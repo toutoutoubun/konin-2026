@@ -80,7 +80,7 @@ export default function EnglishAnalysisPage() {
         <section className="py-12 md:py-20" aria-labelledby="hero-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">ENGLISH PAST EXAM ANALYZER</p>
           <h1 id="hero-title" className="mt-4 max-w-5xl font-mincho text-6xl font-bold leading-none tracking-[-.06em] md:text-9xl">
-            <span className="font-serifDisplay italic">KONIN</span><br />英語頻出分析
+            英語頻出分析
           </h1>
           <p className="mt-7 max-w-3xl text-xl leading-relaxed">
             文科省公開の英語過去問PDFをブラウザ上で解析し、よく出る単元、文法項目、問題形式の傾向を可視化します。PDFはサーバーへ送信しません。

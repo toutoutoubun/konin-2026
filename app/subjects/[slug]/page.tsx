@@ -1,9 +1,10 @@
 import DisplaySettings from '@/components/DisplaySettings'
 import { getSubject, officialPastExamUrl, subjects } from '@/data/subjects'
-import EnglishAnalysisPage from '@/app/english/page'
 
 export function generateStaticParams() {
-  return subjects.map((subject) => ({ slug: subject.slug }))
+  return subjects
+    .filter((subject) => subject.slug !== 'english')
+    .map((subject) => ({ slug: subject.slug }))
 }
 
 const formatRows = [
@@ -20,7 +21,6 @@ export default function SubjectPage({ params }: { params: { slug: string } }) {
   const subject = getSubject(params.slug)
 
   if (!subject) return null
-  if (subject.slug === 'english') return <EnglishAnalysisPage />
 
   return (
     <>
