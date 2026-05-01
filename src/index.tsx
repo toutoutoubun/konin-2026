@@ -154,7 +154,6 @@ function homePage() {
         <div class="section-heading">
           <p class="eyebrow">APPLICATION TODO</p>
           <h2 id="todo-title">出願Todoリスト</h2>
-          <p id="exam-schedule" class="fact-strip" aria-live="polite">次回日程を確認しています。</p>
         </div>
         <div class="todo-list" role="list" aria-describedby="todo-title">
           ${renderTodoStep('1', '試験を知る', ['高卒認定試験の概要確認', '受験資格の確認', '科目と合格要件の確認', '試験日程の確認', '既取得単位による科目免除の確認'])}
