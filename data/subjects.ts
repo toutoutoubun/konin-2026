@@ -15,7 +15,7 @@ export const officialExamGuideUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken
 
 export const subjects: Subject[] = [
   { slug: 'japanese', name: '国語', label: 'JAPANESE', status: 'placeholder', accent: 'blue', description: '現代文・古文・漢文を含む公開済みデータの集計画面。' },
-  { slug: 'math', name: '数学', label: 'MATH', status: 'placeholder', accent: 'orange', description: '大問形式、関数、図形、確率などの出現傾向を扱う予定です。' },
+  { slug: 'math', name: '数学', label: 'MATH', status: 'active', accent: 'orange', description: '文科省公開の数学過去問PDFをブラウザ上で解析し、大問ごとの出題単元、頻出トピック、年度推移を表示します。' },
   { slug: 'english', name: '英語', label: 'ENGLISH', status: 'active', accent: 'yellow', description: '文科省公開の英語過去問PDFをブラウザ上で解析し、よく出る単元、出題形式、年度推移を表示します。' },
   { slug: 'history', name: '歴史', label: 'HISTORY', status: 'placeholder', accent: 'blue', description: '新課程を基準に、旧課程科目を制度区分として内包します。', legacy: '旧課程：日本史A・B・世界史A・B' },
   { slug: 'geography', name: '地理', label: 'GEOGRAPHY', status: 'placeholder', accent: 'orange', description: '新課程を基準に、地図・統計・地域別テーマの出現傾向を扱います。', legacy: '旧課程：地理A・B' },

@@ -3,7 +3,7 @@ import { getSubject, officialPastExamUrl, subjects } from '@/data/subjects'
 
 export function generateStaticParams() {
   return subjects
-    .filter((subject) => subject.slug !== 'english')
+    .filter((subject) => subject.slug !== 'english' && subject.slug !== 'math')
     .map((subject) => ({ slug: subject.slug }))
 }
 
@@ -34,6 +34,7 @@ export default function SubjectPage({ params }: { params: { slug: string } }) {
           <nav aria-label="主要ナビゲーション" className="flex flex-wrap gap-5 font-bold">
             <a href="/#tools">ツール一覧</a>
             <a href="/subjects/english/">英語分析</a>
+            <a href="/math/">数学分析</a>
             <a href="/tags/">タグ定義</a>
             <a href="/updates/">更新履歴</a>
           </nav>
