@@ -134,9 +134,9 @@ function homePage() {
       <section class="content-section split-section" aria-labelledby="about-title">
         <div>
           <p class="eyebrow">OVERVIEW</p>
-          <h2 id="about-title">高認パスとは</h2>
+          <h2 id="about-title" style="font-size: 40px;"><span>高認パスとは</span></h2>
         </div>
-        <p>公開済みデータを集計し、よく出る単元、出現回数、出現率を確認するためのUIです。励ましではなく、試験情報を静かに整理することを優先します。</p>
+        <p>公開済みデータを集計し、よく出る単元、出現回数、出現率を確認するためのツールです。</p>
       </section>
 
       <section class="content-section guide-card" aria-labelledby="past-exam-title">
