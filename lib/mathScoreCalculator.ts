@@ -1,17 +1,19 @@
 /**
- * mathScoreCalculator.ts
+ * mathScoreCalculator.ts — v2.0
+ *
  * 数学頻出分析の集計・ランキング・年度推移・重み付きスコアを計算する。
  *
  * Sections:
- *   A. よく出る単元ランキング (topic_l1 + topic_l2)
+ *   A. よく出る単元ランキング (topic_l1 単位)
  *   B. 近年重み付きランキング (latest 1.0, prev 0.8, 2-ago 0.6, 3-ago 0.4, earlier 0.2)
  *   C. 大問別分布
  *   D. 年度推移
+ *   F. 解析対象外カウント
  */
 
-import type { MathAnalysisResult, MathQuestionBlock } from './mathTagMapper'
+import type { MathAnalysisResult, DetectedBlock } from './mathTagMapper'
 
-// ── 型定義 ─────────────────────────────────────────
+// ── 型定義 ─────────────────────────────────────
 
 export type MathRankingRow = {
   unit: string
@@ -40,14 +42,9 @@ export type MathTrendRow = {
 
 export type MathAggregateSummary = {
   totalFiles: number
-  totalSubQuestions: number
-  formulaOnlyTotal: number
 
-  /** A. topic_l2 単位の頻出ランキング */
+  /** A. topic_l1 単位の頻出ランキング */
   unitRanking: MathRankingRow[]
-
-  /** topic_l1 単位の頻出ランキング */
-  l1Ranking: MathRankingRow[]
 
   /** B. 近年重み付きランキング */
   recentRanking: MathRecentRankingRow[]
@@ -61,96 +58,95 @@ export type MathAggregateSummary = {
   /** セッション一覧（ソート済み） */
   sessions: string[]
 
-  /** 利用可能な topic_l1 一覧 */
+  /** F. 解析対象外カウント */
+  totalCidHeavyPages: number
+  totalBlankPages: number
+  totalAnswerPages: number
+
+  /** フィルタ用一覧 */
   availableL1: string[]
-
-  /** 利用可能な topic_l2 一覧 */
   availableL2: string[]
-
-  /** 利用可能なブロック一覧 */
   availableBlocks: string[]
 }
 
-// ── 重み定義 ─────────────────────────────────────────
+// ── 重み定義 ─────────────────────────────────────
 
 const SESSION_WEIGHTS = [1.0, 0.8, 0.6, 0.4] as const
 const DEFAULT_WEIGHT = 0.2
 
-// ── メイン集計 ─────────────────────────────────────────
+// ── メイン集計 ─────────────────────────────────────
 
 export function aggregateMathResults(results: MathAnalysisResult[]): MathAggregateSummary {
-  if (results.length === 0) {
-    return emptyAggregate()
-  }
+  if (results.length === 0) return emptyAggregate()
 
   // 年度ソート（新しい順）
   const sorted = [...results].sort(
-    (a, b) => (b.examYear ?? 0) - (a.examYear ?? 0) || b.examSession.localeCompare(a.examSession)
+    (a, b) =>
+      (b.examYear ?? 0) - (a.examYear ?? 0) ||
+      b.examSession.localeCompare(a.examSession)
   )
 
-  // カウンターマップ
-  const l2Counts = new Map<string, number>()
   const l1Counts = new Map<string, number>()
   const blockCounts = new Map<string, { topic_l1: string; count: number }>()
   const recentScores = new Map<string, { score: number; latestSession: string }>()
-  const trendMap = new Map<string, Map<string, number>>() // session → (topic_l1 → count)
+  const trendMap = new Map<string, Map<string, number>>()
+  const allL2 = new Set<string>()
 
-  let totalSubQuestions = 0
-  let formulaOnlyTotal = 0
+  let totalCidHeavyPages = 0
+  let totalBlankPages = 0
+  let totalAnswerPages = 0
 
   sorted.forEach((result, resultIndex) => {
-    const weight = resultIndex < SESSION_WEIGHTS.length
-      ? SESSION_WEIGHTS[resultIndex]
-      : DEFAULT_WEIGHT
+    const weight =
+      resultIndex < SESSION_WEIGHTS.length
+        ? SESSION_WEIGHTS[resultIndex]
+        : DEFAULT_WEIGHT
 
-    formulaOnlyTotal += result.formulaOnlyTotal
+    totalCidHeavyPages += result.cidHeavyPages
+    totalBlankPages += result.blankPages
+    totalAnswerPages += result.answerPages ?? 0
 
-    for (const block of result.questionBlocks) {
-      const blockKey = `第${block.blockNumber}問`
-      const existing = blockCounts.get(blockKey) ?? { topic_l1: block.topic_l1, count: 0 }
+    const sessionKey = result.examSession
 
-      // 大問別カウント（大問の出現回数はファイル数分）
-      existing.count += 1
-      blockCounts.set(blockKey, existing)
+    if (!trendMap.has(sessionKey)) trendMap.set(sessionKey, new Map())
+    const sessionMap = trendMap.get(sessionKey)!
 
+    for (const block of result.detectedBlocks) {
       // topic_l1 カウント
-      l1Counts.set(block.topic_l1, (l1Counts.get(block.topic_l1) ?? 0) + block.totalSubQuestions)
+      l1Counts.set(block.topic_l1, (l1Counts.get(block.topic_l1) ?? 0) + 1)
 
-      // 年度推移データ
-      const sessionKey = result.examSession
-      if (!trendMap.has(sessionKey)) trendMap.set(sessionKey, new Map())
-      const sessionMap = trendMap.get(sessionKey)!
-      sessionMap.set(block.topic_l1, (sessionMap.get(block.topic_l1) ?? 0) + block.totalSubQuestions)
+      // 大問別カウント
+      const bKey = block.blockLabel
+      const existing = blockCounts.get(bKey) ?? { topic_l1: block.topic_l1, count: 0 }
+      existing.count += 1
+      blockCounts.set(bKey, existing)
 
-      for (const sub of block.subQuestions) {
-        totalSubQuestions++
+      // 年度推移
+      sessionMap.set(block.topic_l1, (sessionMap.get(block.topic_l1) ?? 0) + 1)
 
-        if (sub.isFormulaOnly || !sub.topic_l2) continue
+      // 近年重み付きスコア
+      const current = recentScores.get(block.topic_l1) ?? {
+        score: 0,
+        latestSession: sessionKey
+      }
+      recentScores.set(block.topic_l1, {
+        score: current.score + weight,
+        latestSession: current.latestSession || sessionKey
+      })
 
-        // topic_l2 カウント
-        l2Counts.set(sub.topic_l2, (l2Counts.get(sub.topic_l2) ?? 0) + 1)
-
-        // 近年重み付きスコア
-        const current = recentScores.get(sub.topic_l2) ?? {
-          score: 0,
-          latestSession: result.examSession
-        }
-        recentScores.set(sub.topic_l2, {
-          score: current.score + 1 * weight,
-          latestSession: current.latestSession || result.examSession
-        })
+      // L2 収集
+      for (const l2 of block.matchedL2) {
+        allL2.add(l2)
       }
     }
   })
 
-  // ── 出力生成 ─────────────────────────────────────────
+  // ── 出力生成 ─────────────────────────────────────
 
-  const totalL2 = Array.from(l2Counts.values()).reduce((s, c) => s + c, 0) || 1
   const totalL1 = Array.from(l1Counts.values()).reduce((s, c) => s + c, 0) || 1
   const totalBlocks = Array.from(blockCounts.values()).reduce((s, b) => s + b.count, 0) || 1
 
-  const unitRanking = toRanking(l2Counts, totalL2)
-  const l1Ranking = toRanking(l1Counts, totalL1)
+  const unitRanking = toRanking(l1Counts, totalL1)
 
   const recentRanking: MathRecentRankingRow[] = Array.from(recentScores.entries())
     .map(([unit, val]) => ({
@@ -173,7 +169,6 @@ export function aggregateMathResults(results: MathAnalysisResult[]): MathAggrega
       return aNum - bNum
     })
 
-  // 年度推移行
   const sessions = Array.from(trendMap.keys()).sort()
   const trendRows: MathTrendRow[] = []
   for (const session of sessions) {
@@ -185,16 +180,16 @@ export function aggregateMathResults(results: MathAnalysisResult[]): MathAggrega
 
   return {
     totalFiles: results.length,
-    totalSubQuestions,
-    formulaOnlyTotal,
     unitRanking,
-    l1Ranking,
     recentRanking,
     blockDistribution,
     trendRows,
     sessions,
+    totalCidHeavyPages,
+    totalBlankPages,
+    totalAnswerPages,
     availableL1: Array.from(l1Counts.keys()).sort(),
-    availableL2: Array.from(l2Counts.keys()).sort(),
+    availableL2: Array.from(allL2).sort(),
     availableBlocks: Array.from(blockCounts.keys()).sort((a, b) => {
       const aNum = parseInt(a.replace(/[^0-9]/g, ''), 10)
       const bNum = parseInt(b.replace(/[^0-9]/g, ''), 10)
@@ -203,7 +198,7 @@ export function aggregateMathResults(results: MathAnalysisResult[]): MathAggrega
   }
 }
 
-// ── フィルタ ─────────────────────────────────────────
+// ── フィルタ ─────────────────────────────────────
 
 export type MathFilters = {
   sessionRange: string
@@ -227,7 +222,9 @@ export function filterMathResults(
   filters: MathFilters
 ): MathAnalysisResult[] {
   let filtered = [...results].sort(
-    (a, b) => (b.examYear ?? 0) - (a.examYear ?? 0) || b.examSession.localeCompare(a.examSession)
+    (a, b) =>
+      (b.examYear ?? 0) - (a.examYear ?? 0) ||
+      b.examSession.localeCompare(a.examSession)
   )
 
   // 試験回範囲
@@ -237,36 +234,44 @@ export function filterMathResults(
 
   // ブロックフィルタ
   if (filters.block !== 'all') {
-    const blockNum = parseInt(filters.block.replace(/[^0-9]/g, ''), 10)
-    filtered = filtered.map((r) => ({
-      ...r,
-      questionBlocks: r.questionBlocks.filter((b) => b.blockNumber === blockNum)
-    })).filter((r) => r.questionBlocks.length > 0)
+    filtered = filtered
+      .map((r) => ({
+        ...r,
+        detectedBlocks: r.detectedBlocks.filter(
+          (b) => b.blockLabel === filters.block
+        )
+      }))
+      .filter((r) => r.detectedBlocks.length > 0)
   }
 
   // topic_l1 フィルタ
   if (filters.topicL1 !== 'all') {
-    filtered = filtered.map((r) => ({
-      ...r,
-      questionBlocks: r.questionBlocks.filter((b) => b.topic_l1 === filters.topicL1)
-    })).filter((r) => r.questionBlocks.length > 0)
+    filtered = filtered
+      .map((r) => ({
+        ...r,
+        detectedBlocks: r.detectedBlocks.filter(
+          (b) => b.topic_l1 === filters.topicL1
+        )
+      }))
+      .filter((r) => r.detectedBlocks.length > 0)
   }
 
   // topic_l2 フィルタ
   if (filters.topicL2 !== 'all') {
-    filtered = filtered.map((r) => ({
-      ...r,
-      questionBlocks: r.questionBlocks.map((b) => ({
-        ...b,
-        subQuestions: b.subQuestions.filter((sq) => sq.topic_l2 === filters.topicL2)
-      })).filter((b) => b.subQuestions.length > 0)
-    })).filter((r) => r.questionBlocks.length > 0)
+    filtered = filtered
+      .map((r) => ({
+        ...r,
+        detectedBlocks: r.detectedBlocks.filter((b) =>
+          b.matchedL2.includes(filters.topicL2)
+        )
+      }))
+      .filter((r) => r.detectedBlocks.length > 0)
   }
 
   return filtered
 }
 
-// ── ユーティリティ ─────────────────────────────────────────
+// ── ユーティリティ ─────────────────────────────────
 
 function toRanking(map: Map<string, number>, total: number): MathRankingRow[] {
   return Array.from(map.entries())
@@ -285,14 +290,14 @@ function round(value: number): number {
 function emptyAggregate(): MathAggregateSummary {
   return {
     totalFiles: 0,
-    totalSubQuestions: 0,
-    formulaOnlyTotal: 0,
     unitRanking: [],
-    l1Ranking: [],
     recentRanking: [],
     blockDistribution: [],
     trendRows: [],
     sessions: [],
+    totalCidHeavyPages: 0,
+    totalBlankPages: 0,
+    totalAnswerPages: 0,
     availableL1: [],
     availableL2: [],
     availableBlocks: []

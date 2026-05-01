@@ -1,222 +1,185 @@
 /**
- * mathPatternMatcher.ts
- * 数学過去問PDFから大問番号、小問番号、選択肢（ア〜エ）を検出し、
- * 空白ページ・計算用紙・表紙・解答用紙をスキップする。
+ * mathPatternMatcher.ts — v2.0
+ *
+ * 数学PDFのページ分類、CIDコード検出、大問番号検出。
+ * 数式部分はCIDコードとして抽出されるため数式解析は行わない。
+ * 正常テキスト（大問番号・年度・ページ識別子）とページ位置で大問を特定する。
  */
 
-/** ページ分類結果 */
+// ── ページ分類 ─────────────────────────────────────
+
 export type PageClassification =
-  | 'question'    // 問題ページ
-  | 'blank'       // 白紙・計算用紙
-  | 'cover'       // 表紙
-  | 'answerSheet' // 解答用紙
-  | 'formulaOnly' // 数式・図のみ
-
-/** 大問検出結果 */
-export type BigQuestionMatch = {
-  raw: string          // マッチした生テキスト
-  blockNumber: number  // 正規化された大問番号（1〜6）
-  startIndex: number   // テキスト内の開始位置
-}
-
-/** 小問検出結果 */
-export type SubQuestionMatch = {
-  raw: string
-  subNumber: number
-  startIndex: number
-}
-
-/** 選択肢検出結果 */
-export type ChoiceMatch = {
-  raw: string
-  choices: string[]
-}
-
-// ── ページ分類 ─────────────────────────────────────────
-
-const BLANK_PATTERNS = [
-  /^[\s\u3000]*$/,                          // 完全空白
-  /計算用紙/,                                // 計算用紙
-  /このページは白紙/i,                       // 白紙明示
-  /余白/,                                    // 余白
-  /メモ欄/                                   // メモ欄
-]
-
-const COVER_PATTERNS = [
-  /高等学校卒業程度認定試験/,
-  /文部科学省/,
-  /注\s*意\s*事\s*項/,
-  /試験問題は.*ページ/,
-  /受験番号/,
-  /解答についての注意/
-]
-
-const ANSWER_SHEET_PATTERNS = [
-  /解答用紙/,
-  /マークシート/,
-  /解答番号/,
-  /記入上の注意/
-]
+  | 'question'
+  | 'blank'
+  | 'cover'
+  | 'answer'
+  | 'cidHeavy'
 
 /**
- * ページテキストを分類する
+ * CIDコードが大量に含まれるかを判定する。
+ * (cid:NNN) の出現文字数がテキスト全体の30%以上なら数式ページとみなす。
  */
-export function classifyPage(pageText: string): PageClassification {
-  const trimmed = pageText.trim()
+export function isCIDHeavy(text: string): boolean {
+  if (text.length === 0) return false
+  const cidPattern = /\(cid:\d+\)/g
+  const matches = text.match(cidPattern)
+  if (!matches) return false
+  // 各マッチの文字数を合算
+  const cidChars = matches.reduce((sum, m) => sum + m.length, 0)
+  return cidChars / text.length > 0.3
+}
 
-  // 完全空白 or 非常に短いテキスト
-  if (trimmed.length < 10) return 'blank'
+/**
+ * 計算用余白ページ or ほぼ空白のページかを判定する。
+ */
+export function isBlankPage(text: string): boolean {
+  const trimmed = text.trim()
+  if (trimmed.length < 10) return true
+  if (/計算用\s*余白/.test(trimmed)) return true
+  if (/計算用\s*ページ/.test(trimmed)) return true
+  if (/^[\s\u3000]*$/.test(trimmed)) return true
+  // ページ番号だけのページ
+  if (/^[\s\u3000\-―─\d]+$/.test(trimmed)) return true
+  return false
+}
 
-  // 空白・計算用紙
-  if (BLANK_PATTERNS.some((pattern) => pattern.test(trimmed))) return 'blank'
+/**
+ * 表紙・注意事項ページかを判定する。
+ */
+export function isCoverPage(text: string): boolean {
+  return (
+    /注\s*意\s*事\s*項/.test(text) ||
+    text.includes('解答上の注意') ||
+    text.includes('試験開始の合図') ||
+    text.includes('受験番号') ||
+    /高等学校卒業程度認定試験/.test(text) ||
+    text.includes('数\u3000\u3000学') // 表紙の「数　　学」
+  )
+}
 
-  // 表紙
-  if (COVER_PATTERNS.some((pattern) => pattern.test(trimmed))) return 'cover'
+/**
+ * 解答用紙ページかを判定する。
+ */
+export function isAnswerSheet(text: string): boolean {
+  return (
+    text.includes('解答用紙') ||
+    text.includes('マークシート') ||
+    text.includes('記入上の注意') ||
+    text.includes('正解番号')
+  )
+}
 
-  // 解答用紙
-  if (ANSWER_SHEET_PATTERNS.some((pattern) => pattern.test(trimmed))) return 'answerSheet'
-
-  // 数式・図のみ判定: 日本語テキストがほとんどなく数字・記号が主体
-  const japaneseChars = (trimmed.match(/[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/g) ?? []).length
-  const totalChars = trimmed.replace(/\s/g, '').length
-  if (totalChars > 20 && japaneseChars / totalChars < 0.05) return 'formulaOnly'
-
+/**
+ * ページテキストを分類する。
+ */
+export function classifyPage(text: string): PageClassification {
+  if (isBlankPage(text)) return 'blank'
+  if (isCoverPage(text)) return 'cover'
+  if (isAnswerSheet(text)) return 'answer'
+  if (isCIDHeavy(text)) return 'cidHeavy'
   return 'question'
 }
 
-// ── 大問番号検出 ─────────────────────────────────────────
+// ── 年度・試験回検出 ─────────────────────────────────
 
-const KANJI_MAP: Record<string, number> = {
-  '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6,
-  '七': 7, '八': 8, '九': 9, '十': 10
+/**
+ * 年度を検出する（西暦 or 元号）。
+ */
+export function detectExamYear(text: string, fileName = ''): number | null {
+  const target = `${fileName}\n${text}`
+
+  // 西暦: 2014–2029
+  const western = target.match(/20(1[4-9]|2[0-9])\s*(?:年度|年)?/)
+  if (western) return Number(western[0].match(/20\d{2}/)?.[0])
+
+  // 令和
+  const reiwa = target.match(/令和\s*([元1-9]|[0-9]{1,2})\s*年度?/)
+  if (reiwa) {
+    const raw = reiwa[1]
+    return 2018 + (raw === '元' ? 1 : Number(raw))
+  }
+
+  // 平成
+  const heisei = target.match(/平成\s*([0-9]{1,2})\s*年度?/)
+  if (heisei) return 1988 + Number(heisei[1])
+
+  return null
 }
 
 /**
- * 大問見出しを検出する
- * パターン: 「第1問」「第一問」「問1」「[1]」「【1】」
+ * 試験回を検出する。「第1回」「第2回」等。
  */
-export function detectBigQuestions(text: string): BigQuestionMatch[] {
-  const patterns: RegExp[] = [
-    /第\s*([0-9一二三四五六七八九十]+)\s*問/g,
-    /問\s*([0-9]+)/g,
-    /[\[［]\s*([0-9]+)\s*[\]］]/g,
-    /【\s*([0-9]+)\s*】/g
-  ]
+export function detectExamSession(text: string, fileName = ''): string {
+  const target = `${fileName}\n${text}`
+  const year = detectExamYear(text, fileName)
 
+  const sessionMatch = target.match(/(?:第\s*([12])\s*回|([12])\s*回目)/i)
+  const session = sessionMatch?.[1] ?? sessionMatch?.[2]
+
+  if (year && session) return `${year}年度 第${session}回`
+  if (year) return `${year}年度`
+  return '試験回未検出'
+}
+
+// ── 大問番号検出 ─────────────────────────────────────
+
+const KANJI_MAP: Record<string, number> = {
+  '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6
+}
+
+export type BigQuestionMatch = {
+  raw: string
+  blockNumber: number
+  pageIndex: number
+}
+
+/**
+ * 全ページから大問番号を検出する。
+ * 「第1問」「第一問」等のパターンを認識。
+ * questionまたはcidHeavyのページのみ対象とする。
+ */
+export function detectBigQuestions(
+  pages: string[],
+  pageClassifications?: PageClassification[]
+): BigQuestionMatch[] {
   const results: BigQuestionMatch[] = []
   const seen = new Set<number>()
 
-  for (const pattern of patterns) {
+  for (let i = 0; i < pages.length; i++) {
+    // question or cidHeavy ページのみ対象
+    if (pageClassifications) {
+      const cls = pageClassifications[i]
+      if (cls === 'blank' || cls === 'cover' || cls === 'answer') continue
+    }
+
+    const text = pages[i]
+
+    // パターン1: 「第N問」「第一問」
+    const daiPattern = /第\s*([0-9一二三四五六]+)\s*問/g
     let match: RegExpExecArray | null
-    while ((match = pattern.exec(text)) !== null) {
-      const rawNumber = match[1]
-      let blockNumber: number
-
-      if (/^[0-9]+$/.test(rawNumber)) {
-        blockNumber = parseInt(rawNumber, 10)
-      } else {
-        blockNumber = KANJI_MAP[rawNumber] ?? 0
+    while ((match = daiPattern.exec(text)) !== null) {
+      const rawNum = match[1]
+      const num = /^[0-9]+$/.test(rawNum)
+        ? parseInt(rawNum, 10)
+        : (KANJI_MAP[rawNum] ?? 0)
+      if (num >= 1 && num <= 6 && !seen.has(num)) {
+        seen.add(num)
+        results.push({ raw: match[0], blockNumber: num, pageIndex: i })
       }
+    }
 
-      if (blockNumber >= 1 && blockNumber <= 6 && !seen.has(blockNumber)) {
-        seen.add(blockNumber)
-        results.push({
-          raw: match[0],
-          blockNumber,
-          startIndex: match.index
-        })
+    // パターン2: ページ先頭の単独数字「1」〜「6」（大問番号の可能性）
+    if (!seen.has(0)) {
+      const headMatch = text.trimStart().match(/^([1-6])\s/)
+      if (headMatch) {
+        const num = parseInt(headMatch[1], 10)
+        if (!seen.has(num)) {
+          seen.add(num)
+          results.push({ raw: headMatch[0], blockNumber: num, pageIndex: i })
+        }
       }
     }
   }
 
   return results.sort((a, b) => a.blockNumber - b.blockNumber)
-}
-
-// ── 小問番号検出 ─────────────────────────────────────────
-
-/**
- * 大問テキストブロック内の小問番号を検出する
- * パターン: (1), 〔1〕, 問1, ①②③
- */
-export function detectSubQuestions(blockText: string): SubQuestionMatch[] {
-  const patterns: RegExp[] = [
-    /[（\(]\s*([0-9]+)\s*[）\)]/g,
-    /〔\s*([0-9]+)\s*〕/g,
-    /問\s*([0-9]+)/g
-  ]
-
-  const circleDigits: Record<string, number> = {
-    '①': 1, '②': 2, '③': 3, '④': 4, '⑤': 5,
-    '⑥': 6, '⑦': 7, '⑧': 8, '⑨': 9, '⑩': 10
-  }
-
-  const results: SubQuestionMatch[] = []
-  const seen = new Set<number>()
-
-  for (const pattern of patterns) {
-    let match: RegExpExecArray | null
-    while ((match = pattern.exec(blockText)) !== null) {
-      const subNumber = parseInt(match[1], 10)
-      if (subNumber >= 1 && subNumber <= 20 && !seen.has(subNumber)) {
-        seen.add(subNumber)
-        results.push({ raw: match[0], subNumber, startIndex: match.index })
-      }
-    }
-  }
-
-  // 丸数字
-  const circlePattern = /[①②③④⑤⑥⑦⑧⑨⑩]/g
-  let circleMatch: RegExpExecArray | null
-  while ((circleMatch = circlePattern.exec(blockText)) !== null) {
-    const subNumber = circleDigits[circleMatch[0]]
-    if (subNumber && !seen.has(subNumber)) {
-      seen.add(subNumber)
-      results.push({ raw: circleMatch[0], subNumber, startIndex: circleMatch.index })
-    }
-  }
-
-  return results.sort((a, b) => a.subNumber - b.subNumber)
-}
-
-// ── 選択肢検出 ─────────────────────────────────────────
-
-/**
- * 選択肢パターン（ア〜エ、①〜④、A〜D等）を検出する
- */
-export function detectChoices(blockText: string): ChoiceMatch {
-  const katakanaChoices = blockText.match(/[アイウエオ]\s*[\.．、)\s]/g)
-  const circleChoices = blockText.match(/[①②③④]/g)
-  const alphaChoices = blockText.match(/[A-D]\s*[\.．)\s]/g)
-
-  const allChoices: string[] = [
-    ...new Set([
-      ...(katakanaChoices ?? []).map((c) => c.trim().replace(/[\.．、)\s]/g, '')),
-      ...(circleChoices ?? []),
-      ...(alphaChoices ?? []).map((c) => c.trim().replace(/[\.．)\s]/g, ''))
-    ])
-  ]
-
-  return {
-    raw: allChoices.join(', '),
-    choices: allChoices.slice(0, 20)
-  }
-}
-
-// ── 数式のみ判定 ─────────────────────────────────────────
-
-/**
- * 小問テキストが数式・図のみかどうかを判定する
- * 日本語文字が非常に少なく、数字・記号が主体の場合にtrue
- */
-export function isFormulaOnly(subText: string): boolean {
-  const trimmed = subText.trim()
-  if (trimmed.length < 5) return true
-
-  const japaneseChars = (trimmed.match(/[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/g) ?? []).length
-  const totalChars = trimmed.replace(/\s/g, '').length
-
-  // 日本語が5%未満で、テキストの長さが十分ある場合
-  if (totalChars > 15 && japaneseChars / totalChars < 0.08) return true
-
-  return false
 }

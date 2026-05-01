@@ -1,52 +1,52 @@
 /**
- * mathTagMapper.ts
+ * mathTagMapper.ts — v2.0
+ *
  * mathTags.json の MATH_STD ルールセットを使い、
- * 検出した大問ブロックに topic_l1 を、小問に topic_l2 をマッピングする。
+ * 検出した大問をページ位置（page_hint）と大問番号で照合し、
+ * topic_l1 を割り当てる。キーワードマッチで topic_l2 を補助的に付与する。
  */
 
 import mathTags from '@/data/mathTags.json'
 import {
   type BigQuestionMatch,
+  type PageClassification,
   classifyPage,
   detectBigQuestions,
-  detectChoices,
-  detectSubQuestions,
-  isFormulaOnly
+  detectExamSession,
+  detectExamYear
 } from './mathPatternMatcher'
 
-// ── 型定義 ─────────────────────────────────────────
+// ── 型定義 ─────────────────────────────────────
+
+export type MathUnit = {
+  block: string
+  page_hint: number
+  topic_l1: string
+  topic_l2: string[]
+  keywords: string[]
+}
 
 export type MathRuleSet = {
   code: string
   label: string
-  total_questions: number
-  blocks: MathBlock[]
-  keyword_map: Record<string, string[]>
+  total_blocks: number
+  units: MathUnit[]
 }
 
-export type MathBlock = {
-  block_id: number
-  label: string
-  topic_l1: string
-  topic_l2: string[]
-}
-
-export type MathSubQuestion = {
-  subNumber: number
+export type PageInfo = {
+  pageIndex: number
   text: string
-  topic_l2: string | null
-  isFormulaOnly: boolean
-  choices: string[]
+  classification: PageClassification
 }
 
-export type MathQuestionBlock = {
+export type DetectedBlock = {
   blockNumber: number
-  heading: string
-  text: string
+  blockLabel: string
   topic_l1: string
-  subQuestions: MathSubQuestion[]
-  totalSubQuestions: number
-  formulaOnlyCount: number
+  matchedL2: string[]
+  startPage: number
+  endPage: number
+  method: 'pattern' | 'pageHint' | 'fallback'
 }
 
 export type MathAnalysisResult = {
@@ -54,98 +54,32 @@ export type MathAnalysisResult = {
   examYear: number | null
   examSession: string
   ruleSet: MathRuleSet
-  rawText: string
   pageCount: number
-  skippedPages: number
-  questionBlocks: MathQuestionBlock[]
-  formulaOnlyTotal: number
+  blankPages: number
+  coverPages: number
+  answerPages: number
+  cidHeavyPages: number
+  questionPages: number
+  detectedBlocks: DetectedBlock[]
   analyzedAt: string
 }
 
-// ── ルールセット取得 ─────────────────────────────────────────
+// ── ルールセット取得 ─────────────────────────────────
 
 export function getMathRuleSet(): MathRuleSet {
-  const raw = mathTags.rule_sets.find((rs) => rs.code === 'MATH_STD')!
+  const raw = mathTags.rule_sets[0]
   return {
     code: raw.code,
     label: raw.label,
-    total_questions: raw.total_questions,
-    blocks: raw.blocks,
-    keyword_map: raw.keyword_map
+    total_blocks: raw.total_blocks,
+    units: raw.units as MathUnit[]
   }
 }
 
-// ── 年度検出 ─────────────────────────────────────────
-
-export function detectMathExamYear(text: string, fileName = ''): number | null {
-  const target = `${fileName}\n${text}`
-
-  const western = target.match(/20(1[4-9]|2[0-9])\s*(?:年度|年)?/)
-  if (western) return Number(western[0].match(/20\d{2}/)?.[0])
-
-  const reiwa = target.match(/令和\s*([元1-9]|[0-9]{1,2})\s*年度?/)
-  if (reiwa) {
-    const raw = reiwa[1]
-    const yearNumber = raw === '元' ? 1 : Number(raw)
-    return 2018 + yearNumber
-  }
-
-  const heisei = target.match(/平成\s*([0-9]{1,2})\s*年度?/)
-  if (heisei) return 1988 + Number(heisei[1])
-
-  return null
-}
-
-// ── 試験回検出 ─────────────────────────────────────────
-
-export function detectMathExamSession(text: string, fileName = ''): string {
-  const target = `${fileName}\n${text}`
-  const year = detectMathExamYear(text, fileName)
-
-  const sessionMatch = target.match(/(?:第\s*([12])\s*回|([12])\s*回目|No\.\s*([12]))/i)
-  const session = sessionMatch?.[1] ?? sessionMatch?.[2] ?? sessionMatch?.[3]
-
-  if (year && session) return `${year}年度 第${session}回`
-  if (year) return `${year}年度`
-  return '試験回未検出'
-}
-
-// ── topic_l2 キーワードマッチ ─────────────────────────────────────────
+// ── メイン解析 ─────────────────────────────────────
 
 /**
- * テキストからキーワードマッチで topic_l2 を推定する
- * 対象ブロックの topic_l2 候補のみにマッチさせる
- */
-export function matchTopicL2(
-  text: string,
-  block: MathBlock,
-  keywordMap: Record<string, string[]>
-): string | null {
-  let bestMatch: string | null = null
-  let bestCount = 0
-
-  for (const topic of block.topic_l2) {
-    const keywords = keywordMap[topic] ?? []
-    let count = 0
-    for (const kw of keywords) {
-      const escapedKw = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      const regex = new RegExp(escapedKw, 'gi')
-      const matches = text.match(regex)
-      if (matches) count += matches.length
-    }
-    if (count > bestCount) {
-      bestCount = count
-      bestMatch = topic
-    }
-  }
-
-  return bestMatch
-}
-
-// ── メイン解析 ─────────────────────────────────────────
-
-/**
- * ページテキスト配列を解析し、大問・小問・トピックをマッピングする
+ * ページテキスト配列を解析し、大問・単元をマッピングする。
  */
 export function analyzeMathPages(
   pages: string[],
@@ -154,156 +88,204 @@ export function analyzeMathPages(
   const ruleSet = getMathRuleSet()
   const fullText = pages.join('\n')
 
-  // ページ分類
-  let skippedPages = 0
-  const questionPages: string[] = []
+  // 1. ページ分類
+  const pageInfos: PageInfo[] = pages.map((text, i) => ({
+    pageIndex: i,
+    text,
+    classification: classifyPage(text)
+  }))
 
-  for (const page of pages) {
-    const classification = classifyPage(page)
-    if (classification === 'question' || classification === 'formulaOnly') {
-      questionPages.push(page)
-    } else {
-      skippedPages++
-    }
-  }
+  const blankPages = pageInfos.filter((p) => p.classification === 'blank').length
+  const coverPages = pageInfos.filter((p) => p.classification === 'cover').length
+  const answerPages = pageInfos.filter((p) => p.classification === 'answer').length
+  const cidHeavyPages = pageInfos.filter((p) => p.classification === 'cidHeavy').length
+  const questionPages = pageInfos.filter((p) => p.classification === 'question').length
 
-  const questionText = questionPages.join('\n')
-  const examYear = detectMathExamYear(fullText, fileName)
-  const examSession = detectMathExamSession(fullText, fileName)
+  // 2. 年度・試験回検出
+  const examYear = detectExamYear(fullText, fileName)
+  const examSession = detectExamSession(fullText, fileName)
 
-  // 大問検出
-  const bigQuestions = detectBigQuestions(questionText)
+  // 3. 大問番号検出（分類情報を渡して不要ページをスキップ）
+  const classifications = pageInfos.map((p) => p.classification)
+  const bigQuestions = detectBigQuestions(pages, classifications)
 
-  // ブロックテキスト分割
-  const questionBlocks = buildQuestionBlocks(
-    questionText,
-    bigQuestions,
-    ruleSet
-  )
-
-  const formulaOnlyTotal = questionBlocks.reduce(
-    (sum, block) => sum + block.formulaOnlyCount,
-    0
-  )
+  // 4. 大問ブロック構築
+  const detectedBlocks = buildBlocks(bigQuestions, pageInfos, ruleSet)
 
   return {
     fileName,
     examYear,
     examSession,
     ruleSet,
-    rawText: fullText,
     pageCount: pages.length,
-    skippedPages,
-    questionBlocks,
-    formulaOnlyTotal,
+    blankPages,
+    coverPages,
+    answerPages,
+    cidHeavyPages,
+    questionPages,
+    detectedBlocks,
     analyzedAt: new Date().toISOString()
   }
 }
 
-/**
- * 大問マッチ位置に基づいてテキストをブロック分割し、
- * 各ブロックに topic_l1 と小問の topic_l2 を割り当てる
- */
-function buildQuestionBlocks(
-  text: string,
+// ── ブロック構築 ─────────────────────────────────────
+
+function buildBlocks(
   bigQuestions: BigQuestionMatch[],
+  pageInfos: PageInfo[],
   ruleSet: MathRuleSet
-): MathQuestionBlock[] {
-  // 大問が検出できなかった場合、全テキストをブロック1として扱う
-  if (bigQuestions.length === 0) {
-    return buildFallbackBlocks(text, ruleSet)
-  }
+): DetectedBlock[] {
+  const blocks: DetectedBlock[] = []
+  const assigned = new Set<number>()
 
-  const blocks: MathQuestionBlock[] = []
+  // ステップ1: パターンマッチで検出された大問を優先的に割り当て
+  for (const bq of bigQuestions) {
+    const unit = ruleSet.units.find(
+      (u) => u.block === `第${bq.blockNumber}問`
+    )
+    if (!unit) continue
+    if (assigned.has(bq.blockNumber)) continue
+    assigned.add(bq.blockNumber)
 
-  for (let i = 0; i < bigQuestions.length; i++) {
-    const bq = bigQuestions[i]
-    const start = bq.startIndex
-    const end = bigQuestions[i + 1]?.startIndex ?? text.length
-    const blockText = text.slice(start, end)
+    const startPage = bq.pageIndex
+    const nextBq = bigQuestions.find(
+      (q) => q.blockNumber > bq.blockNumber
+    )
+    const endPage = nextBq
+      ? nextBq.pageIndex - 1
+      : pageInfos.length - 1
 
-    // ルールセットから対応するブロック定義を取得
-    const blockDef = ruleSet.blocks.find((b) => b.block_id === bq.blockNumber)
-    const topicL1 = blockDef?.topic_l1 ?? '未分類'
-
-    // 小問検出
-    const subMatches = detectSubQuestions(blockText)
-    const subQuestions = buildSubQuestions(blockText, subMatches, blockDef, ruleSet.keyword_map)
-
-    const formulaOnlyCount = subQuestions.filter((sq) => sq.isFormulaOnly).length
+    // ブロック範囲内のテキストからキーワードマッチ
+    const blockText = collectBlockText(pageInfos, startPage, endPage)
+    const matchedL2 = matchKeywords(blockText, unit)
 
     blocks.push({
       blockNumber: bq.blockNumber,
-      heading: bq.raw,
-      text: blockText,
-      topic_l1: topicL1,
-      subQuestions,
-      totalSubQuestions: subQuestions.length,
-      formulaOnlyCount
+      blockLabel: unit.block,
+      topic_l1: unit.topic_l1,
+      matchedL2,
+      startPage,
+      endPage,
+      method: 'pattern'
     })
   }
 
-  return blocks
-}
+  // ステップ2: page_hintで補完（パターンで未検出の大問を埋める）
+  for (const unit of ruleSet.units) {
+    const blockNum = parseInt(unit.block.replace(/[^0-9]/g, ''), 10)
+    if (assigned.has(blockNum)) continue
 
-/**
- * 大問が検出できなかった場合のフォールバック
- */
-function buildFallbackBlocks(text: string, ruleSet: MathRuleSet): MathQuestionBlock[] {
-  return ruleSet.blocks.map((blockDef) => ({
-    blockNumber: blockDef.block_id,
-    heading: blockDef.label,
-    text: '',
-    topic_l1: blockDef.topic_l1,
-    subQuestions: [],
-    totalSubQuestions: 0,
-    formulaOnlyCount: 0
-  }))
-}
+    // page_hint は1-indexed なので 0-indexed に変換
+    const hintPage = unit.page_hint - 1
 
-/**
- * 小問テキストを分割し、各小問に topic_l2 を割り当てる
- */
-function buildSubQuestions(
-  blockText: string,
-  subMatches: ReturnType<typeof detectSubQuestions>,
-  blockDef: MathBlock | undefined,
-  keywordMap: Record<string, string[]>
-): MathSubQuestion[] {
-  if (subMatches.length === 0) {
-    // 小問番号が見つからない場合、ブロック全体から topic_l2 を推定
-    if (!blockDef) return []
+    // page_hint付近（±2ページ）にquestionまたはcidHeavyページがあるか確認
+    const nearby = pageInfos.find(
+      (p) =>
+        Math.abs(p.pageIndex - hintPage) <= 2 &&
+        (p.classification === 'question' || p.classification === 'cidHeavy')
+    )
 
-    const topic = matchTopicL2(blockText, blockDef, keywordMap)
-    const formulaOnly = isFormulaOnly(blockText)
-    const choices = detectChoices(blockText)
+    if (nearby) {
+      assigned.add(blockNum)
 
-    return [{
-      subNumber: 1,
-      text: blockText.slice(0, 300),
-      topic_l2: formulaOnly ? null : topic,
-      isFormulaOnly: formulaOnly,
-      choices: choices.choices
-    }]
+      // 次のユニットの page_hint から終了ページを推定
+      const nextUnit = ruleSet.units.find(
+        (u) => parseInt(u.block.replace(/[^0-9]/g, ''), 10) > blockNum
+      )
+      const endHint = nextUnit
+        ? nextUnit.page_hint - 2 // 次の大問の1ページ前まで
+        : pageInfos.length - 1
+
+      const startPage = nearby.pageIndex
+      const endPage = Math.max(startPage, endHint)
+
+      const blockText = collectBlockText(pageInfos, startPage, endPage)
+      const matchedL2 = matchKeywords(blockText, unit)
+
+      blocks.push({
+        blockNumber: blockNum,
+        blockLabel: unit.block,
+        topic_l1: unit.topic_l1,
+        matchedL2,
+        startPage,
+        endPage,
+        method: 'pageHint'
+      })
+    } else {
+      // フォールバック: ページが見つからなくても大問は存在するとみなす
+      assigned.add(blockNum)
+      blocks.push({
+        blockNumber: blockNum,
+        blockLabel: unit.block,
+        topic_l1: unit.topic_l1,
+        matchedL2: [],
+        startPage: -1,
+        endPage: -1,
+        method: 'fallback'
+      })
+    }
   }
 
-  return subMatches.map((sub, index) => {
-    const start = sub.startIndex
-    const end = subMatches[index + 1]?.startIndex ?? blockText.length
-    const subText = blockText.slice(start, end)
+  return blocks.sort((a, b) => a.blockNumber - b.blockNumber)
+}
 
-    const formulaOnly = isFormulaOnly(subText)
-    const topic = blockDef && !formulaOnly
-      ? matchTopicL2(subText, blockDef, keywordMap)
-      : null
-    const choices = detectChoices(subText)
+// ── テキスト収集 ─────────────────────────────────
 
-    return {
-      subNumber: sub.subNumber,
-      text: subText.slice(0, 300),
-      topic_l2: topic,
-      isFormulaOnly: formulaOnly,
-      choices: choices.choices
+/**
+ * 指定ページ範囲の question ページテキストを結合する。
+ * cidHeavy ページも部分的にテキストを含む場合があるので含める。
+ */
+function collectBlockText(
+  pageInfos: PageInfo[],
+  startPage: number,
+  endPage: number
+): string {
+  return pageInfos
+    .filter(
+      (p) =>
+        p.pageIndex >= startPage &&
+        p.pageIndex <= endPage &&
+        (p.classification === 'question' || p.classification === 'cidHeavy')
+    )
+    .map((p) => p.text)
+    .join(' ')
+}
+
+// ── キーワードマッチ ─────────────────────────────────
+
+/**
+ * ブロック内テキストからキーワードマッチで topic_l2 を推定する。
+ * 1) topic_l2 名自体がテキストに含まれるか
+ * 2) keywords リストの語がテキストに含まれるか → 対応する topic_l2 を付与
+ */
+function matchKeywords(text: string, unit: MathUnit): string[] {
+  const matched = new Set<string>()
+
+  // 直接マッチ: topic_l2 名がテキストに含まれるか
+  for (const topic of unit.topic_l2) {
+    if (text.includes(topic)) {
+      matched.add(topic)
     }
-  })
+  }
+
+  // キーワード補助マッチ
+  for (const kw of unit.keywords) {
+    const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    if (new RegExp(escaped, 'i').test(text)) {
+      // このキーワードに最も関連する topic_l2 を探す
+      for (const topic of unit.topic_l2) {
+        if (matched.has(topic)) continue
+        // キーワードが topic 名の一部か、topic 名がキーワードの一部か
+        if (topic.includes(kw) || kw.includes(topic)) {
+          matched.add(topic)
+        }
+      }
+      // 直接関連が見つからない場合、まだマッチしていない最初の topic_l2 を付与
+      if (matched.size === 0 && unit.topic_l2.length > 0) {
+        matched.add(unit.topic_l2[0])
+      }
+    }
+  }
+
+  return Array.from(matched)
 }

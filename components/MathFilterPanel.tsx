@@ -36,7 +36,7 @@ export default function MathFilterPanel({
           フィルタ
         </h2>
         <p id="math-filter-help" className="mt-3 max-w-3xl">
-          試験回範囲、大問、大分類（topic_l1）、小分類（topic_l2）で表示条件を変更できます。即時反映し、解除ボタンで初期状態に戻せます。
+          試験回範囲・大問・大分類（topic_l1）・小分類（topic_l2）で表示条件を変更できます。即時反映し、解除ボタンで初期状態に戻せます。
         </p>
       </div>
 
@@ -69,9 +69,7 @@ export default function MathFilterPanel({
           >
             <option value="all">全件</option>
             {availableBlocks.map((block) => (
-              <option key={block} value={block}>
-                {block}
-              </option>
+              <option key={block} value={block}>{block}</option>
             ))}
           </select>
         </label>
@@ -85,9 +83,7 @@ export default function MathFilterPanel({
           >
             <option value="all">全件</option>
             {availableL1.map((topic) => (
-              <option key={topic} value={topic}>
-                {topic}
-              </option>
+              <option key={topic} value={topic}>{topic}</option>
             ))}
           </select>
         </label>
@@ -101,9 +97,7 @@ export default function MathFilterPanel({
           >
             <option value="all">全件</option>
             {availableL2.map((topic) => (
-              <option key={topic} value={topic}>
-                {topic}
-              </option>
+              <option key={topic} value={topic}>{topic}</option>
             ))}
           </select>
         </label>

@@ -15,10 +15,15 @@ export default function MathPDFUploader({ onComplete, onError }: Props) {
   const [dragging, setDragging] = useState(false)
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState<MathParseProgress | null>(null)
+  const [completedFiles, setCompletedFiles] = useState<
+    { name: string; session: string; skippedBlank: number; skippedCid: number }[]
+  >([])
 
   const handleFiles = async (fileList: FileList | File[]) => {
     const files = Array.from(fileList).filter(
-      (file) => file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')
+      (file) =>
+        file.type === 'application/pdf' ||
+        file.name.toLowerCase().endsWith('.pdf')
     )
     if (!files.length) {
       onError('該当データはない：PDFファイルを選択してください。')
@@ -26,9 +31,18 @@ export default function MathPDFUploader({ onComplete, onError }: Props) {
     }
 
     setLoading(true)
+    setCompletedFiles([])
     onError('')
     try {
       const results = await parseMathPdfs(files, setProgress)
+      setCompletedFiles(
+        results.map((r) => ({
+          name: r.fileName,
+          session: r.examSession,
+          skippedBlank: r.blankPages,
+          skippedCid: r.cidHeavyPages
+        }))
+      )
       onComplete(results)
     } catch (error) {
       const message =
@@ -45,8 +59,13 @@ export default function MathPDFUploader({ onComplete, onError }: Props) {
   return (
     <section className="panel p-6 md:p-8" aria-labelledby="math-upload-title">
       <div className="mb-6">
-        <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">UPLOAD</p>
-        <h2 id="math-upload-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
+        <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">
+          UPLOAD
+        </p>
+        <h2
+          id="math-upload-title"
+          className="mt-2 font-mincho text-4xl font-bold md:text-6xl"
+        >
           PDFアップロード
         </h2>
         <p id="math-upload-help" className="mt-3 max-w-3xl">
@@ -89,7 +108,9 @@ export default function MathPDFUploader({ onComplete, onError }: Props) {
           accept="application/pdf,.pdf"
           multiple
           aria-label="数学過去問PDFファイルを選択"
-          onChange={(event) => event.target.files && void handleFiles(event.target.files)}
+          onChange={(event) =>
+            event.target.files && void handleFiles(event.target.files)
+          }
         />
         <div>
           <span
@@ -99,16 +120,40 @@ export default function MathPDFUploader({ onComplete, onError }: Props) {
             PDF
           </span>
           <strong className="block text-xl">ここへドラッグ&ドロップ</strong>
-          <span className="mt-2 block">またはクリックして複数PDFを選択</span>
+          <span className="mt-2 block">
+            またはクリックして複数PDFを選択
+          </span>
         </div>
       </div>
 
       <div id="math-upload-status" className="mt-5" aria-live="polite">
         {loading ? (
-          <SkeletonLoader label={progress?.message ?? '数学PDFを解析しています…'} />
+          <SkeletonLoader
+            label={progress?.message ?? '数学PDFを解析しています…'}
+          />
+        ) : completedFiles.length > 0 ? (
+          <div className="space-y-2">
+            {completedFiles.map((f, i) => (
+              <div key={`${f.name}-${i}`} className="border-2 border-ink bg-cream p-4">
+                <p className="font-bold">
+                  解析完了: {f.name} – {f.session}
+                </p>
+                {f.skippedBlank > 0 && (
+                  <p className="text-sm mt-1">
+                    計算用ページをスキップしました: {f.skippedBlank}ページ
+                  </p>
+                )}
+                {f.skippedCid > 0 && (
+                  <p className="text-sm mt-1">
+                    数式のみのページ: {f.skippedCid}ページ（対象外）
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
         ) : (
           <p className="border-2 border-ink bg-cream p-4">
-            未解析。PDFを選択すると、解析したファイル名と検出した試験回・大問構造を表示します。
+            未解析。PDFを選択すると、解析したファイル名と検出した試験回を表示します。
           </p>
         )}
       </div>
