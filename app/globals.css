@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=BIZ+UDMincho&family=DM+Serif+Display:ital@0;1&family=Shippori+Mincho:wght@400;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --cream: #F5F0E8;
+  --ink: #1A1A1A;
+  --blue: #1A5CFF;
+  --orange: #FF6B35;
+  --yellow: #FFD166;
+  --paper: #FFFAF0;
+  --line: 1.65;
+  --letter: 0;
+  --body-size: 16px;
+}
+
+html { font-size: var(--body-size); scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Shippori Mincho', serif;
+  line-height: var(--line);
+  letter-spacing: var(--letter);
+}
+body.text-large { --body-size: 18px; }
+body.ud-font { font-family: 'BIZ UDMincho', serif; }
+body.wide-line { --line: 2.05; }
+body.wide-letter { --letter: 0.1em; }
+body:not(.ruby-on) rt { display: none; }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(26,26,26,.08) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: .28;
+  pointer-events: none;
+  z-index: -1;
+}
+
+:focus-visible { outline: 4px solid var(--blue); outline-offset: 4px; }
+a { text-underline-offset: .18em; }
+button, a.button-like { min-height: 44px; }
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: .75rem;
+  transform: translateY(-160%);
+  background: var(--ink);
+  color: var(--cream);
+  padding: .85rem 1rem;
+  z-index: 100;
+}
+.skip-link:focus { transform: translateY(0); }
+
+.hard-button {
+  min-height: 44px;
+  border: 2px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  font-weight: 700;
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+.hard-button:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--ink); }
+.panel {
+  border: 2px solid var(--ink);
+  background: rgba(255,250,240,.72);
+  box-shadow: 0 18px 48px rgba(26,26,26,.10);
+}
+.skeleton {
+  background: linear-gradient(90deg, #eadfce, #fffaf0, #eadfce);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+.recharts-wrapper text { fill: var(--ink); font-family: 'Shippori Mincho', serif; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
