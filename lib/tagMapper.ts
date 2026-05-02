@@ -30,6 +30,8 @@ export type VocabularyLevel = {
   count: number
 }
 
+export type { VocabItem, CefrDistributionRow, GrammarVocabCrossCell, CefrLevel } from './vocabAnalyzer'
+
 export type AnalysisResult = {
   fileName: string
   examYear: number | null
@@ -39,6 +41,10 @@ export type AnalysisResult = {
   questionBlocks: QuestionBlock[]
   grammarTags: GrammarTag[]
   vocabularyLevels: VocabularyLevel[]
+  vocabItems: import('./vocabAnalyzer').VocabItem[]
+  cefrDistribution: import('./vocabAnalyzer').CefrDistributionRow[]
+  grammarVocabCross: import('./vocabAnalyzer').GrammarVocabCrossCell[]
+  totalContentWords: number
   formatCounts: Record<string, number>
   analyzedAt: string
 }

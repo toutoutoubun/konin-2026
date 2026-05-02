@@ -1,4 +1,5 @@
 import { analyzeEnglishText } from './textAnalyzer'
+import { analyzeVocabulary } from './vocabAnalyzer'
 import {
   AnalysisResult,
   countFormats,
@@ -54,6 +55,7 @@ export async function parseEnglishPdf(file: File, onProgress?: (progress: ParseP
   const ruleSet = getRuleSetForYear(examYear)
   const questionBlocks = detectQuestionBlocks(rawText, ruleSet)
   const nlpResult = analyzeEnglishText(rawText)
+  const vocabResult = analyzeVocabulary(rawText)
   const formatCounts = countFormats(questionBlocks, ruleSet)
 
   onProgress?.({ fileName: file.name, status: 'done', message: '解析が完了しました。' })
@@ -66,6 +68,10 @@ export async function parseEnglishPdf(file: File, onProgress?: (progress: ParseP
     questionBlocks,
     grammarTags: nlpResult.grammarTags,
     vocabularyLevels: nlpResult.vocabularyLevels,
+    vocabItems: vocabResult.vocabItems,
+    cefrDistribution: vocabResult.cefrDistribution,
+    grammarVocabCross: vocabResult.grammarVocabCross,
+    totalContentWords: vocabResult.totalContentWords,
     formatCounts,
     analyzedAt: new Date().toISOString()
   }

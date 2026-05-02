@@ -7,6 +7,8 @@ export type EnglishFilters = {
   sessionRange: string
   format: string
   grammar: string
+  cefrLevel: string
+  pos: string
 }
 
 type Props = {
@@ -22,7 +24,9 @@ const initialFilters: EnglishFilters = {
   ruleSet: 'all',
   sessionRange: 'all',
   format: 'all',
-  grammar: 'all'
+  grammar: 'all',
+  cefrLevel: 'all',
+  pos: 'all'
 }
 
 export { initialFilters }
@@ -31,14 +35,16 @@ export default function FilterPanel({ value, onChange, availableFormats, availab
   const setValue = (key: keyof EnglishFilters, nextValue: string) => onChange({ ...value, [key]: nextValue })
   const reset = () => onChange(initialFilters)
 
+  const activeCount = Object.values(value).filter((v) => v !== 'all').length
+
   return (
     <section className="panel p-6 md:p-8" aria-labelledby="filter-title">
       <div className="mb-6">
-        <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION F</p>
+        <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">FILTER</p>
         <h2 id="filter-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">フィルタ</h2>
-        <p id="filter-help" className="mt-3 max-w-3xl">制度区分、試験回範囲、問題形式、文法項目で表示条件を変える。即時反映し、解除ボタンで初期状態に戻せます。</p>
+        <p id="filter-help" className="mt-3 max-w-3xl">制度区分、試験回範囲、問題形式、文法項目、CEFRレベル、品詞で表示条件を変える。即時反映し、解除ボタンで初期状態に戻せます。</p>
       </div>
-      <form className="grid gap-4 md:grid-cols-5" role="search" aria-describedby="filter-help filter-status" onSubmit={(event) => event.preventDefault()}>
+      <form className="grid gap-4 md:grid-cols-3 lg:grid-cols-7" role="search" aria-describedby="filter-help filter-status" onSubmit={(event) => event.preventDefault()}>
         <label className="font-bold">
           制度区分
           <select className="mt-2 min-h-11 w-full border-2 border-ink bg-paper p-2" value={value.ruleSet} onChange={(event) => setValue('ruleSet', event.target.value)}>
@@ -69,12 +75,35 @@ export default function FilterPanel({ value, onChange, availableFormats, availab
             {availableGrammar.map((grammar) => <option key={grammar} value={grammar}>{grammar}</option>)}
           </select>
         </label>
-        <button type="button" className="hard-button self-end bg-paper px-4 py-2" onClick={reset}>解除</button>
+        <label className="font-bold">
+          CEFRレベル
+          <select className="mt-2 min-h-11 w-full border-2 border-ink bg-paper p-2" value={value.cefrLevel} onChange={(event) => setValue('cefrLevel', event.target.value)}>
+            <option value="all">全件</option>
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="B1">B1</option>
+            <option value="B2">B2</option>
+            <option value="unknown">未分類</option>
+          </select>
+        </label>
+        <label className="font-bold">
+          品詞
+          <select className="mt-2 min-h-11 w-full border-2 border-ink bg-paper p-2" value={value.pos} onChange={(event) => setValue('pos', event.target.value)}>
+            <option value="all">全件</option>
+            <option value="noun">名詞</option>
+            <option value="verb">動詞</option>
+            <option value="adjective">形容詞</option>
+            <option value="adverb">副詞</option>
+          </select>
+        </label>
+        <button type="button" className="hard-button self-end bg-paper px-4 py-2" onClick={reset}>
+          解除{activeCount > 0 ? `（${activeCount}）` : ''}
+        </button>
       </form>
       <div id="filter-status" className="mt-5 border-2 border-ink bg-cream p-4" aria-live="polite">
-        {value.ruleSet === 'all' && value.sessionRange === 'all' && value.format === 'all' && value.grammar === 'all'
+        {activeCount === 0
           ? `フィルタ未適用：全件表示。集計対象 ${resultCount}件。`
-          : `表示条件を変える：集計対象 ${resultCount}件。`}
+          : `表示条件を変える（${activeCount}件適用中）：集計対象 ${resultCount}件。`}
         {mixedRuleSets && <p className="mt-2 font-bold">集計基準が異なるため単純比較に注意。</p>}
       </div>
     </section>

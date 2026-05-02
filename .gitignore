@@ -1,5 +1,7 @@
 # prod
 dist/
+out/
+.next/
 
 # dev
 .yarn/
