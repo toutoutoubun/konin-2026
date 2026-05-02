@@ -8,14 +8,20 @@ type Props = {
   caption: string
 }
 
-const cefrLevels: CefrLevel[] = ['A1', 'A2', 'B1', 'B2', 'unknown']
+const cefrLevels: CefrLevel[] = ['A1', 'A2', 'B1', 'B2', 'pre-CEFR', 'unknown']
 
 const cefrHeaderColors: Record<CefrLevel, string> = {
   A1: 'bg-green-600',
   A2: 'bg-blue-600',
   B1: 'bg-yellow-600',
   B2: 'bg-orange-600',
+  'pre-CEFR': 'bg-violet-600',
   unknown: 'bg-gray-500'
+}
+
+const cefrLabelMap: Record<string, string> = {
+  A1: 'A1', A2: 'A2', B1: 'B1', B2: 'B2',
+  'pre-CEFR': '試験語彙', unknown: '未分類'
 }
 
 function heatColor(value: number, max: number): string {
@@ -119,7 +125,7 @@ export default function GrammarVocabCrossTable({ rows, caption }: Props) {
                     scope="col"
                     className={`p-3 text-center text-white ${cefrHeaderColors[level]}`}
                   >
-                    {level === 'unknown' ? '未分類' : level}
+                    {cefrLabelMap[level] ?? level}
                   </th>
                 ))}
                 <th scope="col" className="bg-ink p-3 text-center text-cream">合計</th>
@@ -174,7 +180,7 @@ export default function GrammarVocabCrossTable({ rows, caption }: Props) {
                 <tr key={`${combo.grammar}-${combo.cefrLevel}`} className="border-b-2 border-ink even:bg-blue/5">
                   <td className="p-3">{index + 1}</td>
                   <td className="p-3 font-bold">{combo.grammar}</td>
-                  <td className="p-3">{combo.cefrLevel === 'unknown' ? '未分類' : combo.cefrLevel}</td>
+                  <td className="p-3">{cefrLabelMap[combo.cefrLevel] ?? combo.cefrLevel}</td>
                   <td className="p-3 text-right tabular-nums">{combo.count}</td>
                 </tr>
               ))}
@@ -189,7 +195,7 @@ export default function GrammarVocabCrossTable({ rows, caption }: Props) {
           <ul className="mt-2 list-inside list-disc space-y-1 text-sm">
             {topCombinations.slice(0, 3).map((combo) => (
               <li key={`${combo.grammar}-${combo.cefrLevel}`}>
-                {combo.grammar}では{combo.cefrLevel === 'unknown' ? '未分類' : combo.cefrLevel}レベルの語彙が多く使われています（{combo.count}件）
+                {combo.grammar}では{cefrLabelMap[combo.cefrLevel] ?? combo.cefrLevel}レベルの語彙が多く使われています（{combo.count}件）
               </li>
             ))}
           </ul>

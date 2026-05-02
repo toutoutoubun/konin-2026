@@ -30,7 +30,7 @@ export type VocabularyLevel = {
   count: number
 }
 
-export type { VocabItem, CefrDistributionRow, GrammarVocabCrossCell, CefrLevel } from './vocabAnalyzer'
+export type { VocabItem, CefrDistributionRow, GrammarVocabCrossCell, CefrLevel, WordCategory } from './vocabAnalyzer'
 
 export type AnalysisResult = {
   fileName: string
@@ -45,6 +45,13 @@ export type AnalysisResult = {
   cefrDistribution: import('./vocabAnalyzer').CefrDistributionRow[]
   grammarVocabCross: import('./vocabAnalyzer').GrammarVocabCrossCell[]
   totalContentWords: number
+  properNounCount: number
+  unknownBreakdown: {
+    resolvedByStem: number
+    trulyUnknown: number
+    properNouns: number
+    preCefr: number
+  }
   formatCounts: Record<string, number>
   analyzedAt: string
 }

@@ -1,5 +1,5 @@
 import type { AnalysisResult } from './tagMapper'
-import type { VocabItem, CefrDistributionRow, GrammarVocabCrossCell, CefrLevel } from './vocabAnalyzer'
+import type { VocabItem, CefrDistributionRow, GrammarVocabCrossCell, CefrLevel, WordCategory } from './vocabAnalyzer'
 import { posLabelJa } from './vocabAnalyzer'
 
 export type RankingRow = {
@@ -29,6 +29,8 @@ export type AggregatedVocabItem = {
   cefrLevel: CefrLevel
   count: number
   rate: number
+  category: WordCategory
+  resolvedVia?: string
 }
 
 export type AggregateSummary = {
@@ -43,6 +45,13 @@ export type AggregateSummary = {
   cefrDistribution: CefrDistributionRow[]
   grammarVocabCross: GrammarVocabCrossCell[]
   totalContentWords: number
+  properNounCount: number
+  unknownBreakdown: {
+    resolvedByStem: number
+    trulyUnknown: number
+    properNouns: number
+    preCefr: number
+  }
 }
 
 const weights = [1, 0.8, 0.6, 0.4]
@@ -74,17 +83,36 @@ export function aggregateResults(results: AnalysisResult[]): AggregateSummary {
   const totalFormat = Array.from(formatCounts.values()).reduce((sum, count) => sum + count, 0)
 
   /* --- Vocab aggregation across all results --- */
-  const vocabMap = new Map<string, { pos: string; cefrLevel: CefrLevel; count: number }>()
+  const vocabMap = new Map<string, { pos: string; cefrLevel: CefrLevel; count: number; category: WordCategory; resolvedVia?: string }>()
   let totalContentWords = 0
+  let totalProperNounCount = 0
+  const aggregatedBreakdown = { resolvedByStem: 0, trulyUnknown: 0, properNouns: 0, preCefr: 0 }
 
   sorted.forEach((result) => {
     totalContentWords += result.totalContentWords ?? 0
+    totalProperNounCount += (result as any).properNounCount ?? 0
+
+    // Aggregate unknown breakdown if available
+    const breakdown = (result as any).unknownBreakdown
+    if (breakdown) {
+      aggregatedBreakdown.resolvedByStem += breakdown.resolvedByStem ?? 0
+      aggregatedBreakdown.trulyUnknown += breakdown.trulyUnknown ?? 0
+      aggregatedBreakdown.properNouns += breakdown.properNouns ?? 0
+      aggregatedBreakdown.preCefr += breakdown.preCefr ?? 0
+    }
+
     ;(result.vocabItems ?? []).forEach((item: VocabItem) => {
       const existing = vocabMap.get(item.word)
       if (existing) {
         existing.count += item.count
       } else {
-        vocabMap.set(item.word, { pos: item.pos, cefrLevel: item.cefrLevel, count: item.count })
+        vocabMap.set(item.word, {
+          pos: item.pos,
+          cefrLevel: item.cefrLevel,
+          count: item.count,
+          category: item.category ?? 'content',
+          resolvedVia: item.resolvedVia
+        })
       }
     })
   })
@@ -97,21 +125,23 @@ export function aggregateResults(results: AnalysisResult[]): AggregateSummary {
       posJa: posLabelJa[data.pos as keyof typeof posLabelJa] ?? data.pos,
       cefrLevel: data.cefrLevel,
       count: data.count,
-      rate: totalContentWords > 0 ? round((data.count / totalContentWords) * 100) : 0
+      rate: totalContentWords > 0 ? round((data.count / totalContentWords) * 100) : 0,
+      category: data.category,
+      resolvedVia: data.resolvedVia
     }))
     .sort((a, b) => b.count - a.count)
 
   vocabRanking.forEach((item, index) => { item.rank = index + 1 })
 
   /* --- CEFR distribution aggregation --- */
-  const cefrCounts: Record<CefrLevel, number> = { A1: 0, A2: 0, B1: 0, B2: 0, unknown: 0 }
+  const cefrCounts: Record<CefrLevel, number> = { A1: 0, A2: 0, B1: 0, B2: 0, 'pre-CEFR': 0, unknown: 0 }
   sorted.forEach((result) => {
     ;(result.cefrDistribution ?? []).forEach((row: CefrDistributionRow) => {
       cefrCounts[row.level] += row.count
     })
   })
 
-  const cefrDistribution: CefrDistributionRow[] = (['A1', 'A2', 'B1', 'B2', 'unknown'] as CefrLevel[]).map((level) => ({
+  const cefrDistribution: CefrDistributionRow[] = (['A1', 'A2', 'B1', 'B2', 'pre-CEFR', 'unknown'] as CefrLevel[]).map((level) => ({
     level,
     count: cefrCounts[level],
     rate: totalContentWords > 0 ? round((cefrCounts[level] / totalContentWords) * 100) : 0
@@ -148,7 +178,9 @@ export function aggregateResults(results: AnalysisResult[]): AggregateSummary {
     vocabRanking,
     cefrDistribution,
     grammarVocabCross,
-    totalContentWords
+    totalContentWords,
+    properNounCount: totalProperNounCount,
+    unknownBreakdown: aggregatedBreakdown
   }
 }
 

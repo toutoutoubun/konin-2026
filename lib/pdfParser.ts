@@ -72,6 +72,8 @@ export async function parseEnglishPdf(file: File, onProgress?: (progress: ParseP
     cefrDistribution: vocabResult.cefrDistribution,
     grammarVocabCross: vocabResult.grammarVocabCross,
     totalContentWords: vocabResult.totalContentWords,
+    properNounCount: vocabResult.properNounCount,
+    unknownBreakdown: vocabResult.unknownBreakdown,
     formatCounts,
     analyzedAt: new Date().toISOString()
   }

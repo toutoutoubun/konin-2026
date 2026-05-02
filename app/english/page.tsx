@@ -56,9 +56,10 @@ export default function EnglishAnalysisPage() {
   const formatChartData = summary.formatRows.map((row) => ({ name: row.format, count: row.count }))
   const trendChartData = summary.trendRows.slice(0, 24).map((row) => ({ session: `${row.session}\n${row.unit}`, count: row.count }))
 
-  // Derive CEFR / POS filter values for vocab section
+  // Derive CEFR / POS / category filter values for vocab section
   const cefrFilter = (filters.cefrLevel ?? 'all') as CefrLevel | 'all'
   const posFilter = filters.pos ?? 'all'
+  const categoryFilter = (filters.category ?? 'all') as 'all' | 'content' | 'properNoun'
 
   return (
     <>
@@ -129,7 +130,7 @@ export default function EnglishAnalysisPage() {
                   <p>検出した試験回：{result.examSession}</p>
                   <p>制度区分：{result.ruleSet.code}（{result.ruleSet.label}）</p>
                   <p>検出ブロック：{result.questionBlocks.length}件 / 抽出文字数：{result.rawText.length.toLocaleString()}字</p>
-                  <p>内容語数：{(result.totalContentWords ?? 0).toLocaleString()}語</p>
+                  <p>内容語数：{(result.totalContentWords ?? 0).toLocaleString()}語 / 固有名詞：{(result.properNounCount ?? 0).toLocaleString()}語</p>
                 </article>
               ))}
             </div>
@@ -209,21 +210,26 @@ export default function EnglishAnalysisPage() {
             <h2 id="vocab-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">頻出語彙ランキング</h2>
             <p className="mt-3 max-w-3xl">
               wink-NLPで抽出した全英単語をCEFRレベル別に分類し、出現頻度が高い内容語を順に表示します。
+              固有名詞はNLPの品詞タグで自動検出し、分離表示します。
               {summary.totalContentWords > 0 && (
                 <span className="ml-1">集計対象：内容語 {summary.totalContentWords.toLocaleString()} 語</span>
+              )}
+              {summary.properNounCount > 0 && (
+                <span className="ml-1">/ 固有名詞 {summary.properNounCount.toLocaleString()} 語</span>
               )}
             </p>
           </div>
 
           <div className="mb-6">
-            <h3 className="font-mincho text-2xl font-bold">頻出語彙トップ20</h3>
+            <h3 className="font-mincho text-2xl font-bold">頻出語彙トップ30</h3>
             <div className="mt-4">
               <VocabRankingTable
                 rows={summary.vocabRanking}
-                caption="頻出語彙トップ20。順位、単語、品詞、CEFRレベル、出現回数、出現率。"
+                caption="頻出語彙トップ30。順位、単語、品詞、CEFRレベル、出現回数、出現率、判定根拠。"
                 cefrFilter={cefrFilter}
                 posFilter={posFilter}
-                limit={20}
+                categoryFilter={categoryFilter}
+                limit={30}
               />
             </div>
           </div>
@@ -240,6 +246,8 @@ export default function EnglishAnalysisPage() {
               rows={summary.cefrDistribution}
               viewMode={cefrViewMode}
               caption="CEFRレベル別の語彙分布。レベル、語彙数、構成比。"
+              properNounCount={summary.properNounCount}
+              unknownBreakdown={summary.unknownBreakdown}
             />
           </div>
         </section>
@@ -251,6 +259,7 @@ export default function EnglishAnalysisPage() {
             <h2 id="cross-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">文法×語彙レベル分析</h2>
             <p className="mt-3 max-w-3xl">
               文法タグとCEFRレベルを組み合わせて、どの文法項目がどのレベルの語彙と一緒に出題されているかを可視化します。
+              固有名詞はクロス集計から除外しています。
             </p>
           </div>
           <GrammarVocabCrossTable
@@ -277,9 +286,20 @@ export default function EnglishAnalysisPage() {
           <h2 id="meta-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">注記とタグ定義</h2>
           <p className="mt-3">公開済みデータを集計しているブラウザ内ツールです。制度区分をまたいだ結果には注意書きを表示します。</p>
           <p className="mt-2">全解析ファイル：{allSummary.totalCount}件 / 表示中：{summary.totalCount}件</p>
-          <div className="mt-4 border-2 border-ink bg-cream p-4">
-            <h3 className="font-bold">CEFRレベル判定について</h3>
-            <p className="mt-1 text-sm">CEFRレベルは公開語彙リスト（A1〜B2）との照合により判定しています。リストに含まれない語は「未分類」として件数のみ表示します。機能語（冠詞・前置詞・接続詞・代名詞など）は集計対象外です。</p>
+          <div className="mt-4 space-y-3">
+            <div className="border-2 border-ink bg-cream p-4">
+              <h3 className="font-bold">CEFRレベル判定について（v3 精密版）</h3>
+              <ul className="mt-2 list-inside list-disc space-y-1 text-sm">
+                <li><strong>直接照合</strong>：CEFRレベル別語彙リスト（A1〜B2、約2,300語基本形 重複排除済み）との完全一致</li>
+                <li><strong>レンマ照合</strong>：wink-NLPの見出し語化（organizations → organization）でリストと照合</li>
+                <li><strong>語幹照合</strong>：58種の派生接辞ルールで基本形を復元（environmental → environment = A2）</li>
+                <li><strong>接頭辞除去</strong>：un-, re-, dis-, inter-, multi- 等16種の接頭辞を除去して照合</li>
+                <li><strong>複合語分割</strong>：ハイフン結合語・長い合成語を分割して各部分を照合（well-known → well + known）</li>
+                <li><strong>試験語彙（pre-CEFR）</strong>：国名形容詞（Japanese等）、月名、曜日、試験指示語など、CEFRレベル外だが高認に頻出する71語を専用分類</li>
+                <li><strong>固有名詞分離</strong>：wink-NLPのPROPNタグ＋139の固有名詞パターンで自動検出し、CEFR分布から除外</li>
+              </ul>
+              <p className="mt-2 text-xs text-ink/60">上記すべてで一致しない語が「未分類（リスト外）」として残ります。機能語（冠詞・前置詞・接続詞・代名詞・副詞等 244語）は集計対象外です。</p>
+            </div>
           </div>
           <p className="mt-4"><a className="hard-button button-like inline-flex bg-paper px-4 py-2 no-underline" href="/tags/">タグ定義を見る</a></p>
         </section>

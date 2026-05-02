@@ -7,6 +7,13 @@ type Props = {
   rows: CefrDistributionRow[]
   viewMode: 'table' | 'chart'
   caption: string
+  properNounCount?: number
+  unknownBreakdown?: {
+    resolvedByStem: number
+    trulyUnknown: number
+    properNouns: number
+    preCefr: number
+  }
 }
 
 const cefrColors: Record<string, string> = {
@@ -14,6 +21,7 @@ const cefrColors: Record<string, string> = {
   A2: '#3b82f6',
   B1: '#eab308',
   B2: '#f97316',
+  'pre-CEFR': '#8b5cf6',
   unknown: '#9ca3af'
 }
 
@@ -22,10 +30,20 @@ const cefrBgClasses: Record<string, string> = {
   A2: 'bg-blue-100 text-blue-800 border-blue-300',
   B1: 'bg-yellow-100 text-yellow-800 border-yellow-300',
   B2: 'bg-orange-100 text-orange-800 border-orange-300',
+  'pre-CEFR': 'bg-violet-100 text-violet-800 border-violet-300',
   unknown: 'bg-gray-100 text-gray-600 border-gray-300'
 }
 
-export default function CEFRDistributionChart({ rows, viewMode, caption }: Props) {
+const cefrLabelMap: Record<string, string> = {
+  A1: 'A1',
+  A2: 'A2',
+  B1: 'B1',
+  B2: 'B2',
+  'pre-CEFR': '試験語彙',
+  unknown: '未分類'
+}
+
+export default function CEFRDistributionChart({ rows, viewMode, caption, properNounCount, unknownBreakdown }: Props) {
   const hasData = rows.some((row) => row.count > 0)
 
   if (!hasData) {
@@ -37,7 +55,7 @@ export default function CEFRDistributionChart({ rows, viewMode, caption }: Props
   }
 
   const chartData = rows.map((row) => ({
-    name: row.level === 'unknown' ? '未分類' : row.level,
+    name: cefrLabelMap[row.level] ?? row.level,
     level: row.level,
     count: row.count,
     rate: row.rate
@@ -45,7 +63,7 @@ export default function CEFRDistributionChart({ rows, viewMode, caption }: Props
 
   return (
     <div>
-      <p className="mb-3 text-sm text-ink/70">内容語のみ集計（機能語は集計対象外）</p>
+      <p className="mb-3 text-sm text-ink/70">内容語のみ集計（機能語・固有名詞は集計対象外）</p>
 
       {viewMode === 'chart' ? (
         <div className="panel h-[320px] p-4" role="img" aria-label={caption}>
@@ -85,8 +103,8 @@ export default function CEFRDistributionChart({ rows, viewMode, caption }: Props
             {rows.map((row) => (
               <tr key={row.level} className="border-b-2 border-ink even:bg-blue/5">
                 <td className="p-3">
-                  <span className={`inline-block rounded border px-2 py-0.5 text-xs font-bold ${cefrBgClasses[row.level]}`}>
-                    {row.level === 'unknown' ? '未分類' : row.level}
+                  <span className={`inline-block rounded border px-2 py-0.5 text-xs font-bold ${cefrBgClasses[row.level] ?? cefrBgClasses.unknown}`}>
+                    {cefrLabelMap[row.level] ?? row.level}
                   </span>
                 </td>
                 <td className="p-3 text-right tabular-nums">{row.count.toLocaleString()}</td>
@@ -107,6 +125,44 @@ export default function CEFRDistributionChart({ rows, viewMode, caption }: Props
           </tbody>
         </table>
       </div>
+
+      {/* Unknown breakdown & proper noun info */}
+      {(unknownBreakdown || (properNounCount && properNounCount > 0)) && (
+        <div className="mt-4 border-2 border-ink bg-cream p-4">
+          <h4 className="font-bold text-sm">分類精度の詳細</h4>
+          <div className="mt-2 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
+            {unknownBreakdown && unknownBreakdown.resolvedByStem > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="inline-block h-3 w-3 rounded-full bg-blue-400" />
+                <span>語幹照合で分類済：<strong>{unknownBreakdown.resolvedByStem.toLocaleString()}</strong> 語</span>
+              </div>
+            )}
+            {unknownBreakdown && unknownBreakdown.preCefr > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="inline-block h-3 w-3 rounded-full bg-violet-400" />
+                <span>試験語彙（pre-CEFR）：<strong>{unknownBreakdown.preCefr.toLocaleString()}</strong> 語</span>
+              </div>
+            )}
+            {unknownBreakdown && unknownBreakdown.trulyUnknown > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="inline-block h-3 w-3 rounded-full bg-gray-400" />
+                <span>リスト外（未分類）：<strong>{unknownBreakdown.trulyUnknown.toLocaleString()}</strong> 語</span>
+              </div>
+            )}
+            {properNounCount != null && properNounCount > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="inline-block h-3 w-3 rounded-full bg-purple-400" />
+                <span>固有名詞（除外）：<strong>{properNounCount.toLocaleString()}</strong> 語</span>
+              </div>
+            )}
+          </div>
+          <p className="mt-2 text-xs text-ink/60">
+            語幹照合：派生語（例：environmental → environment）をCEFRリストの基本形と照合して分類。
+            試験語彙（pre-CEFR）：国名形容詞（Japanese等）、月名、曜日、試験指示語など、CEFRレベル外だが試験に頻出する語彙。
+            固有名詞はwink-NLPの品詞タグにより自動検出し、CEFR分布の集計から除外。
+          </p>
+        </div>
+      )}
     </div>
   )
 }

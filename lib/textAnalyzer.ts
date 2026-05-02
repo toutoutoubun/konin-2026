@@ -1,14 +1,12 @@
 import winkNLP from 'wink-nlp'
 import model from 'wink-eng-lite-web-model'
+import { resolveCefrLevel, isFunctionWord } from './vocabAnalyzer'
 import type { GrammarTag, VocabularyLevel } from './tagMapper'
 
 const nlp = winkNLP(model)
 const its = nlp.its
 
-const A1 = new Set(['be', 'have', 'do', 'go', 'get', 'make', 'take', 'see', 'come', 'know', 'good', 'new', 'first', 'last', 'day', 'time', 'people', 'school', 'work', 'like', 'want', 'need', 'can', 'will'])
-const A2 = new Set(['because', 'before', 'after', 'during', 'without', 'important', 'different', 'example', 'question', 'answer', 'travel', 'health', 'music', 'family', 'country', 'information'])
-const B1 = new Set(['although', 'however', 'therefore', 'environment', 'experience', 'community', 'education', 'develop', 'provide', 'increase', 'compare', 'relationship', 'opportunity'])
-
+/* ---------- Grammar detection ---------- */
 function pushTag(map: Map<string, { count: number; examples: Set<string> }>, name: string, example: string) {
   const item = map.get(name) ?? { count: 0, examples: new Set<string>() }
   item.count += 1
@@ -19,7 +17,6 @@ function pushTag(map: Map<string, { count: number; examples: Set<string> }>, nam
 export function analyzeEnglishText(text: string): { grammarTags: GrammarTag[]; vocabularyLevels: VocabularyLevel[] } {
   const doc = nlp.readDoc(text || '')
   const sentences = doc.sentences().out() as string[]
-  const tokenValues = doc.tokens().filter((token: any) => token.out(its.type) === 'word').out(its.normal) as string[]
   const grammarMap = new Map<string, { count: number; examples: Set<string> }>()
 
   sentences.forEach((sentence) => {
@@ -41,18 +38,38 @@ export function analyzeEnglishText(text: string): { grammarTags: GrammarTag[]; v
     if (/\b(in|on|at|by|for|with|from|to|into|over|under|between|among|during|before|after)\b/.test(lower)) pushTag(grammarMap, '前置詞', sentence)
   })
 
+  const tokenValues = doc.tokens().filter((token: any) => token.out(its.type) === 'word').out(its.normal) as string[]
   const past = tokenValues.filter((word) => /ed$/.test(word)).length
   if (past) pushTag(grammarMap, '過去', `${past} past-like tokens`)
   const present = tokenValues.filter((word) => /s$/.test(word) && word.length > 3).length
   if (present) pushTag(grammarMap, '現在', `${present} present-like tokens`)
   if (!grammarMap.has('能動')) pushTag(grammarMap, '能動', 'Active voice is used as the baseline in extracted sentences.')
 
+  /* ---------- Vocabulary level classification (unified CEFR resolution) ---------- */
   const levelCounts: Record<VocabularyLevel['level'], number> = { A1: 0, A2: 0, B1: 0, B2: 0 }
-  tokenValues.forEach((word) => {
-    if (A1.has(word) || word.length <= 4) levelCounts.A1 += 1
-    else if (A2.has(word) || word.length <= 7) levelCounts.A2 += 1
-    else if (B1.has(word) || word.length <= 10) levelCounts.B1 += 1
-    else levelCounts.B2 += 1
+
+  // Filter to content words only (skip proper nouns and function words)
+  doc.tokens().each((token: any) => {
+    const type = token.out(its.type) as string
+    if (type !== 'word') return
+    const pos = token.out(its.pos) as string
+    if (pos === 'PROPN') return // Skip proper nouns
+    const normal = (token.out(its.normal) as string).toLowerCase()
+    const lemma = (token.out(its.lemma) as string).toLowerCase()
+    if (normal.length < 2) return
+    if (isFunctionWord(normal)) return
+    if (isFunctionWord(lemma)) return
+
+    // Use the unified CEFR resolution from vocabAnalyzer
+    const resolution = resolveCefrLevel(normal, lemma)
+
+    // Map to the 4-level VocabularyLevel system used by textAnalyzer
+    // pre-CEFR and unknown are excluded from this count (they are tracked separately in vocabAnalyzer)
+    if (resolution.level === 'A1' || resolution.level === 'A2' || resolution.level === 'B1' || resolution.level === 'B2') {
+      levelCounts[resolution.level] += 1
+    }
+    // pre-CEFR and unknown words are intentionally not counted here
+    // They are properly tracked and displayed by vocabAnalyzer's own distribution
   })
 
   return {

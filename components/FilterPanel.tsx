@@ -9,6 +9,7 @@ export type EnglishFilters = {
   grammar: string
   cefrLevel: string
   pos: string
+  category: string
 }
 
 type Props = {
@@ -26,7 +27,8 @@ const initialFilters: EnglishFilters = {
   format: 'all',
   grammar: 'all',
   cefrLevel: 'all',
-  pos: 'all'
+  pos: 'all',
+  category: 'all'
 }
 
 export { initialFilters }
@@ -42,9 +44,9 @@ export default function FilterPanel({ value, onChange, availableFormats, availab
       <div className="mb-6">
         <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">FILTER</p>
         <h2 id="filter-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">フィルタ</h2>
-        <p id="filter-help" className="mt-3 max-w-3xl">制度区分、試験回範囲、問題形式、文法項目、CEFRレベル、品詞で表示条件を変える。即時反映し、解除ボタンで初期状態に戻せます。</p>
+        <p id="filter-help" className="mt-3 max-w-3xl">制度区分、試験回範囲、問題形式、文法項目、CEFRレベル、品詞、語彙カテゴリで表示条件を変える。即時反映し、解除ボタンで初期状態に戻せます。</p>
       </div>
-      <form className="grid gap-4 md:grid-cols-3 lg:grid-cols-7" role="search" aria-describedby="filter-help filter-status" onSubmit={(event) => event.preventDefault()}>
+      <form className="grid gap-4 md:grid-cols-3 lg:grid-cols-4" role="search" aria-describedby="filter-help filter-status" onSubmit={(event) => event.preventDefault()}>
         <label className="font-bold">
           制度区分
           <select className="mt-2 min-h-11 w-full border-2 border-ink bg-paper p-2" value={value.ruleSet} onChange={(event) => setValue('ruleSet', event.target.value)}>
@@ -79,11 +81,12 @@ export default function FilterPanel({ value, onChange, availableFormats, availab
           CEFRレベル
           <select className="mt-2 min-h-11 w-full border-2 border-ink bg-paper p-2" value={value.cefrLevel} onChange={(event) => setValue('cefrLevel', event.target.value)}>
             <option value="all">全件</option>
-            <option value="A1">A1</option>
-            <option value="A2">A2</option>
-            <option value="B1">B1</option>
-            <option value="B2">B2</option>
-            <option value="unknown">未分類</option>
+            <option value="A1">A1（基礎）</option>
+            <option value="A2">A2（初級）</option>
+            <option value="B1">B1（中級）</option>
+            <option value="B2">B2（中上級）</option>
+            <option value="pre-CEFR">試験語彙（pre-CEFR）</option>
+            <option value="unknown">未分類（リスト外）</option>
           </select>
         </label>
         <label className="font-bold">
@@ -94,6 +97,15 @@ export default function FilterPanel({ value, onChange, availableFormats, availab
             <option value="verb">動詞</option>
             <option value="adjective">形容詞</option>
             <option value="adverb">副詞</option>
+            <option value="properNoun">固有名詞</option>
+          </select>
+        </label>
+        <label className="font-bold">
+          語彙カテゴリ
+          <select className="mt-2 min-h-11 w-full border-2 border-ink bg-paper p-2" value={value.category} onChange={(event) => setValue('category', event.target.value)}>
+            <option value="all">全件</option>
+            <option value="content">内容語のみ</option>
+            <option value="properNoun">固有名詞のみ</option>
           </select>
         </label>
         <button type="button" className="hard-button self-end bg-paper px-4 py-2" onClick={reset}>
