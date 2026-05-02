@@ -72,7 +72,7 @@ export default function HomePage() {
               <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SUBJECT TOOLS</p>
               <h2 id="tools-title" className="mt-2 font-mincho text-4xl font-bold leading-none md:text-6xl">ツール一覧</h2>
             </div>
-            <p className="max-w-lg">科目詳細ページは同じ構造で配置します。英語・数学は分析機能を実装済み、その他はPhase 1の画面設計として準備しています。</p>
+            <p className="max-w-lg">科目詳細ページは同じ構造で配置します。英語・数学・歴史・地理は分析機能を実装済み、その他はPhase 1の画面設計として準備しています。</p>
           </div>
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {subjects.map((subject) => (
@@ -85,7 +85,7 @@ export default function HomePage() {
                   <span className={`border-2 border-ink px-3 py-1 font-bold ${accentClass[subject.accent]}`}>
                     {subject.status === 'active' ? '実装済み' : subject.status === 'coming-soon' ? '準備中' : '画面構成'}
                   </span>
-                  <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={subject.slug === 'english' ? '/subjects/english/' : subject.slug === 'math' ? '/math/' : subject.slug === 'history' ? '/history/' : `/subjects/${subject.slug}/`}>
+                  <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={subject.slug === 'english' ? '/subjects/english/' : subject.slug === 'math' ? '/math/' : subject.slug === 'history' ? '/history/' : subject.slug === 'geography' ? '/geography/' : `/subjects/${subject.slug}/`}>
                     詳細ページへ
                   </a>
                 </div>
