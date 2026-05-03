@@ -38,9 +38,6 @@ export default function HomePage() {
           <p className="mt-7 max-w-3xl text-xl leading-relaxed">
             高等学校卒業程度認定試験の公開済み過去問PDFを科目別に集計するWebツールです。PDFはサーバーへ送信せず、ブラウザ上で処理します。
           </p>
-          <p className="mt-4 max-w-3xl text-xl leading-relaxed">
-            使っていて恥ずかしくない、知的でグラフィカルな頻出分析。励ましではなく、公開済みデータの見取り図を置きます。
-          </p>
           <div className="mt-8 flex flex-wrap gap-4" aria-label="主要操作">
             <a className="hard-button button-like bg-blue px-5 py-3 text-white no-underline" href="#tools">科目別ツールを見る</a>
             <a className="hard-button button-like bg-paper px-5 py-3 no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">過去問を入手</a>
@@ -51,7 +48,7 @@ export default function HomePage() {
           <div className="grid gap-6 lg:grid-cols-[.95fr_1.05fr]">
             <div>
               <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">OFFICIAL SOURCE</p>
-              <h2 id="past-exams-title" className="mt-2 font-mincho text-4xl font-bold leading-none md:text-6xl">過去問の入手方法</h2>
+              <h2 id="past-exams-title" className="mt-2 font-mincho text-[48px] font-bold leading-none">過去問の入手方法</h2>
             </div>
             <div className="space-y-4 text-lg">
               <p>文部科学省が公開している過去問PDFを端末に保存し、各科目詳細ページのアップロード領域へ追加します。</p>

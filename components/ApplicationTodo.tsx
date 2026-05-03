@@ -92,17 +92,9 @@ export default function ApplicationTodo() {
       <div className="grid gap-6 lg:grid-cols-[.9fr_1.1fr]">
         <div>
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">APPLICATION MAP</p>
-          <h2 id="todo-title" className="mt-2 font-mincho text-4xl font-bold leading-none md:text-6xl">出願Todoリスト</h2>
-          <p className="mt-4 max-w-xl">チェック状態はこの端末に保存されます。カウントダウンではなく、公開日程に基づく残日数を事実として表示します。</p>
+          <h2 id="todo-title" className="mt-2 font-mincho text-[48px] font-bold leading-none">出願Todoリスト</h2>
+          <p className="mt-4 max-w-xl">チェック状態はこの端末に保存されます。</p>
           <dl className="mt-5 grid gap-3 text-lg" aria-live="polite">
-            <div className="border-2 border-ink bg-yellow p-4">
-              <dt className="font-bold">次回試験</dt>
-              <dd>{nextExam.label}{days ? `（残${Math.max(days.exam, 0)}日）` : ''}</dd>
-            </div>
-            <div className="border-2 border-ink bg-paper p-4">
-              <dt className="font-bold">次回出願期限</dt>
-              <dd>{nextExam.applicationDeadline.replaceAll('-', '年').replace(/年(\d{2})年(\d{2})$/, '年$1月$2日')}{days ? `（残${Math.max(days.deadline, 0)}日）` : ''}</dd>
-            </div>
             <div className="border-2 border-ink bg-cream p-4">
               <dt className="font-bold">進行状況</dt>
               <dd>{done} / {total} 件</dd>
