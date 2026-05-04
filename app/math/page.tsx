@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import DisplaySettings from '@/components/DisplaySettings'
+import Header from '@/components/Header'
 import FrequencyChart from '@/components/FrequencyChart'
 import MathFilterPanel from '@/components/MathFilterPanel'
 import MathPDFUploader from '@/components/MathPDFUploader'
@@ -107,32 +107,14 @@ export default function MathAnalysisPage() {
       </a>
 
       {/* ── ヘッダー ── */}
-      <header className="sticky top-0 z-20 border-b-2 border-ink bg-cream/95 px-4 py-4 backdrop-blur md:px-10">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
-          <a
-            href="/"
-            className="flex items-center gap-3 no-underline"
-            aria-label="高認パストップへ"
-          >
-            <span className="grid h-12 w-12 place-items-center rounded-full border-2 border-ink bg-yellow font-serifDisplay text-lg">
-              KP
-            </span>
-            <span className="font-bold">高認パス</span>
-          </a>
-          <nav
-            aria-label="主要ナビゲーション"
-            className="flex flex-wrap gap-5 font-bold"
-          >
-            <a href="/#tools">ツール一覧</a>
-            <a href="#math-upload-title">アップロード</a>
-            <a href="#math-ranking-title">集計</a>
-            <a href="#math-filter-title">フィルタ</a>
-            <a href="/tags/">タグ定義</a>
-            <a href="/updates/">更新履歴</a>
-          </nav>
-          <DisplaySettings />
-        </div>
-      </header>
+      <Header navItems={[
+        { label: 'ツール一覧', href: '/#tools' },
+        { label: 'アップロード', href: '#math-upload-title' },
+        { label: '集計', href: '#math-ranking-title' },
+        { label: 'フィルタ', href: '#math-filter-title' },
+        { label: 'タグ定義', href: '/tags/' },
+        { label: '更新履歴', href: '/updates/' },
+      ]} />
 
       {/* ── パンくずリスト ── */}
       <nav
@@ -158,28 +140,28 @@ export default function MathAnalysisPage() {
           </p>
           <h1
             id="math-hero-title"
-            className="mt-4 max-w-5xl font-mincho text-6xl font-bold leading-none tracking-[-.06em] md:text-9xl"
+            className="mt-4 max-w-5xl font-mincho text-4xl font-bold leading-none tracking-[-.04em] sm:text-5xl md:text-7xl lg:text-9xl"
           >
             <ruby>
               数学<rt>すうがく</rt>
             </ruby>
             頻出分析
           </h1>
-          <p className="mt-7 max-w-3xl text-xl leading-relaxed">
+          <p className="mt-5 max-w-3xl text-base leading-relaxed sm:mt-7 sm:text-xl">
             文科省公開の数学過去問PDFをブラウザ上で解析し、大問（第1問〜第6問）ごとの出題単元と年度推移を可視化します。PDFはサーバーへ送信しません。
           </p>
           <p className="mt-3 max-w-3xl">
             数学PDFは数式部分がCIDコードとして抽出されるため、数式のテキスト解析は行いません。正常に抽出できるテキストとページ位置で大問単位の集計を行います。
           </p>
-          <div className="mt-8 flex flex-wrap gap-4" aria-label="主要操作">
+          <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4" aria-label="主要操作">
             <a
-              className="hard-button button-like bg-blue px-5 py-3 text-white no-underline"
+              className="hard-button button-like bg-blue px-5 py-3 text-center text-white no-underline"
               href="#math-upload-title"
             >
               PDFを分析する
             </a>
             <a
-              className="hard-button button-like bg-paper px-5 py-3 no-underline"
+              className="hard-button button-like bg-paper px-5 py-3 text-center no-underline"
               href={officialPastExamUrl}
               target="_blank"
               rel="noopener"
@@ -238,7 +220,7 @@ export default function MathAnalysisPage() {
           </p>
           <h2
             id="math-status-title"
-            className="mt-2 font-mincho text-4xl font-bold md:text-6xl"
+            className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl"
           >
             解析結果
           </h2>
@@ -306,7 +288,7 @@ export default function MathAnalysisPage() {
               </p>
               <h2
                 id="math-ranking-title"
-                className="mt-2 font-mincho text-4xl font-bold md:text-6xl"
+                className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl"
               >
                 よく出る単元ランキング
               </h2>
@@ -372,7 +354,7 @@ export default function MathAnalysisPage() {
           </p>
           <h2
             id="math-recent-title"
-            className="mt-2 font-mincho text-4xl font-bold md:text-6xl"
+            className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl"
           >
             近年頻出ランキング
           </h2>
@@ -400,7 +382,7 @@ export default function MathAnalysisPage() {
           </p>
           <h2
             id="math-block-title"
-            className="mt-2 font-mincho text-4xl font-bold md:text-6xl"
+            className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl"
           >
             大問別出題分布
           </h2>
@@ -470,7 +452,7 @@ export default function MathAnalysisPage() {
           </p>
           <h2
             id="math-trend-title"
-            className="mt-2 font-mincho text-4xl font-bold md:text-6xl"
+            className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl"
           >
             年度推移
           </h2>
@@ -554,7 +536,7 @@ export default function MathAnalysisPage() {
           </p>
           <h2
             id="math-meta-title"
-            className="mt-2 font-mincho text-4xl font-bold md:text-6xl"
+            className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl"
           >
             注記とタグ定義
           </h2>
@@ -616,7 +598,7 @@ export default function MathAnalysisPage() {
       </main>
 
       {/* ── フッター ── */}
-      <footer className="border-t-2 border-ink bg-ink px-4 py-8 text-cream md:px-10">
+      <footer className="border-t-2 border-ink bg-ink px-4 py-6 text-cream sm:py-8 md:px-10">
         <div className="mx-auto max-w-7xl space-y-2">
           <p>
             <strong>更新日</strong> 2026-05-01

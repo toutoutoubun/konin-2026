@@ -88,34 +88,34 @@ export default function ApplicationTodo() {
   }
 
   return (
-    <section className="panel p-6 md:p-8" aria-labelledby="todo-title">
+    <section className="panel p-5 sm:p-6 md:p-8" aria-labelledby="todo-title">
       <div className="grid gap-6 lg:grid-cols-[.9fr_1.1fr]">
         <div>
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">APPLICATION MAP</p>
-          <h2 id="todo-title" className="mt-2 font-mincho text-[48px] font-bold leading-none">出願Todoリスト</h2>
-          <p className="mt-4 max-w-xl">チェック状態はこの端末に保存されます。</p>
-          <dl className="mt-5 grid gap-3 text-lg" aria-live="polite">
-            <div className="border-2 border-ink bg-cream p-4">
+          <h2 id="todo-title" className="mt-2 font-mincho text-3xl font-bold leading-tight sm:text-4xl md:text-[48px] md:leading-none">出願Todoリスト</h2>
+          <p className="mt-3 max-w-xl text-sm sm:mt-4 sm:text-base">チェック状態はこの端末に保存されます。</p>
+          <dl className="mt-4 grid gap-3 text-base sm:mt-5 sm:text-lg" aria-live="polite">
+            <div className="border-2 border-ink bg-cream p-3 sm:p-4">
               <dt className="font-bold">進行状況</dt>
               <dd>{done} / {total} 件</dd>
             </div>
           </dl>
         </div>
-        <div className="space-y-5" role="group" aria-label="出願Todoチェックリスト">
+        <div className="space-y-4 sm:space-y-5" role="group" aria-label="出願Todoチェックリスト">
           {steps.map((step) => (
             <section key={step.title} aria-labelledby={`todo-${step.title}`}>
-              <h3 id={`todo-${step.title}`} className="font-mincho text-2xl font-bold">{step.title}</h3>
-              <ul className="mt-3 space-y-2">
+              <h3 id={`todo-${step.title}`} className="font-mincho text-xl font-bold sm:text-2xl">{step.title}</h3>
+              <ul className="mt-2 space-y-2 sm:mt-3">
                 {step.items.map((item) => (
                   <li key={item.id} className="flex gap-3 border-2 border-ink bg-cream p-3">
                     <input
                       id={`todo-${item.id}`}
                       type="checkbox"
-                      className="mt-1 h-5 w-5 accent-blue"
+                      className="mt-0.5 h-5 w-5 shrink-0 accent-blue sm:mt-1"
                       checked={Boolean(checked[item.id])}
                       onChange={() => toggle(item.id)}
                     />
-                    <label htmlFor={`todo-${item.id}`} className="flex-1">
+                    <label htmlFor={`todo-${item.id}`} className="flex-1 text-sm sm:text-base">
                       {item.href ? <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noopener' : undefined}>{item.label}</a> : item.label}
                     </label>
                   </li>

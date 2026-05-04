@@ -76,6 +76,13 @@ button, a.button-like { min-height: 44px; }
 @keyframes shimmer { to { background-position: -200% 0; } }
 
 .recharts-wrapper text { fill: var(--ink); font-family: 'Shippori Mincho', serif; }
+/* Mobile-first responsive helpers */
+@media (max-width: 767px) {
+  .hard-button { box-shadow: 3px 3px 0 var(--ink); }
+  .hard-button:hover { transform: none; box-shadow: 3px 3px 0 var(--ink); }
+  .panel { box-shadow: 0 8px 24px rgba(26,26,26,.08); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }

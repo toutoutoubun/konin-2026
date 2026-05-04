@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import DisplaySettings from '@/components/DisplaySettings'
+import Header from '@/components/Header'
 import FrequencyChart from '@/components/FrequencyChart'
 import HistoryFilterPanel from '@/components/HistoryFilterPanel'
 import HistoryPDFUploader from '@/components/HistoryPDFUploader'
@@ -148,23 +148,14 @@ export default function HistoryAnalysisPage() {
       <a className="skip-link" href="#main-content">本文へ移動</a>
 
       {/* ── ヘッダー ── */}
-      <header className="sticky top-0 z-20 border-b-2 border-ink bg-cream/95 px-4 py-4 backdrop-blur md:px-10">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
-          <a href="/" className="flex items-center gap-3 no-underline" aria-label="高認パストップへ">
-            <span className="grid h-12 w-12 place-items-center rounded-full border-2 border-ink bg-yellow font-serifDisplay text-lg">KP</span>
-            <span className="font-bold">高認パス</span>
-          </a>
-          <nav aria-label="主要ナビゲーション" className="flex flex-wrap gap-5 font-bold">
-            <a href="/#tools">ツール一覧</a>
-            <a href="#history-upload-title">アップロード</a>
-            <a href="#history-ranking-title">集計</a>
-            <a href="#history-filter-title">フィルタ</a>
-            <a href="/tags/">タグ定義</a>
-            <a href="/updates/">更新履歴</a>
-          </nav>
-          <DisplaySettings />
-        </div>
-      </header>
+      <Header navItems={[
+        { label: 'ツール一覧', href: '/#tools' },
+        { label: 'アップロード', href: '#history-upload-title' },
+        { label: '集計', href: '#history-ranking-title' },
+        { label: 'フィルタ', href: '#history-filter-title' },
+        { label: 'タグ定義', href: '/tags/' },
+        { label: '更新履歴', href: '/updates/' },
+      ]} />
 
       {/* ── パンくずリスト ── */}
       <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
@@ -179,18 +170,18 @@ export default function HistoryAnalysisPage() {
         {/* ── ヒーロー ── */}
         <section className="py-12 md:py-20" aria-labelledby="history-hero-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">HISTORY PAST EXAM ANALYZER</p>
-          <h1 id="history-hero-title" className="mt-4 max-w-5xl font-mincho text-6xl font-bold leading-none tracking-[-.06em] md:text-9xl">
+          <h1 id="history-hero-title" className="mt-4 max-w-5xl font-mincho text-4xl font-bold leading-none tracking-[-.04em] sm:text-5xl md:text-7xl lg:text-9xl">
             <ruby>歴史<rt>れきし</rt></ruby>頻出分析
           </h1>
-          <p className="mt-7 max-w-3xl text-xl leading-relaxed">
+          <p className="mt-5 max-w-3xl text-base leading-relaxed sm:mt-7 sm:text-xl">
             文科省公開の歴史・世界史A過去問PDFをブラウザ上で解析し、テーマ別・時代別・地域別・出題形式別の頻出傾向を可視化します。PDFはサーバーへ送信しません。
           </p>
           <p className="mt-3 max-w-3xl">
             kuromoji.jsによる形態素解析とキーワード照合で、大テーマ（topic_l1）・小テーマ（topic_l2）・時代・地域・出題形式のタグを自動付与します。2024年度以降の新課程「歴史」と旧課程「世界史A」の両方に対応しています。
           </p>
-          <div className="mt-8 flex flex-wrap gap-4" aria-label="主要操作">
-            <a className="hard-button button-like bg-blue px-5 py-3 text-white no-underline" href="#history-upload-title">PDFを分析する</a>
-            <a className="hard-button button-like bg-paper px-5 py-3 no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">過去問を入手</a>
+          <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4" aria-label="主要操作">
+            <a className="hard-button button-like bg-blue px-5 py-3 text-center text-white no-underline" href="#history-upload-title">PDFを分析する</a>
+            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">過去問を入手</a>
           </div>
         </section>
 
@@ -220,7 +211,7 @@ export default function HistoryAnalysisPage() {
         {/* ── 解析結果サマリー ── */}
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="history-status-title" aria-live="polite">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">ANALYSIS STATUS</p>
-          <h2 id="history-status-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">解析結果</h2>
+          <h2 id="history-status-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">解析結果</h2>
           {hasResults ? (
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               {results.map((result) => (
@@ -267,7 +258,7 @@ export default function HistoryAnalysisPage() {
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION A</p>
-              <h2 id="history-ranking-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
+              <h2 id="history-ranking-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
                 よく出るテーマランキング
               </h2>
               <p className="mt-3 max-w-3xl">
@@ -308,7 +299,7 @@ export default function HistoryAnalysisPage() {
         {/* ── Section B: 近年頻出ランキング ── */}
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="history-recent-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION B</p>
-          <h2 id="history-recent-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
+          <h2 id="history-recent-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             近年頻出ランキング
           </h2>
           <p className="mt-3 max-w-3xl">
@@ -322,7 +313,7 @@ export default function HistoryAnalysisPage() {
         {/* ── Section C: 時代別出題分布 ── */}
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="history-era-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION C</p>
-          <h2 id="history-era-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
+          <h2 id="history-era-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             時代別出題分布
           </h2>
           <p className="mt-3 max-w-3xl">古代・中世・近世・近代・現代の各時代でどれだけ出題されているかを表示します。</p>
@@ -377,7 +368,7 @@ export default function HistoryAnalysisPage() {
         {/* ── Section D: 地域別出題分布 ── */}
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="history-region-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION D</p>
-          <h2 id="history-region-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
+          <h2 id="history-region-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             地域別出題分布
           </h2>
           <p className="mt-3 max-w-3xl">ヨーロッパ・アジア・アフリカ・アメリカ・中東・日本の各地域での出題分布を表示します。</p>
@@ -432,7 +423,7 @@ export default function HistoryAnalysisPage() {
         {/* ── Section E: 出題形式分布 ── */}
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="history-format-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION E</p>
-          <h2 id="history-format-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
+          <h2 id="history-format-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             出題形式分布
           </h2>
           <p className="mt-3 max-w-3xl">空欄補充、正誤判定、年代順並び替え、資料読解、会話文読解、探究活動型など、出題形式ごとの分布を表示します。</p>
@@ -469,7 +460,7 @@ export default function HistoryAnalysisPage() {
         {/* ── Section F: 年度推移 ── */}
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="history-trend-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION F</p>
-          <h2 id="history-trend-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
+          <h2 id="history-trend-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             年度推移
           </h2>
           <p className="mt-3 max-w-3xl">各試験回ごとの出題テーマ数を時系列で表示します。積み上げ棒グラフと折れ線グラフで傾向を確認できます。</p>
@@ -526,7 +517,7 @@ export default function HistoryAnalysisPage() {
         {/* ── 注記とタグ定義 ── */}
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="history-meta-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">NOTES</p>
-          <h2 id="history-meta-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
+          <h2 id="history-meta-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             注記とタグ定義
           </h2>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
@@ -562,7 +553,7 @@ export default function HistoryAnalysisPage() {
       </main>
 
       {/* ── フッター ── */}
-      <footer className="border-t-2 border-ink bg-ink px-4 py-8 text-cream md:px-10">
+      <footer className="border-t-2 border-ink bg-ink px-4 py-6 text-cream sm:py-8 md:px-10">
         <div className="mx-auto max-w-7xl space-y-2">
           <p><strong>更新日</strong> 2026-05-02</p>
           <p><strong>データ範囲</strong> ユーザーがブラウザ上でアップロードした文科省公開PDF。</p>

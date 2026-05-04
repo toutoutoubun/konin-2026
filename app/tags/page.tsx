@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import DisplaySettings from '@/components/DisplaySettings'
+import Header from '@/components/Header'
 import englishTags from '@/data/englishTags.json'
 import mathTags from '@/data/mathTags.json'
 import historyTags from '@/data/historyTags.json'
@@ -264,20 +264,11 @@ export default function TagsPage() {
   return (
     <>
       <a className="skip-link" href="#main-content">本文へ移動</a>
-      <header className="sticky top-0 z-20 border-b-2 border-ink bg-cream/95 px-4 py-4 backdrop-blur md:px-10">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
-          <a href="/" className="flex items-center gap-3 no-underline" aria-label="高認パストップへ">
-            <span className="grid h-12 w-12 place-items-center rounded-full border-2 border-ink bg-yellow font-serifDisplay text-lg">KP</span>
-            <span className="font-bold">高認パス</span>
-          </a>
-          <nav aria-label="主要ナビゲーション" className="flex flex-wrap gap-5 font-bold">
-            <a href="/#tools">ツール一覧</a>
-            <a href="/tags/" aria-current="page">タグ定義</a>
-            <a href="/updates/">更新履歴</a>
-          </nav>
-          <DisplaySettings />
-        </div>
-      </header>
+      <Header navItems={[
+        { label: 'ツール一覧', href: '/#tools' },
+        { label: 'タグ定義', href: '/tags/' },
+        { label: '更新履歴', href: '/updates/' },
+      ]} />
 
       <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a><span aria-hidden="true">/</span><span>タグ定義</span>
@@ -287,8 +278,8 @@ export default function TagsPage() {
         {/* Hero */}
         <section className="py-12 md:py-20" aria-labelledby="tags-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">TAG DICTIONARY</p>
-          <h1 id="tags-title" className="mt-4 max-w-6xl font-mincho text-6xl font-bold leading-none tracking-[-.06em] md:text-9xl">タグ定義</h1>
-          <p className="mt-7 max-w-3xl text-xl leading-relaxed">全12科目の単元タグ、形式タグ、制度区分を一覧化しています。科目タブを切り替えて各科目のタグ定義を確認できます。</p>
+          <h1 id="tags-title" className="mt-4 max-w-6xl font-mincho text-4xl font-bold leading-none tracking-[-.04em] sm:text-5xl md:text-7xl lg:text-9xl">タグ定義</h1>
+          <p className="mt-5 max-w-3xl text-base leading-relaxed sm:mt-7 sm:text-xl">全12科目の単元タグ、形式タグ、制度区分を一覧化しています。科目タブを切り替えて各科目のタグ定義を確認できます。</p>
         </section>
 
         {/* Subject Tabs */}
@@ -325,7 +316,7 @@ export default function TagsPage() {
             <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">UNIT TAGS</p>
             {statusBadge(active.status)}
           </div>
-          <h2 className="mt-2 font-mincho text-4xl font-bold md:text-6xl">{active.name}の単元タグ</h2>
+          <h2 className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">{active.name}の単元タグ</h2>
 
           {/* Rule Sets */}
           {active.ruleSets.length > 0 && (

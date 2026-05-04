@@ -1,4 +1,4 @@
-import DisplaySettings from '@/components/DisplaySettings'
+import Header from '@/components/Header'
 import { getSubject, officialPastExamUrl, subjects } from '@/data/subjects'
 
 export function generateStaticParams() {
@@ -25,22 +25,13 @@ export default function SubjectPage({ params }: { params: { slug: string } }) {
   return (
     <>
       <a className="skip-link" href="#main-content">本文へ移動</a>
-      <header className="sticky top-0 z-20 border-b-2 border-ink bg-cream/95 px-4 py-4 backdrop-blur md:px-10">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
-          <a href="/" className="flex items-center gap-3 no-underline" aria-label="高認パストップへ">
-            <span className="grid h-12 w-12 place-items-center rounded-full border-2 border-ink bg-yellow font-serifDisplay text-lg">KP</span>
-            <span className="font-bold">高認パス</span>
-          </a>
-          <nav aria-label="主要ナビゲーション" className="flex flex-wrap gap-5 font-bold">
-            <a href="/#tools">ツール一覧</a>
-            <a href="/subjects/english/">英語分析</a>
-            <a href="/math/">数学分析</a>
-            <a href="/tags/">タグ定義</a>
-            <a href="/updates/">更新履歴</a>
-          </nav>
-          <DisplaySettings />
-        </div>
-      </header>
+      <Header navItems={[
+        { label: 'ツール一覧', href: '/#tools' },
+        { label: '英語分析', href: '/subjects/english/' },
+        { label: '数学分析', href: '/math/' },
+        { label: 'タグ定義', href: '/tags/' },
+        { label: '更新履歴', href: '/updates/' },
+      ]} />
 
       <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a><span aria-hidden="true">/</span><a href="/#tools">ツール一覧</a><span aria-hidden="true">/</span><span>{subject.name}</span>
@@ -49,7 +40,7 @@ export default function SubjectPage({ params }: { params: { slug: string } }) {
       <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
         <section className="py-12 md:py-20" aria-labelledby="subject-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">{subject.label}</p>
-          <h1 id="subject-title" className="mt-4 max-w-6xl font-mincho text-6xl font-bold leading-none tracking-[-.06em] md:text-9xl">{subject.name}<br />頻出分析</h1>
+          <h1 id="subject-title" className="mt-4 max-w-6xl font-mincho text-4xl font-bold leading-none tracking-[-.04em] sm:text-5xl md:text-7xl lg:text-9xl">{subject.name}<br />頻出分析</h1>
           <p className="mt-7 max-w-3xl text-xl leading-relaxed">{subject.description}</p>
           {subject.legacy && <p className="mt-4 max-w-3xl border-2 border-ink bg-paper p-4 font-bold">制度区分：新課程 / {subject.legacy}</p>}
           {subject.status === 'coming-soon' ? (
@@ -64,7 +55,7 @@ export default function SubjectPage({ params }: { params: { slug: string } }) {
 
         <section className="panel p-6 md:p-8" aria-labelledby="structure-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">PHASE 1 STRUCTURE</p>
-          <h2 id="structure-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">科目詳細ページの構成</h2>
+          <h2 id="structure-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">科目詳細ページの構成</h2>
           <p className="mt-3 max-w-3xl">この科目は画面構成を先に配置しています。英語分析と同じレイアウト構造で、PDF解析ロジックを科目別に追加できる状態です。</p>
           <div className="mt-6 overflow-x-auto" role="region" aria-label={`${subject.name}の科目詳細ページ構成表`}>
             <table className="w-full min-w-[640px] border-collapse bg-paper" role="table">
@@ -77,12 +68,12 @@ export default function SubjectPage({ params }: { params: { slug: string } }) {
 
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="nodata-title" aria-live="polite">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">NO DATA</p>
-          <h2 id="nodata-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">該当データはない</h2>
+          <h2 id="nodata-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">該当データはない</h2>
           <p className="mt-3">この科目のブラウザ内PDF解析は未実装です。現在はPhase 1のUI構成と導線を確認できます。</p>
         </section>
       </main>
 
-      <footer className="border-t-2 border-ink bg-ink px-4 py-8 text-cream md:px-10">
+      <footer className="border-t-2 border-ink bg-ink px-4 py-6 text-cream sm:py-8 md:px-10">
         <div className="mx-auto max-w-7xl space-y-2">
           <p><strong>更新日</strong> 2026-05-01</p>
           <p><strong>データ範囲</strong> 文部科学省が公開している過去問題PDF。</p>

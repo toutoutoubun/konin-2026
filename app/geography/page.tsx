@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import DisplaySettings from '@/components/DisplaySettings'
+import Header from '@/components/Header'
 import FrequencyChart from '@/components/FrequencyChart'
 import GeographyFilterPanel from '@/components/GeographyFilterPanel'
 import GeographyPDFUploader from '@/components/GeographyPDFUploader'
@@ -134,23 +134,14 @@ export default function GeographyAnalysisPage() {
       <a className="skip-link" href="#main-content">本文へ移動</a>
 
       {/* ── ヘッダー ── */}
-      <header className="sticky top-0 z-20 border-b-2 border-ink bg-cream/95 px-4 py-4 backdrop-blur md:px-10">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
-          <a href="/" className="flex items-center gap-3 no-underline" aria-label="高認パストップへ">
-            <span className="grid h-12 w-12 place-items-center rounded-full border-2 border-ink bg-yellow font-serifDisplay text-lg">KP</span>
-            <span className="font-bold">高認パス</span>
-          </a>
-          <nav aria-label="主要ナビゲーション" className="flex flex-wrap gap-5 font-bold">
-            <a href="/#tools">ツール一覧</a>
-            <a href="#geo-upload-title">アップロード</a>
-            <a href="#geo-ranking-title">集計</a>
-            <a href="#geo-filter-title">フィルタ</a>
-            <a href="/tags/">タグ定義</a>
-            <a href="/updates/">更新履歴</a>
-          </nav>
-          <DisplaySettings />
-        </div>
-      </header>
+      <Header navItems={[
+        { label: 'ツール一覧', href: '/#tools' },
+        { label: 'アップロード', href: '#geo-upload-title' },
+        { label: '集計', href: '#geo-ranking-title' },
+        { label: 'フィルタ', href: '#geo-filter-title' },
+        { label: 'タグ定義', href: '/tags/' },
+        { label: '更新履歴', href: '/updates/' },
+      ]} />
 
       {/* ── パンくずリスト ── */}
       <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
@@ -165,18 +156,18 @@ export default function GeographyAnalysisPage() {
         {/* ── ヒーロー ── */}
         <section className="py-12 md:py-20" aria-labelledby="geo-hero-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">GEOGRAPHY PAST EXAM ANALYZER</p>
-          <h1 id="geo-hero-title" className="mt-4 max-w-5xl font-mincho text-6xl font-bold leading-none tracking-[-.06em] md:text-9xl">
+          <h1 id="geo-hero-title" className="mt-4 max-w-5xl font-mincho text-4xl font-bold leading-none tracking-[-.04em] sm:text-5xl md:text-7xl lg:text-9xl">
             <ruby>地理<rt>ちり</rt></ruby>頻出分析
           </h1>
-          <p className="mt-7 max-w-3xl text-xl leading-relaxed">
+          <p className="mt-5 max-w-3xl text-base leading-relaxed sm:mt-7 sm:text-xl">
             文科省公開の地理・地理A・地理B過去問PDFをブラウザ上で解析し、大問別・テーマ別・地域別・出題形式別の頻出傾向を可視化します。PDFはサーバーへ送信しません。
           </p>
           <p className="mt-3 max-w-3xl">
             キーワード照合で大テーマ（topic_l1）・小テーマ（topic_l2）・地域・出題形式のタグを自動付与します。2024年度以降の新課程「地理」と旧課程「地理A」「地理B」の両方に対応しています。
           </p>
-          <div className="mt-8 flex flex-wrap gap-4" aria-label="主要操作">
-            <a className="hard-button button-like bg-blue px-5 py-3 text-white no-underline" href="#geo-upload-title">PDFを分析する</a>
-            <a className="hard-button button-like bg-paper px-5 py-3 no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">過去問を入手</a>
+          <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4" aria-label="主要操作">
+            <a className="hard-button button-like bg-blue px-5 py-3 text-center text-white no-underline" href="#geo-upload-title">PDFを分析する</a>
+            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">過去問を入手</a>
           </div>
         </section>
 
@@ -206,7 +197,7 @@ export default function GeographyAnalysisPage() {
         {/* ── 解析結果サマリー ── */}
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="geo-status-title" aria-live="polite">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">ANALYSIS STATUS</p>
-          <h2 id="geo-status-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">解析結果</h2>
+          <h2 id="geo-status-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">解析結果</h2>
           {hasResults ? (
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               {results.map((result) => (
@@ -259,7 +250,7 @@ export default function GeographyAnalysisPage() {
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION A</p>
-              <h2 id="geo-ranking-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
+              <h2 id="geo-ranking-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
                 よく出るテーマランキング
               </h2>
               <p className="mt-3 max-w-3xl">
@@ -300,7 +291,7 @@ export default function GeographyAnalysisPage() {
         {/* ── Section B: 近年頻出ランキング ── */}
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="geo-recent-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION B</p>
-          <h2 id="geo-recent-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
+          <h2 id="geo-recent-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             近年頻出ランキング
           </h2>
           <p className="mt-3 max-w-3xl">
@@ -314,7 +305,7 @@ export default function GeographyAnalysisPage() {
         {/* ── Section C: 地域別出題分布 ── */}
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="geo-region-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION C</p>
-          <h2 id="geo-region-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
+          <h2 id="geo-region-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             地域別出題分布
           </h2>
           <p className="mt-3 max-w-3xl">日本・東アジア・東南アジア・南アジア・中東・ヨーロッパ・アフリカ・北アメリカ・南アメリカ・オセアニアの各地域での出題分布を表示します。</p>
@@ -369,7 +360,7 @@ export default function GeographyAnalysisPage() {
         {/* ── Section D: 出題形式分布 ── */}
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="geo-format-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION D</p>
-          <h2 id="geo-format-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
+          <h2 id="geo-format-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             出題形式分布
           </h2>
           <p className="mt-3 max-w-3xl">地図読解、グラフ読解、表の読み取り、会話文型、レポート型、地域調査型、防災判断型、空欄補充、正誤判定、写真・景観読解など、出題形式ごとの分布を表示します。</p>
@@ -406,7 +397,7 @@ export default function GeographyAnalysisPage() {
         {/* ── Section E: 年度推移 ── */}
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="geo-trend-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION E</p>
-          <h2 id="geo-trend-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
+          <h2 id="geo-trend-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             年度推移
           </h2>
           <p className="mt-3 max-w-3xl">各試験回ごとの出題テーマ数を時系列で表示します。積み上げ棒グラフと折れ線グラフで傾向を確認できます。</p>
@@ -464,7 +455,7 @@ export default function GeographyAnalysisPage() {
         {/* ── 注記とタグ定義 ── */}
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="geo-meta-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">NOTES</p>
-          <h2 id="geo-meta-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
+          <h2 id="geo-meta-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             注記とタグ定義
           </h2>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
@@ -504,7 +495,7 @@ export default function GeographyAnalysisPage() {
       </main>
 
       {/* ── フッター ── */}
-      <footer className="border-t-2 border-ink bg-ink px-4 py-8 text-cream md:px-10">
+      <footer className="border-t-2 border-ink bg-ink px-4 py-6 text-cream sm:py-8 md:px-10">
         <div className="mx-auto max-w-7xl space-y-2">
           <p><strong>更新日</strong> 2026-05-02</p>
           <p><strong>データ範囲</strong> ユーザーがブラウザ上でアップロードした文科省公開PDF。</p>
