@@ -56,6 +56,12 @@ export type BalanceRow = {
 
 /* ── 集計サマリー型 ── */
 
+export type FormatRow = {
+  format: string
+  count: number
+  rate: number
+}
+
 export type SciAggregateSummary = {
   totalCount: number
   hasLowConfidence: boolean
@@ -69,6 +75,8 @@ export type SciAggregateSummary = {
   balanceRows: BalanceRow[]
   // Section D: 年度推移
   trendRows: TrendRow[]
+  // 出題形式集計
+  formatRows: FormatRow[]
   // メタ情報
   availableGroups: SciGroupName[]
   availableUnits: string[]
@@ -244,6 +252,24 @@ export function aggregateSciResults(
     block2Count: blockCounts.get(group.blocks[1].block) ?? 0
   }))
 
+  // 出題形式集計
+  const formatCountMap = new Map<string, number>()
+  for (const result of sorted) {
+    for (const hit of result.blockHits) {
+      for (const fmt of hit.formatTags) {
+        formatCountMap.set(fmt, (formatCountMap.get(fmt) ?? 0) + 1)
+      }
+    }
+  }
+  const totalFormatHits = Array.from(formatCountMap.values()).reduce((s, c) => s + c, 0)
+  const formatRows: FormatRow[] = Array.from(formatCountMap.entries())
+    .map(([format, count]) => ({
+      format,
+      count,
+      rate: totalFormatHits ? round((count / totalFormatHits) * 100) : 0
+    }))
+    .sort((a, b) => b.count - a.count)
+
   // メタ情報
   const sessions = Array.from(new Set(sorted.map((r) => r.examSession)))
   const availableGroups = Array.from(new Set(
@@ -262,6 +288,7 @@ export function aggregateSciResults(
     groupRecentRankings,
     balanceRows,
     trendRows,
+    formatRows,
     availableGroups,
     availableUnits,
     sessions

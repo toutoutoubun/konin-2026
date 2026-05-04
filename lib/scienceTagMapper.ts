@@ -16,6 +16,8 @@ export type SciRuleSet = {
 
 export type SciGroupName = '物理系' | '化学系' | '生物系' | '地学系'
 
+export type SciFormatTag = string
+
 export type SciBlockHit = {
   block: string
   blockIndex: number
@@ -24,6 +26,7 @@ export type SciBlockHit = {
   matchedKeywords: string[]
   keywordCount: number
   confidence: 'high' | 'low'
+  formatTags: SciFormatTag[]
 }
 
 export type SciAnalysisResult = {
@@ -35,12 +38,15 @@ export type SciAnalysisResult = {
   pageTexts: string[]
   blockHits: SciBlockHit[]
   detectedBlocks: string[]
+  formatCounts: Record<string, number>
   analyzedAt: string
 }
 
-/* ── rule_set ── */
+/* ── rule_set & format ── */
 
 const ruleSetData = scienceTags.rule_sets[0]
+const formatKeywords: Record<string, string[]> = (scienceTags as any).format_keywords ?? {}
+export const formatTags: string[] = (scienceTags as any).format_tags ?? []
 
 export const sciRuleSet: SciRuleSet = {
   code: ruleSetData.code,
@@ -166,6 +172,9 @@ export function matchScienceUnit(
     }
   }
 
+  // 出題形式の検出
+  const detectedFormats = detectFormatTags(text)
+
   return {
     block: blockDef.block,
     blockIndex,
@@ -173,8 +182,25 @@ export function matchScienceUnit(
     topic_l2: blockDef.topic_l2,
     matchedKeywords,
     keywordCount,
-    confidence: matchedKeywords.length >= 2 ? 'high' : 'low'
+    confidence: matchedKeywords.length >= 2 ? 'high' : 'low',
+    formatTags: detectedFormats
   }
+}
+
+/* ── 出題形式タグの検出 ── */
+
+export function detectFormatTags(text: string): SciFormatTag[] {
+  const detected: SciFormatTag[] = []
+  for (const [tag, keywords] of Object.entries(formatKeywords)) {
+    for (const kw of keywords) {
+      const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      if (new RegExp(escaped).test(text)) {
+        detected.push(tag)
+        break
+      }
+    }
+  }
+  return detected
 }
 
 /* ── PDF全体のブロック照合 ── */

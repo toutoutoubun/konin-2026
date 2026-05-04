@@ -190,7 +190,7 @@ const subjectTabs: SubjectTab[] = [
         `問題範囲：${b.question_range}`
       ] as TagRow)
     ),
-    formatTags: scienceLifeTags.format_tags,
+    formatTags: (scienceTags as any).format_tags ?? scienceLifeTags.format_tags,
     ruleSets: [{ code: scienceTags.rule_sets[0].code, label: scienceTags.rule_sets[0].label, detail: `全${scienceTags.rule_sets[0].total_blocks}大問・4分野から2分野選択` }],
     extraSections: (
       <div className="mt-6">

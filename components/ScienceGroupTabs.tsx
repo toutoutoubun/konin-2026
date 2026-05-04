@@ -24,13 +24,15 @@ type Props = {
   groupRankings: Record<SciGroupName, RankingRow[]>
   groupRecentRankings?: Record<SciGroupName, RecentRankingRow[]>
   caption: string
+  idPrefix?: string
 }
 
 export default function ScienceGroupTabs({
   mode,
   groupRankings,
   groupRecentRankings,
-  caption
+  caption,
+  idPrefix = 'sci'
 }: Props) {
   const [activeGroup, setActiveGroup] = useState<SciGroupName>('物理系')
 
@@ -48,8 +50,8 @@ export default function ScienceGroupTabs({
             type="button"
             role="tab"
             aria-selected={activeGroup === tab.key}
-            aria-controls={`sci-tab-panel-${tab.key}`}
-            id={`sci-tab-${tab.key}`}
+            aria-controls={`${idPrefix}-tab-panel-${tab.key}`}
+            id={`${idPrefix}-tab-${tab.key}`}
             className={`hard-button px-4 py-2 text-sm sm:px-5 sm:text-base ${
               activeGroup === tab.key
                 ? 'bg-blue text-white'
@@ -65,9 +67,9 @@ export default function ScienceGroupTabs({
 
       {/* タブパネル */}
       <div
-        id={`sci-tab-panel-${activeGroup}`}
+        id={`${idPrefix}-tab-panel-${activeGroup}`}
         role="tabpanel"
-        aria-labelledby={`sci-tab-${activeGroup}`}
+        aria-labelledby={`${idPrefix}-tab-${activeGroup}`}
         className="mt-5"
       >
         <p className="mb-4 border-2 border-ink bg-cream p-3 text-sm">

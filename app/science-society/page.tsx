@@ -11,7 +11,8 @@ import {
   aggregateSciResults,
   filterSciResults,
   initialSciFilters,
-  type SciFilters
+  type SciFilters,
+  type FormatRow
 } from '@/lib/scienceScoreCalculator'
 import type { SciAnalysisResult, SciGroupName } from '@/lib/scienceTagMapper'
 import {
@@ -177,6 +178,9 @@ export default function ScienceSocietyPage() {
                   <p>制度区分：{result.ruleSet.code}（{result.ruleSet.label}）</p>
                   <p>検出ブロック：{result.detectedBlocks.length > 0 ? result.detectedBlocks.join('、') : '自動検出'}</p>
                   <p>検出単元：{result.blockHits.length}件</p>
+                  {Object.keys(result.formatCounts).length > 0 && (
+                    <p>出題形式：{Object.entries(result.formatCounts).map(([k, v]) => `${k}(${v})`).join('、')}</p>
+                  )}
                   <div className="mt-2 flex flex-wrap gap-2">
                     {result.blockHits.map((hit) => (
                       <span
@@ -221,6 +225,7 @@ export default function ScienceSocietyPage() {
               mode="ranking"
               groupRankings={summary.groupRankings}
               caption="単元ごとの頻出ランキング。順位、単元、出現回数、出現率。"
+              idPrefix="sci-a"
             />
           </div>
         </section>
@@ -240,6 +245,7 @@ export default function ScienceSocietyPage() {
               groupRankings={summary.groupRankings}
               groupRecentRankings={summary.groupRecentRankings}
               caption="近年頻出ランキング。重み付きスコアと直近の出現。"
+              idPrefix="sci-b"
             />
           </div>
         </section>
@@ -300,6 +306,55 @@ export default function ScienceSocietyPage() {
                 )}
               </tbody>
             </table>
+          </div>
+        </section>
+
+        {/* ── Section E2: 出題形式分布 ── */}
+        <section className="panel mt-8 p-6 md:p-8" aria-labelledby="sci-format-title">
+          <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">FORMAT DISTRIBUTION</p>
+          <h2 id="sci-format-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
+            <ruby>出題<rt>しゅつだい</rt></ruby><ruby>形式<rt>けいしき</rt></ruby><ruby>分布<rt>ぶんぷ</rt></ruby>
+          </h2>
+          <p className="mt-3 max-w-3xl">
+            各大問で検出された出題形式（空欄補充・正誤判定・実験考察・図表読み取り・計算・日常生活との関連）の出現回数と割合です。
+          </p>
+          <div className="mt-5">
+            {summary.formatRows.length > 0 ? (
+              <>
+                <FrequencyChart
+                  data={summary.formatRows.map((r) => ({ name: r.format, count: r.count }))}
+                  xKey="name"
+                  yKey="count"
+                  label="出題形式の出現回数"
+                  color="#FFD166"
+                />
+                <div className="mt-5 overflow-x-auto" role="region" aria-label="出題形式分布表" tabIndex={0}>
+                  <table className="w-full min-w-[400px] border-collapse bg-paper" role="table">
+                    <caption className="py-3 text-left font-bold">出題形式ごとの出現回数と割合。</caption>
+                    <thead className="bg-ink text-cream">
+                      <tr>
+                        <th scope="col" className="p-3 text-left">順位</th>
+                        <th scope="col" className="p-3 text-left">出題形式</th>
+                        <th scope="col" className="p-3 text-right">出現回数</th>
+                        <th scope="col" className="p-3 text-right">割合</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {summary.formatRows.map((row, index) => (
+                        <tr key={row.format} className="border-b-2 border-ink even:bg-blue/5">
+                          <td className="p-3">{index + 1}</td>
+                          <td className="p-3 font-bold">{row.format}</td>
+                          <td className="p-3 text-right">{row.count}</td>
+                          <td className="p-3 text-right">{row.rate}%</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            ) : (
+              <p className="border-2 border-ink bg-cream p-4">該当データはない：PDF解析後に出題形式を表示します。</p>
+            )}
           </div>
         </section>
 

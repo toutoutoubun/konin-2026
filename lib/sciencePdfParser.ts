@@ -45,7 +45,7 @@ export async function parseSciencePdf(
 
   const loadingTask = pdfjs.getDocument({
     data: buffer,
-    cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
+    cMapUrl: '/cmaps/',
     cMapPacked: true,
     useWorkerFetch: false,
     isEvalSupported: false
@@ -88,6 +88,14 @@ export async function parseSciencePdf(
   // 各大問のキーワードマッチング
   const blockHits = analyzeBlocks(rawText)
 
+  // 出題形式の集計
+  const formatCounts: Record<string, number> = {}
+  for (const hit of blockHits) {
+    for (const fmt of hit.formatTags) {
+      formatCounts[fmt] = (formatCounts[fmt] ?? 0) + 1
+    }
+  }
+
   onProgress?.({ fileName: file.name, status: 'done', message: '解析が完了しました。' })
 
   return {
@@ -99,6 +107,7 @@ export async function parseSciencePdf(
     pageTexts,
     blockHits,
     detectedBlocks,
+    formatCounts,
     analyzedAt: new Date().toISOString()
   }
 }
