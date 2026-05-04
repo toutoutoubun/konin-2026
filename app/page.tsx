@@ -2,13 +2,41 @@ import ApplicationTodo from '@/components/ApplicationTodo'
 import RouteCompare from '@/components/RouteCompare/RouteCompare'
 import ExemptionCheck from '@/components/ExemptionCheck/ExemptionCheck'
 import Header from '@/components/Header'
-import { officialExamGuideUrl, officialPastExamUrl } from '@/data/subjects'
+import { officialExamGuideUrl, officialPastExamUrl, subjects } from '@/data/subjects'
+
+const accentClass: Record<string, string> = {
+  blue: 'bg-blue text-white',
+  orange: 'bg-orange',
+  yellow: 'bg-yellow',
+}
+
+const statusLabel: Record<string, { text: string; style: string }> = {
+  active:       { text: '実装済み', style: 'border-blue bg-blue/10' },
+  placeholder:  { text: '準備中',   style: 'border-ink/30 bg-cream' },
+  'coming-soon': { text: '画面構成', style: 'border-orange bg-orange/10' },
+}
+
+function subjectHref(slug: string) {
+  if (slug === 'english') return '/subjects/english/'
+  if (slug === 'math') return '/math/'
+  if (slug === 'history') return '/history/'
+  if (slug === 'geography') return '/geography/'
+  if (slug === 'science-life') return '/science-society/'
+  return `/subjects/${slug}/`
+}
 
 const navItems = [
   { label: '過去問', href: '#past-exams' },
   { label: 'ツール', href: '#tools' },
   { label: 'タグ定義', href: '/tags/' },
   { label: '更新履歴', href: '/updates/' },
+]
+
+const toolToc = [
+  { id: 'tool-todo',      label: '出願Todoリスト' },
+  { id: 'tool-route',     label: 'ルート比較' },
+  { id: 'tool-exemption', label: '免除・必要科目確認' },
+  { id: 'tool-analysis',  label: '過去問頻出分析' },
 ]
 
 export default function HomePage() {
@@ -61,7 +89,7 @@ export default function HomePage() {
               <h2 id="past-exams-title" className="mt-2 font-mincho text-3xl font-bold leading-tight sm:text-4xl md:text-[48px] md:leading-none">過去問の入手方法</h2>
             </div>
             <div className="space-y-4 text-base sm:text-lg">
-              <p>文部科学省が公開している過去問PDFを端末に保存し、各科目の分析ページへアップロードします。科目別の分析ページはヘッダーの「過去問分析ツール」プルダウンから選択できます。</p>
+              <p>文部科学省が公開している過去問PDFを端末に保存し、各科目の分析ページへアップロードします。</p>
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
                 <a className="hard-button button-like bg-orange px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省の過去問ページ</a>
                 <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialExamGuideUrl} target="_blank" rel="noopener">試験概要を確認</a>
@@ -70,21 +98,81 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ツール一覧：3カラム並列配置 */}
+        {/* ツール一覧 */}
         <section id="tools" className="mt-8" aria-labelledby="tools-title">
           <div className="mb-6">
             <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">TOOLS</p>
             <h2 id="tools-title" className="mt-2 font-mincho text-3xl font-bold leading-tight sm:text-4xl md:text-6xl md:leading-none">ツール一覧</h2>
-            <p className="mt-3 max-w-2xl text-sm sm:mt-4 sm:text-base">
-              出願準備・ルート比較・免除科目確認の三つのツールを提供します。過去問頻出分析ツールはヘッダーの「過去問分析ツール」プルダウンから科目を選択してください。
-            </p>
           </div>
 
-          {/* 3-column grid: 1col mobile, 3col desktop */}
+          {/* ── 目次 ── */}
+          <nav className="mb-8 border-2 border-ink bg-paper p-4 sm:p-5" aria-label="ツール目次">
+            <p className="text-sm font-bold">このページのツール</p>
+            <ol className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+              {toolToc.map((t, i) => (
+                <li key={t.id}>
+                  <a
+                    href={`#${t.id}`}
+                    className="flex min-h-[44px] items-center gap-2 border-2 border-ink bg-cream px-3 py-2 text-sm font-bold no-underline transition-colors hover:bg-yellow/30"
+                  >
+                    <span className="grid h-6 w-6 shrink-0 place-items-center border border-ink bg-yellow text-xs font-bold tabular-nums" aria-hidden="true">
+                      {i + 1}
+                    </span>
+                    {t.label}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+
+          {/* ── 3カラム：Todo / ルート比較 / 免除確認 ── */}
           <div className="grid gap-6 lg:grid-cols-3 lg:items-start">
-            <ApplicationTodo />
-            <RouteCompare />
-            <ExemptionCheck />
+            <div id="tool-todo"><ApplicationTodo /></div>
+            <div id="tool-route"><RouteCompare /></div>
+            <div id="tool-exemption"><ExemptionCheck /></div>
+          </div>
+
+          {/* ── 過去問頻出分析ツール ── */}
+          <div id="tool-analysis" className="mt-10">
+            <div className="mb-5">
+              <p className="font-serifDisplay text-xs uppercase tracking-[.18em]">PAST EXAM ANALYSIS</p>
+              <h3 className="mt-1 font-mincho text-2xl font-bold leading-tight sm:text-3xl md:text-4xl">
+                <ruby>過去問<rp>(</rp><rt>かこもん</rt><rp>)</rp></ruby>
+                <ruby>頻出<rp>(</rp><rt>ひんしゅつ</rt><rp>)</rp></ruby>
+                <ruby>分析<rp>(</rp><rt>ぶんせき</rt><rp>)</rp></ruby>
+                ツール
+              </h3>
+              <p className="mt-2 max-w-2xl text-sm sm:text-base">
+                文科省公開の過去問PDFをブラウザ上で解析し、科目ごとの出題傾向・頻出トピックを可視化します。各カードから科目別ページへ移動してください。
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {subjects.map((s) => {
+                const st = statusLabel[s.status]
+                return (
+                  <a
+                    key={s.slug}
+                    href={subjectHref(s.slug)}
+                    className="group border-2 border-ink bg-paper p-4 no-underline transition-colors hover:bg-yellow/10"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <span className="font-serifDisplay text-xs uppercase tracking-wider text-ink/50">{s.label}</span>
+                        <p className="mt-0.5 font-mincho text-lg font-bold sm:text-xl">{s.name}</p>
+                      </div>
+                      <span className={`shrink-0 border px-2 py-0.5 text-xs font-bold ${st.style}`}>
+                        {st.text}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm leading-relaxed">{s.description}</p>
+                    {s.legacy && (
+                      <p className="mt-1.5 text-xs text-ink/50">{s.legacy}</p>
+                    )}
+                  </a>
+                )
+              })}
+            </div>
           </div>
         </section>
       </main>
