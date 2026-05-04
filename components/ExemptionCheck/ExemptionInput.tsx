@@ -19,8 +19,7 @@ export default function ExemptionInputForm({ input, onChange, onClear }: Props) 
     Object.values(input.credits).some((v) => v > 0) ||
     input.eiken !== 'なし' ||
     input.suken !== 'なし' ||
-    input.kanken !== 'なし' ||
-    input.otherQualification !== ''
+    input.kanken !== 'なし'
 
   const updateCredit = (slug: string, value: string) => {
     const num = parseInt(value, 10)
@@ -132,19 +131,7 @@ export default function ExemptionInputForm({ input, onChange, onClear }: Props) 
             </select>
           </div>
         </div>
-        <div className="mt-2">
-          <label htmlFor="exemption-other" className="block text-xs font-bold">
-            その他の資格（自由記入）
-          </label>
-          <input
-            id="exemption-other"
-            type="text"
-            value={input.otherQualification}
-            onChange={(e) => onChange({ ...input, otherQualification: e.target.value })}
-            placeholder="例：簿記2級、情報処理技術者"
-            className="mt-0.5 w-full min-h-[44px] border-2 border-ink bg-paper px-2 py-1.5 text-sm focus-visible:outline-4 focus-visible:outline-blue"
-          />
-        </div>
+
       </div>
 
       {hasInput && (
