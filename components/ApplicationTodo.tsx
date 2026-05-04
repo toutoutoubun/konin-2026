@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { officialExamGuideUrl, officialPastExamUrl, nextExam, daysUntil } from '@/data/subjects'
+import { useEffect, useState } from 'react'
+import { officialExamGuideUrl, officialPastExamUrl } from '@/data/subjects'
 
 type TodoItem = {
   id: string
@@ -63,20 +63,12 @@ const steps: TodoStep[] = [
 
 export default function ApplicationTodo() {
   const [checked, setChecked] = useState<Record<string, boolean>>({})
-  const [days, setDays] = useState<{ exam: number; deadline: number } | null>(null)
   const [openSteps, setOpenSteps] = useState<Record<string, boolean>>({ 'STEP 1：試験を知る': true })
 
   useEffect(() => {
     const saved = window.localStorage.getItem('koninpass:applicationTodo')
     setChecked(saved ? JSON.parse(saved) : {})
-    setDays({
-      exam: daysUntil(nextExam.date),
-      deadline: daysUntil(nextExam.applicationDeadline),
-    })
   }, [])
-
-  const total = useMemo(() => steps.reduce((sum, step) => sum + step.items.length, 0), [])
-  const done = Object.values(checked).filter(Boolean).length
 
   const toggle = (id: string) => {
     const next = { ...checked, [id]: !checked[id] }
@@ -101,39 +93,7 @@ export default function ApplicationTodo() {
         </h2>
       </div>
 
-      {/* Progress bar */}
-      <div className="mt-3" aria-live="polite">
-        <div className="flex items-baseline justify-between text-sm">
-          <span className="font-bold">進行状況</span>
-          <span>{done} / {total} 件</span>
-        </div>
-        <div className="mt-1.5 h-2.5 w-full border border-ink bg-cream" role="progressbar" aria-valuenow={done} aria-valuemin={0} aria-valuemax={total} aria-label={`${done}件中${total}件完了`}>
-          <div
-            className="h-full bg-blue transition-all duration-300"
-            style={{ width: `${total > 0 ? (done / total) * 100 : 0}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Exam countdown */}
-      {days && (
-        <div className="mt-3 grid grid-cols-2 gap-2 text-center text-xs">
-          <div className="border border-ink bg-cream p-2">
-            <span className="block font-bold">次回試験まで</span>
-            <span className="mt-0.5 block text-lg font-bold tabular-nums text-blue">
-              {days.exam > 0 ? `${days.exam}日` : '終了'}
-            </span>
-          </div>
-          <div className="border border-ink bg-cream p-2">
-            <span className="block font-bold">出願締切まで</span>
-            <span className={`mt-0.5 block text-lg font-bold tabular-nums ${days.deadline > 0 ? 'text-orange' : 'text-ink/50'}`}>
-              {days.deadline > 0 ? `${days.deadline}日` : '終了'}
-            </span>
-          </div>
-        </div>
-      )}
-
-      <p className="mt-2 text-xs text-ink/60">チェック状態はこの端末に保存されます。</p>
+      <p className="mt-3 text-xs text-ink/60">チェック状態はこの端末に保存されます。</p>
 
       {/* Accordion steps */}
       <div className="mt-3 flex-1 space-y-1.5 overflow-y-auto" role="group" aria-label="出願Todoチェックリスト">
