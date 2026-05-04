@@ -3,21 +3,40 @@
 ## Project Overview
 - **Name**: 高認パス
 - **Goal**: 高等学校卒業程度認定試験（高卒認定・高認）の公開済み過去問PDFを科目別に集計し、頻出傾向を知的でグラフィカルに可視化するWebツール。
-- **Phase 1 Scope**: トップページ、科目別詳細ページ構成、英語頻出分析、数学頻出分析、タグ定義、更新履歴、表示設定、出願Todoリスト。
+- **Phase 1 Scope**: トップページ（3カラムツール配置）、ルート比較ツール、免除・必要科目確認ツール、出願Todoリスト、科目別詳細ページ構成、英語頻出分析、数学頻出分析、歴史頻出分析、地理頻出分析、科学と人間生活頻出分析、タグ定義、更新履歴、表示設定。
 - **Design Tone**: レトロモダン・ポップ。クリーム背景、ブラックの大胆なタイポグラフィ、ビビッドブルー／サンセットオレンジ／ウォームイエローを限定的に使用。
 - **Privacy Model**: PDF解析はPDF.jsとwink-NLPを使ったクライアントサイド処理。サーバーへのデータ送信は行わない。
 
 ## Currently Completed Features
 - Next.js static export構成
-- `/` 高認パストップページ
+- `/` 高認パストップページ（3カラムレイアウト）
   - 高認パスとは
   - 文科省過去問の入手方法ガイド
-  - 出願Todoリスト
-  - 科目別ツール一覧カード
+  - ヘッダーに「過去問分析ツール」ドロップダウンナビ
+  - **3カラム並列ツール配置**（デスクトップ: 3列、モバイル: 1列）
+    - 出願Todoリスト
+    - ルート比較ツール
+    - 免除・必要科目確認ツール
 - 出願Todoリスト
-  - STEP 1〜5のチェックリスト
+  - STEP 1〜5のアコーディオン型チェックリスト
+  - プログレスバーで進捗を視覚表示
+  - 次回試験・出願締切のカウントダウン表示
   - チェック状態をLocalStorageに保存
-  - 次回試験・次回出願期限の残日数を事実ベースで表示
+- ルート比較ツール（ROUTE COMPARE）
+  - 高認取得・通信制高校転籍・在籍継続の3ルートをアコーディオン型で比較
+  - 各ルートの詳細情報（試験回数、受験資格、在籍、費用、卒業資格、大学受験等）
+  - 任意入力（学年、欠席期間、卒業意向、希望時期）で条件ノート表示
+  - LocalStorage保存・復元、クリア機能
+  - 注意書き（公開情報ベースである旨の免責）
+- 免除・必要科目確認ツール（EXEMPTION CHECK）
+  - 11科目の免除判定（国語、数学、英語、歴史、地理、公民、科学と人間生活、物理基礎、化学基礎、生物基礎、地学基礎）
+  - 結果を3グループ表示：免除できる可能性がある科目(○)、受験が必要な可能性がある科目(△)、確認が必要な科目(？)
+  - サマリーバーで科目数を一覧表示
+  - 入力：高校在籍有無、科目別単位数、英検・数検・漢検レベル、その他資格
+  - 英検準2級以上→英語免除可能性、数検2級以上→数学免除可能性の自動判定
+  - 単位数による免除判定（科目別閾値設定）
+  - LocalStorage保存・復元、クリア機能
+  - 注意書き（文部科学省への確認が必要な旨の免責）
 - 共通UI
   - ヘッダー、主要ナビゲーション、パンくず、フッター
   - 表示設定パネル（ふりがな、文字サイズ、UDフォント、行間、文字間隔）
@@ -89,9 +108,11 @@
   - `VocabItem`: 単語、品詞、CEFRレベル、出現回数 [v2.0]
   - `CefrDistributionRow`: CEFRレベル、語彙数、構成比 [v2.0]
   - `GrammarVocabCrossCell`: 文法タグ×CEFRレベルの件数 [v2.0]
-- **Storage Services**: 外部DBなし。PDF解析結果はブラウザメモリ上のみ。表示設定と出願TodoのみLocalStorageに保存。
+- **Storage Services**: 外部DBなし。PDF解析結果はブラウザメモリ上のみ。LocalStorage保存対象：表示設定、出願Todo、ルート比較入力、免除確認入力。
 - **Static Data**
   - `data/subjects.ts`: 科目一覧、公式リンク、次回試験・出願期限
+  - `data/routes.ts`: ルート比較データ（高認取得・通信制・在籍継続）、型定義、条件ノート
+  - `data/exemptions.ts`: 免除科目データ（11科目）、評価ロジック、資格レベル定義
   - `data/englishTags.json`: 英語rule_set、文法タグ、CEFRレベル
   - `data/cefrVocab.json`: CEFR A1〜B2語彙リスト＋機能語リスト [v2.0]
   - `data/mathTags.json`: 数学MATH_STDルールセット、6ブロック定義、topic_l1/l2、keyword_map
@@ -106,7 +127,16 @@
 - `app/math/page.tsx` — 数学分析ページ本体
 - `app/tags/page.tsx` — タグ定義ページ
 - `app/updates/page.tsx` — 更新履歴ページ
-- `components/ApplicationTodo.tsx` — 出願Todoリスト
+- `components/ApplicationTodo.tsx` — 出願Todoリスト（アコーディオン型、プログレスバー、カウントダウン）
+- `components/RouteCompare/RouteCompare.tsx` — ルート比較ツール親コンポーネント
+- `components/RouteCompare/RouteCompareInput.tsx` — ルート比較入力フォーム
+- `components/RouteCompare/RouteCompareTable.tsx` — ルート比較アコーディオン表
+- `components/RouteCompare/RouteCompareNote.tsx` — ルート比較注意書き
+- `components/ExemptionCheck/ExemptionCheck.tsx` — 免除確認ツール親コンポーネント
+- `components/ExemptionCheck/ExemptionInput.tsx` — 免除確認入力フォーム
+- `components/ExemptionCheck/ExemptionResult.tsx` — 免除確認結果表示
+- `components/ExemptionCheck/ExemptionNote.tsx` — 免除確認注意書き
+- `components/SubjectNav/SubjectDropdown.tsx` — 過去問分析ツールドロップダウンナビ
 - `components/PDFUploader.tsx` — 英語PDFアップロードUI
 - `components/MathPDFUploader.tsx` — 数学PDFアップロードUI
 - `components/FilterPanel.tsx` — 英語フィルタUI（CEFRレベル・品詞対応） [v2.0更新]
@@ -133,16 +163,19 @@
 
 ## User Guide
 1. `/` を開く。
-2. 文科省公開の過去問PDF入手方法と出願Todoを確認する。
-3. ツール一覧から科目詳細ページを開く。
-4. 英語は `/subjects/english/` でPDFをアップロードする。
-5. 数学は `/math/` でPDFをアップロードする（複数年度同時選択可）。
-6. 解析完了後、検出された試験回・大問構造を確認する。
-7. よく出る単元（Section B）、近年頻出（Section C）、出題形式分布（Section D）、年度推移（Section E）を見る。
-8. **頻出語彙ランキング（Section F）でCEFRレベル別の語彙分析を確認する。** [v2.0]
-9. **文法×語彙レベル分析（Section G）で文法項目とCEFRレベルのクロス集計を確認する。** [v2.0]
-10. フィルタで制度区分・試験回範囲・問題形式・文法項目・CEFRレベル・品詞の表示条件を変える。
-11. ヘッダーの「表示設定」から読みやすさを調整する。
+2. ツール一覧の3カラムを確認する（出願Todo、ルート比較、免除確認）。
+3. ルート比較ツールで高認取得・通信制・在籍継続の選択肢を比較する（任意入力で条件ノート表示）。
+4. 免除・必要科目確認ツールで取得単位・資格から免除可能性を確認する。
+5. 出願Todoリストでステップごとに進捗を管理する。
+6. ヘッダーの「過去問分析ツール」プルダウンから科目別の分析ページを開く。
+7. 英語は `/subjects/english/` でPDFをアップロードする。
+8. 数学は `/math/` でPDFをアップロードする（複数年度同時選択可）。
+9. 解析完了後、検出された試験回・大問構造を確認する。
+10. よく出る単元（Section B）、近年頻出（Section C）、出題形式分布（Section D）、年度推移（Section E）を見る。
+11. **頻出語彙ランキング（Section F）でCEFRレベル別の語彙分析を確認する。** [v2.0]
+12. **文法×語彙レベル分析（Section G）で文法項目とCEFRレベルのクロス集計を確認する。** [v2.0]
+13. フィルタで制度区分・試験回範囲・問題形式・文法項目・CEFRレベル・品詞の表示条件を変える。
+14. ヘッダーの「表示設定」から読みやすさを調整する。
 
 ## Features Not Yet Implemented
 - 数学以外の科目別PDF解析ロジック（国語、歴史、地理、公民、理科系）
@@ -164,4 +197,4 @@
 - **Build Output**: `out/`
 - **Tech Stack**: Next.js 14 static export + TypeScript + Tailwind CSS + PDF.js + wink-NLP + Recharts
 - **Status**: Local implementation completed, production not deployed
-- **Last Updated**: 2026-05-02
+- **Last Updated**: 2026-05-04
