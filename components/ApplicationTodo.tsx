@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { officialExamGuideUrl, officialPastExamUrl, nextExam } from '@/data/subjects'
+import { officialExamGuideUrl, officialPastExamUrl, nextExam, daysUntil } from '@/data/subjects'
 
 type TodoItem = {
   id: string
@@ -61,21 +61,18 @@ const steps: TodoStep[] = [
   }
 ]
 
-function calcDaysUntil(dateString: string) {
-  const now = new Date()
-  const target = new Date(`${dateString}T00:00:00+09:00`)
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  return Math.ceil((target.getTime() - today.getTime()) / 86400000)
-}
-
 export default function ApplicationTodo() {
   const [checked, setChecked] = useState<Record<string, boolean>>({})
   const [days, setDays] = useState<{ exam: number; deadline: number } | null>(null)
+  const [openSteps, setOpenSteps] = useState<Record<string, boolean>>({ 'STEP 1：試験を知る': true })
 
   useEffect(() => {
     const saved = window.localStorage.getItem('koninpass:applicationTodo')
     setChecked(saved ? JSON.parse(saved) : {})
-    setDays({ exam: calcDaysUntil(nextExam.date), deadline: calcDaysUntil(nextExam.applicationDeadline) })
+    setDays({
+      exam: daysUntil(nextExam.date),
+      deadline: daysUntil(nextExam.applicationDeadline),
+    })
   }, [])
 
   const total = useMemo(() => steps.reduce((sum, step) => sum + step.items.length, 0), [])
@@ -87,43 +84,117 @@ export default function ApplicationTodo() {
     window.localStorage.setItem('koninpass:applicationTodo', JSON.stringify(next))
   }
 
+  const toggleStep = (title: string) => {
+    setOpenSteps((prev) => ({ ...prev, [title]: !prev[title] }))
+  }
+
+  const stepDone = (step: TodoStep) => step.items.filter((item) => checked[item.id]).length
+
   return (
-    <section className="panel p-5 sm:p-6 md:p-8" aria-labelledby="todo-title">
-      <div className="grid gap-6 lg:grid-cols-[.9fr_1.1fr]">
-        <div>
-          <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">APPLICATION MAP</p>
-          <h2 id="todo-title" className="mt-2 font-mincho text-3xl font-bold leading-tight sm:text-4xl md:text-[48px] md:leading-none">出願Todoリスト</h2>
-          <p className="mt-3 max-w-xl text-sm sm:mt-4 sm:text-base">チェック状態はこの端末に保存されます。</p>
-          <dl className="mt-4 grid gap-3 text-base sm:mt-5 sm:text-lg" aria-live="polite">
-            <div className="border-2 border-ink bg-cream p-3 sm:p-4">
-              <dt className="font-bold">進行状況</dt>
-              <dd>{done} / {total} 件</dd>
-            </div>
-          </dl>
+    <section className="panel flex flex-col p-4 sm:p-5" aria-labelledby="todo-title">
+      {/* Header */}
+      <div>
+        <p className="font-serifDisplay text-xs uppercase tracking-[.18em]">APPLICATION MAP</p>
+        <h2 id="todo-title" className="mt-1 font-mincho text-2xl font-bold leading-tight sm:text-3xl">
+          <ruby>出願<rp>(</rp><rt>しゅつがん</rt><rp>)</rp></ruby>
+          Todoリスト
+        </h2>
+      </div>
+
+      {/* Progress bar */}
+      <div className="mt-3" aria-live="polite">
+        <div className="flex items-baseline justify-between text-sm">
+          <span className="font-bold">進行状況</span>
+          <span>{done} / {total} 件</span>
         </div>
-        <div className="space-y-4 sm:space-y-5" role="group" aria-label="出願Todoチェックリスト">
-          {steps.map((step) => (
-            <section key={step.title} aria-labelledby={`todo-${step.title}`}>
-              <h3 id={`todo-${step.title}`} className="font-mincho text-xl font-bold sm:text-2xl">{step.title}</h3>
-              <ul className="mt-2 space-y-2 sm:mt-3">
-                {step.items.map((item) => (
-                  <li key={item.id} className="flex gap-3 border-2 border-ink bg-cream p-3">
-                    <input
-                      id={`todo-${item.id}`}
-                      type="checkbox"
-                      className="mt-0.5 h-5 w-5 shrink-0 accent-blue sm:mt-1"
-                      checked={Boolean(checked[item.id])}
-                      onChange={() => toggle(item.id)}
-                    />
-                    <label htmlFor={`todo-${item.id}`} className="flex-1 text-sm sm:text-base">
-                      {item.href ? <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noopener' : undefined}>{item.label}</a> : item.label}
-                    </label>
-                  </li>
-                ))}
-              </ul>
+        <div className="mt-1.5 h-2.5 w-full border border-ink bg-cream" role="progressbar" aria-valuenow={done} aria-valuemin={0} aria-valuemax={total} aria-label={`${done}件中${total}件完了`}>
+          <div
+            className="h-full bg-blue transition-all duration-300"
+            style={{ width: `${total > 0 ? (done / total) * 100 : 0}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Exam countdown */}
+      {days && (
+        <div className="mt-3 grid grid-cols-2 gap-2 text-center text-xs">
+          <div className="border border-ink bg-cream p-2">
+            <span className="block font-bold">次回試験まで</span>
+            <span className="mt-0.5 block text-lg font-bold tabular-nums text-blue">
+              {days.exam > 0 ? `${days.exam}日` : '終了'}
+            </span>
+          </div>
+          <div className="border border-ink bg-cream p-2">
+            <span className="block font-bold">出願締切まで</span>
+            <span className={`mt-0.5 block text-lg font-bold tabular-nums ${days.deadline > 0 ? 'text-orange' : 'text-ink/50'}`}>
+              {days.deadline > 0 ? `${days.deadline}日` : '終了'}
+            </span>
+          </div>
+        </div>
+      )}
+
+      <p className="mt-2 text-xs text-ink/60">チェック状態はこの端末に保存されます。</p>
+
+      {/* Accordion steps */}
+      <div className="mt-3 flex-1 space-y-1.5 overflow-y-auto" role="group" aria-label="出願Todoチェックリスト">
+        {steps.map((step) => {
+          const isOpen = openSteps[step.title] ?? false
+          const sDone = stepDone(step)
+          const sTotal = step.items.length
+          const allDone = sDone === sTotal
+
+          return (
+            <section key={step.title} aria-labelledby={`todo-heading-${step.title}`}>
+              <button
+                type="button"
+                id={`todo-heading-${step.title}`}
+                className={`flex w-full min-h-[44px] items-center gap-2 border-2 border-ink px-3 py-2 text-left text-sm font-bold transition-colors ${allDone ? 'bg-blue/10' : 'bg-cream'}`}
+                aria-expanded={isOpen}
+                onClick={() => toggleStep(step.title)}
+              >
+                <svg
+                  className={`h-3.5 w-3.5 shrink-0 transition-transform ${isOpen ? 'rotate-90' : ''}`}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+                <span className="flex-1">{step.title}</span>
+                <span className={`shrink-0 border border-ink px-1.5 py-0.5 text-xs tabular-nums ${allDone ? 'bg-blue text-white' : 'bg-paper'}`}>
+                  {sDone}/{sTotal}
+                </span>
+              </button>
+              {isOpen && (
+                <ul className="border-x-2 border-b-2 border-ink">
+                  {step.items.map((item) => (
+                    <li key={item.id} className="flex items-start gap-2.5 border-b border-ink/10 px-3 py-2 last:border-0">
+                      <input
+                        id={`todo-${item.id}`}
+                        type="checkbox"
+                        className="mt-0.5 h-5 w-5 shrink-0 accent-blue"
+                        checked={Boolean(checked[item.id])}
+                        onChange={() => toggle(item.id)}
+                      />
+                      <label htmlFor={`todo-${item.id}`} className="flex-1 text-sm leading-snug">
+                        {item.href ? (
+                          <a
+                            href={item.href}
+                            target={item.href.startsWith('http') ? '_blank' : undefined}
+                            rel={item.href.startsWith('http') ? 'noopener' : undefined}
+                          >
+                            {item.label}
+                          </a>
+                        ) : (
+                          item.label
+                        )}
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </section>
-          ))}
-        </div>
+          )
+        })}
       </div>
     </section>
   )

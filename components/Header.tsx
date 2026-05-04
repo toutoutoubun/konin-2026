@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import DisplaySettings from '@/components/DisplaySettings'
+import SubjectDropdown from '@/components/SubjectNav/SubjectDropdown'
 
 type NavItem = {
   label: string
@@ -10,9 +11,10 @@ type NavItem = {
 
 type HeaderProps = {
   navItems: NavItem[]
+  showSubjectDropdown?: boolean
 }
 
-export default function Header({ navItems }: HeaderProps) {
+export default function Header({ navItems, showSubjectDropdown = false }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -66,7 +68,8 @@ export default function Header({ navItems }: HeaderProps) {
         </a>
 
         {/* Desktop nav */}
-        <nav aria-label="主要ナビゲーション" className="hidden flex-wrap gap-5 font-bold md:flex">
+        <nav aria-label="主要ナビゲーション" className="hidden items-center gap-4 font-bold md:flex lg:gap-5">
+          {showSubjectDropdown && <SubjectDropdown />}
           {navItems.map((item) => (
             <a key={item.href} href={item.href} onClick={() => setMenuOpen(false)}>{item.label}</a>
           ))}
@@ -109,6 +112,11 @@ export default function Header({ navItems }: HeaderProps) {
         }`}
       >
         <nav aria-label="モバイルナビゲーション" className="mx-auto max-w-7xl px-4 py-4">
+          {showSubjectDropdown && (
+            <div className="mb-3">
+              <SubjectDropdown />
+            </div>
+          )}
           <ul className="space-y-1">
             {navItems.map((item) => (
               <li key={item.href}>
