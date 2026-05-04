@@ -1,0 +1,113 @@
+'use client'
+
+import { useRef, useState } from 'react'
+import { parseSciencePdfs, type SciParseProgress } from '@/lib/sciencePdfParser'
+import type { SciAnalysisResult } from '@/lib/scienceTagMapper'
+import SkeletonLoader from './SkeletonLoader'
+
+type Props = {
+  onComplete: (results: SciAnalysisResult[]) => void
+  onError: (message: string) => void
+}
+
+export default function SciencePDFUploader({ onComplete, onError }: Props) {
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  const [dragging, setDragging] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [progress, setProgress] = useState<SciParseProgress | null>(null)
+
+  const handleFiles = async (fileList: FileList | File[]) => {
+    const files = Array.from(fileList).filter(
+      (file) => file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')
+    )
+    if (!files.length) {
+      onError('該当データはない：PDFファイルを選択してください。')
+      return
+    }
+
+    setLoading(true)
+    onError('')
+    try {
+      const results = await parseSciencePdfs(files, setProgress)
+      onComplete(results)
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message === 'NO_TEXT'
+          ? '該当データはない：PDFからテキストを抽出できませんでした。別の公開過去問PDFで試してください。'
+          : '解析できませんでした。PDFを選び直すか、文科省公開の過去問PDFか確認してください。'
+      onError(message)
+    } finally {
+      setLoading(false)
+      setProgress(null)
+    }
+  }
+
+  return (
+    <section className="panel p-6 md:p-8" aria-labelledby="sci-upload-title">
+      <div className="mb-6">
+        <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">UPLOAD</p>
+        <h2 id="sci-upload-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
+          PDFアップロード
+        </h2>
+        <p id="sci-upload-help" className="mt-3 max-w-3xl">
+          文科省公開の<ruby>科学<rt>かがく</rt></ruby>と<ruby>人間<rt>にんげん</rt></ruby><ruby>生活<rt>せいかつ</rt></ruby>過去問PDFをアップロードすると分析します。複数ファイルを同時に追加できます。PDFはサーバーへ送信せず、ブラウザ上で処理します。
+        </p>
+      </div>
+
+      <div
+        role="button"
+        tabIndex={0}
+        aria-describedby="sci-upload-help sci-upload-status"
+        aria-label="科学と人間生活 過去問PDFをアップロード"
+        className={`grid min-h-[230px] place-items-center border-[3px] border-dashed border-ink bg-cream p-8 text-center ${dragging ? 'bg-yellow' : ''}`}
+        onClick={() => inputRef.current?.click()}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            inputRef.current?.click()
+          }
+        }}
+        onDragEnter={(event) => {
+          event.preventDefault()
+          setDragging(true)
+        }}
+        onDragOver={(event) => event.preventDefault()}
+        onDragLeave={(event) => {
+          event.preventDefault()
+          setDragging(false)
+        }}
+        onDrop={(event) => {
+          event.preventDefault()
+          setDragging(false)
+          void handleFiles(event.dataTransfer.files)
+        }}
+      >
+        <input
+          ref={inputRef}
+          className="sr-only"
+          type="file"
+          accept="application/pdf,.pdf"
+          multiple
+          onChange={(event) => event.target.files && void handleFiles(event.target.files)}
+        />
+        <div>
+          <span className="mx-auto mb-4 grid h-20 w-20 place-items-center rounded-full border-2 border-ink bg-blue font-serifDisplay text-xl text-white">
+            PDF
+          </span>
+          <strong className="block text-xl">ここへドラッグ&ドロップ</strong>
+          <span className="mt-2 block">またはクリックして複数PDFを選択</span>
+        </div>
+      </div>
+
+      <div id="sci-upload-status" className="mt-5" aria-live="polite">
+        {loading ? (
+          <SkeletonLoader label={progress?.message ?? 'PDFアップロード中'} />
+        ) : (
+          <p className="border-2 border-ink bg-cream p-4">
+            未解析。PDFを選択すると、解析したファイル名と検出した試験回を表示します。
+          </p>
+        )}
+      </div>
+    </section>
+  )
+}

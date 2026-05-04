@@ -75,7 +75,7 @@ export default function HomePage() {
                   <span className={`border-2 border-ink px-3 py-1 text-sm font-bold ${accentClass[subject.accent]}`}>
                     {subject.status === 'active' ? '実装済み' : subject.status === 'coming-soon' ? '準備中' : '画面構成'}
                   </span>
-                  <a className="hard-button button-like bg-paper px-4 py-2 text-sm no-underline" href={subject.slug === 'english' ? '/subjects/english/' : subject.slug === 'math' ? '/math/' : subject.slug === 'history' ? '/history/' : subject.slug === 'geography' ? '/geography/' : `/subjects/${subject.slug}/`}>
+                  <a className="hard-button button-like bg-paper px-4 py-2 text-sm no-underline" href={subject.slug === 'english' ? '/subjects/english/' : subject.slug === 'math' ? '/math/' : subject.slug === 'history' ? '/history/' : subject.slug === 'geography' ? '/geography/' : subject.slug === 'science-life' ? '/science-society/' : `/subjects/${subject.slug}/`}>
                     詳細ページへ
                   </a>
                 </div>

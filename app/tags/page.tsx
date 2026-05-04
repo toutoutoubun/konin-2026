@@ -9,6 +9,7 @@ import geographyTags from '@/data/geographyTags.json'
 import japaneseTags from '@/data/japaneseTags.json'
 import civicsTags from '@/data/civicsTags.json'
 import scienceLifeTags from '@/data/scienceLifeTags.json'
+import scienceTags from '@/data/scienceTags.json'
 import physicsTags from '@/data/physicsTags.json'
 import chemistryTags from '@/data/chemistryTags.json'
 import biologyTags from '@/data/biologyTags.json'
@@ -179,10 +180,36 @@ const subjectTabs: SubjectTab[] = [
     slug: 'science-life',
     name: '科学と人間生活',
     accent: 'blue',
-    status: 'placeholder',
-    unitRows: buildUnitRows(scienceLifeTags.rule_sets[0].units),
+    status: 'active',
+    unitRows: scienceTags.rule_sets[0].selection_structure.flatMap((group) =>
+      group.blocks.map((b) => [
+        b.block,
+        `${group.group}：${b.topic_l2}`,
+        b.keywords.slice(0, 8).join('、'),
+        `大問番号から${group.group}を特定し、キーワード照合で確認`,
+        `問題範囲：${b.question_range}`
+      ] as TagRow)
+    ),
     formatTags: scienceLifeTags.format_tags,
-    ruleSets: scienceLifeTags.rule_sets.map((r) => ({ code: r.code, label: r.label, detail: `全${r.total_blocks}大問` })),
+    ruleSets: [{ code: scienceTags.rule_sets[0].code, label: scienceTags.rule_sets[0].label, detail: `全${scienceTags.rule_sets[0].total_blocks}大問・4分野から2分野選択` }],
+    extraSections: (
+      <div className="mt-6">
+        <h4 className="font-mincho text-xl font-bold">選択構造</h4>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          {scienceTags.rule_sets[0].selection_structure.map((group) => (
+            <div key={group.group} className="border-2 border-ink bg-cream p-4">
+              <strong>{group.group}</strong>
+              <p className="mt-1 text-sm">{group.instruction}</p>
+              <ul className="mt-2 space-y-1 text-sm">
+                {group.blocks.map((b) => (
+                  <li key={b.block}>{b.block}：{b.topic_l2}(問{b.question_range})</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
   },
   {
     slug: 'physics',
