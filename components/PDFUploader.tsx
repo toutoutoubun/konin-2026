@@ -30,8 +30,8 @@ export default function PDFUploader({ onComplete, onError }: Props) {
       onComplete(results)
     } catch (error) {
       const message = error instanceof Error && error.message === 'NO_TEXT'
-        ? '該当データはない：PDFからテキストを抽出できませんでした。別の公開過去問PDFで試してください。'
-        : '解析できませんでした。PDFを選び直すか、文科省公開の過去問PDFか確認してください。'
+        ? '該当データはない：PDFからテキストを抽出できませんでした。別の公式PDFで試してください。'
+        : '解析できませんでした。PDFを選び直すか、文科省公式ページから取得したPDFか確認してください。'
       onError(message)
     } finally {
       setLoading(false)
@@ -42,10 +42,10 @@ export default function PDFUploader({ onComplete, onError }: Props) {
   return (
     <section className="panel p-6 md:p-8" aria-labelledby="upload-title">
       <div className="mb-6">
-        <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">UPLOAD</p>
-        <h2 id="upload-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">PDFアップロード</h2>
+        <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">LOCAL PDF</p>
+        <h2 id="upload-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">公式PDFを選択</h2>
         <p id="upload-help" className="mt-3 max-w-3xl">
-          文科省公開の英語過去問PDFをアップロードすると分析します。PDFはサーバーへ送信せず、ブラウザ上で処理します。
+          ユーザーが文科省公式ページから取得した英語PDFを選択すると、端末内で傾向データを集計します。PDFはサーバーへ送信せず、問題文や設問文は再掲載しません。
         </p>
       </div>
 
@@ -53,7 +53,7 @@ export default function PDFUploader({ onComplete, onError }: Props) {
         role="button"
         tabIndex={0}
         aria-describedby="upload-help upload-status"
-        aria-label="英語過去問PDFをアップロード"
+        aria-label="英語の公式PDFを端末内解析用に選択"
         className={`grid min-h-[230px] place-items-center border-[3px] border-dashed border-ink bg-cream p-8 text-center ${dragging ? 'bg-yellow' : ''}`}
         onClick={() => inputRef.current?.click()}
         onKeyDown={(event) => {
@@ -93,7 +93,7 @@ export default function PDFUploader({ onComplete, onError }: Props) {
       </div>
 
       <div id="upload-status" className="mt-5" aria-live="polite">
-        {loading ? <SkeletonLoader label={progress?.message ?? 'PDFアップロード中'} /> : <p className="border-2 border-ink bg-cream p-4">未解析。PDFを選択すると、解析したファイル名と検出した試験回・制度区分を表示します。</p>}
+        {loading ? <SkeletonLoader label={progress?.message ?? 'PDF解析中'} /> : <p className="border-2 border-ink bg-cream p-4">未解析。PDFを選択すると、解析したファイル名と検出した試験回・制度区分を表示します。</p>}
       </div>
     </section>
   )

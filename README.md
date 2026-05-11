@@ -2,17 +2,17 @@
 
 ## Project Overview
 - **Name**: 高認パス
-- **Goal**: 高等学校卒業程度認定試験（高卒認定・高認）の公開済み過去問PDFを科目別に集計し、頻出傾向を知的でグラフィカルに可視化するWebツール。
+- **Goal**: ユーザーが正当に取得した高等学校卒業程度認定試験（高卒認定・高認）の公式PDFを端末内で解析し、著作物の表現ではない出題傾向データを科目別に可視化するWebツール。過去問本文・設問文そのものは提供しない。
 - **Phase 1 Scope**: トップページ（3カラムツール配置）、ルート比較ツール、免除・必要科目確認ツール、出願Todoリスト、科目別詳細ページ構成、英語頻出分析、数学頻出分析、歴史頻出分析、地理頻出分析、科学と人間生活頻出分析、タグ定義、更新履歴、表示設定。
 - **Design Tone**: レトロモダン・ポップ。クリーム背景、ブラックの大胆なタイポグラフィ、ビビッドブルー／サンセットオレンジ／ウォームイエローを限定的に使用。
-- **Privacy Model**: PDF解析はPDF.jsとwink-NLPを使ったクライアントサイド処理。サーバーへのデータ送信は行わない。
+- **Privacy Model**: PDF解析はPDF.jsとwink-NLPを使ったクライアントサイド処理。サーバーへのデータ送信は行わず、問題文・設問文の保存や再掲載もしない。
 
 ## Currently Completed Features
 - Next.js static export構成
 - `/` 高認パストップページ（3カラムレイアウト）
   - 高認パスとは
-  - 文科省過去問の入手方法ガイド
-  - ヘッダーに「過去問分析ツール」ドロップダウンナビ
+  - 文科省公式PDFページへの導線
+  - ヘッダーに「公式PDF傾向分析」ドロップダウンナビ
   - **3カラム並列ツール配置**（デスクトップ: 3列、モバイル: 1列）
     - 出願Todoリスト
     - ルート比較ツール
@@ -46,8 +46,8 @@
   - 国語、歴史、地理、公民、科学と人間生活、物理基礎、化学基礎、生物基礎、地学基礎はPhase 1の構成画面
   - 情報は「令和8年度第1回より追加予定。現在過去問未公開のため分析機能は準備中です」と明示
   - 英語・数学は実装済み分析ページとして統合
-- `/subjects/english/` および `/english/` 英語過去問頻出分析ページ
-  - PDFアップロード（ドラッグ&ドロップ、複数PDF選択、スケルトン表示）
+- `/subjects/english/` および `/english/` 英語公式PDF頻出分析ページ
+  - 公式PDF選択（ドラッグ&ドロップ、複数PDF選択、スケルトン表示）
   - PDF.jsによるブラウザ内テキスト抽出
   - 年度検出とrule_set自動判定（EN_2014 / EN_2016 / EN_2024）
   - 問題構造検出、wink-NLPによる英語テキスト分析
@@ -66,8 +66,8 @@
     - ヒートマップ／表リスト切替可能
     - 傾向サマリー（事実ベースの記述のみ）
   - フィルタ（制度区分、試験回範囲、問題形式、文法項目、CEFRレベル、品詞）
-- `/math/` 数学過去問頻出分析ページ
-  - PDFアップロード（ドラッグ&ドロップ、複数PDF選択、スケルトン表示）
+- `/math/` 数学公式PDF頻出分析ページ
+  - 公式PDF選択（ドラッグ&ドロップ、複数PDF選択、スケルトン表示）
   - PDF.jsによるブラウザ内テキスト抽出
   - 年度検出（西暦・令和・平成対応）、試験回検出
   - 空白ページ・計算用紙・表紙・解答用紙の自動スキップ
@@ -136,9 +136,9 @@
 - `components/ExemptionCheck/ExemptionInput.tsx` — 免除確認入力フォーム
 - `components/ExemptionCheck/ExemptionResult.tsx` — 免除確認結果表示
 - `components/ExemptionCheck/ExemptionNote.tsx` — 免除確認注意書き
-- `components/SubjectNav/SubjectDropdown.tsx` — 過去問分析ツールドロップダウンナビ
-- `components/PDFUploader.tsx` — 英語PDFアップロードUI
-- `components/MathPDFUploader.tsx` — 数学PDFアップロードUI
+- `components/SubjectNav/SubjectDropdown.tsx` — 公式PDF傾向分析ドロップダウンナビ
+- `components/PDFUploader.tsx` — 英語PDF選択UI
+- `components/MathPDFUploader.tsx` — 数学PDF選択UI
 - `components/FilterPanel.tsx` — 英語フィルタUI（CEFRレベル・品詞対応） [v2.0更新]
 - `components/MathFilterPanel.tsx` — 数学フィルタUI
 - `components/FrequencyChart.tsx` — Rechartsグラフ（共通）
@@ -167,9 +167,9 @@
 3. ルート比較ツールで高認取得・通信制・在籍継続の選択肢を比較する（任意入力で条件ノート表示）。
 4. 免除・必要科目確認ツールで取得単位・資格から免除可能性を確認する。
 5. 出願Todoリストでステップごとに進捗を管理する。
-6. ヘッダーの「過去問分析ツール」プルダウンから科目別の分析ページを開く。
-7. 英語は `/subjects/english/` でPDFをアップロードする。
-8. 数学は `/math/` でPDFをアップロードする（複数年度同時選択可）。
+6. ヘッダーの「公式PDF傾向分析」プルダウンから科目別の分析ページを開く。
+7. 英語は `/subjects/english/` で、ユーザーが取得した公式PDFを選択する。
+8. 数学は `/math/` で、ユーザーが取得した公式PDFを選択する（複数年度同時選択可）。
 9. 解析完了後、検出された試験回・大問構造を確認する。
 10. よく出る単元（Section B）、近年頻出（Section C）、出題形式分布（Section D）、年度推移（Section E）を見る。
 11. **頻出語彙ランキング（Section F）でCEFRレベル別の語彙分析を確認する。** [v2.0]
@@ -190,7 +190,7 @@
 3. 国語・歴史など、科目別タグ定義と解析ルールを追加する。
 4. 科目別の頻出分析ロジックを順次実装する。
 5. オリジナル問題演習のUIと採点ロジックを追加する。
-6. E2Eテストでアップロード、フィルタ、表示設定、Todo保存を検証する。
+6. E2EテストでPDF選択、フィルタ、表示設定、Todo保存を検証する。
 
 ## Deployment
 - **Platform**: Cloudflare Pages static hosting

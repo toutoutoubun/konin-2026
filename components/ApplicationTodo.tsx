@@ -30,7 +30,7 @@ const steps: TodoStep[] = [
     items: [
       { id: 'subjects', label: '受験科目を決める' },
       { id: 'exemption-subjects', label: '免除申請できる科目を確認する' },
-      { id: 'download-pdfs', label: '過去問を文科省サイトからダウンロードする', href: officialPastExamUrl },
+      { id: 'download-pdfs', label: '公式PDFを文科省サイトから取得する', href: officialPastExamUrl },
       { id: 'analysis', label: '頻出分析ツールで出題傾向を確認する', href: '#tools' }
     ]
   },

@@ -136,7 +136,7 @@ export default function GeographyAnalysisPage() {
       {/* ── ヘッダー ── */}
       <Header navItems={[
         { label: 'ツール一覧', href: '/#tools' },
-        { label: 'アップロード', href: '#geo-upload-title' },
+        { label: 'PDF選択', href: '#geo-upload-title' },
         { label: '集計', href: '#geo-ranking-title' },
         { label: 'フィルタ', href: '#geo-filter-title' },
         { label: 'タグ定義', href: '/tags/' },
@@ -160,18 +160,18 @@ export default function GeographyAnalysisPage() {
             <ruby>地理<rt>ちり</rt></ruby>頻出分析
           </h1>
           <p className="mt-5 max-w-3xl text-base leading-relaxed sm:mt-7 sm:text-xl">
-            文科省公開の地理・地理A・地理B過去問PDFをブラウザ上で解析し、大問別・テーマ別・地域別・出題形式別の頻出傾向を可視化します。PDFはサーバーへ送信しません。
+            ユーザーが文科省公式ページから取得した地理・地理A・地理BのPDFを端末内で解析し、大問別・テーマ別・地域別・出題形式別の頻出傾向を可視化します。PDFはサーバーへ送信せず、問題文や設問文は再掲載しません。
           </p>
           <p className="mt-3 max-w-3xl">
             キーワード照合で大テーマ（topic_l1）・小テーマ（topic_l2）・地域・出題形式のタグを自動付与します。2024年度以降の新課程「地理」と旧課程「地理A」「地理B」の両方に対応しています。
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4" aria-label="主要操作">
             <a className="hard-button button-like bg-blue px-5 py-3 text-center text-white no-underline" href="#geo-upload-title">PDFを分析する</a>
-            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">過去問を入手</a>
+            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式PDFページへ</a>
           </div>
         </section>
 
-        {/* ── PDFアップロード ── */}
+        {/* ── PDF選択 ── */}
         <GeographyPDFUploader
           onComplete={(nextResults) => {
             setResults((prev) => {
@@ -190,7 +190,7 @@ export default function GeographyAnalysisPage() {
           <section className="panel mt-8 border-orange bg-paper p-6" aria-live="polite" aria-labelledby="geo-error-title">
             <h2 id="geo-error-title" className="font-mincho text-3xl font-bold">解析できませんでした</h2>
             <p className="mt-2">{error}</p>
-            <p className="mt-2">文科省公開の地理・地理A・地理B過去問PDFを選び直してください。</p>
+            <p className="mt-2">文科省公式ページから取得した地理・地理A・地理BのPDFを選び直してください。</p>
           </section>
         )}
 
@@ -470,7 +470,7 @@ export default function GeographyAnalysisPage() {
                 <p>検出科目：{allSummary.detectedSubjects.join('、')}</p>
               )}
               <p className="mt-3 text-sm">
-                公開済みデータを集計しているブラウザ内ツールです。テーマの検出精度はPDFのテキスト抽出結果とキーワード辞書に依存します。
+                端末内で抽出した出題傾向データを集計するツールです。問題文・設問文など著作物の表現は保存・再掲載せず、テーマの検出精度はPDFのテキスト抽出結果とキーワード辞書に依存します。
               </p>
             </div>
             <div className="border-2 border-ink bg-cream p-4">
@@ -498,7 +498,7 @@ export default function GeographyAnalysisPage() {
       <footer className="border-t-2 border-ink bg-ink px-4 py-6 text-cream sm:py-8 md:px-10">
         <div className="mx-auto max-w-7xl space-y-2">
           <p><strong>更新日</strong> 2026-05-02</p>
-          <p><strong>データ範囲</strong> ユーザーがブラウザ上でアップロードした文科省公開PDF。</p>
+          <p><strong>データ範囲</strong> ユーザーが正当に取得し、端末内で選択した文部科学省公式PDF。問題文・設問文の配布や再掲載は行いません。</p>
           <p><strong>注意書き</strong> 高認パスは文部科学省の公式サービスではありません。</p>
           <p><a className="text-yellow" href={officialPastExamUrl} target="_blank" rel="noopener">文部科学省 過去問題ページ</a></p>
         </div>

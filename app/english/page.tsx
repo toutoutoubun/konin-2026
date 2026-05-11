@@ -66,7 +66,7 @@ export default function EnglishAnalysisPage() {
       <a className="skip-link" href="#main-content">本文へ移動</a>
       <Header navItems={[
         { label: 'ツール一覧', href: '/#tools' },
-        { label: 'PDFアップロード', href: '#upload-title' },
+        { label: 'PDF選択', href: '#upload-title' },
         { label: '集計', href: '#ranking-title' },
         { label: '語彙分析', href: '#vocab-title' },
         { label: 'フィルタ', href: '#filter-title' },
@@ -85,11 +85,11 @@ export default function EnglishAnalysisPage() {
             英語頻出分析
           </h1>
           <p className="mt-5 max-w-3xl text-base leading-relaxed sm:mt-7 sm:text-xl">
-            文科省公開の英語過去問PDFをブラウザ上で解析し、よく出る単元、文法項目、問題形式、語彙レベルの傾向を可視化します。PDFはサーバーへ送信しません。
+            ユーザーが文科省公式ページから取得した英語PDFを端末内で解析し、よく出る単元、文法項目、問題形式、語彙レベルの傾向を可視化します。PDFはサーバーへ送信せず、問題文や設問文は再掲載しません。
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4" aria-label="主要操作">
             <a className="hard-button button-like bg-blue px-5 py-3 text-center text-white no-underline" href="#upload-title">PDFを分析する</a>
-            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">過去問を入手</a>
+            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式PDFページへ</a>
           </div>
         </section>
 
@@ -106,7 +106,7 @@ export default function EnglishAnalysisPage() {
           <section className="panel mt-8 border-orange bg-paper p-6" aria-live="polite" aria-labelledby="error-title">
             <h2 id="error-title" className="font-mincho text-3xl font-bold">解析できませんでした</h2>
             <p className="mt-2">{error}</p>
-            <p className="mt-2">次の操作：文科省公開の英語過去問PDFを選び直してください。</p>
+            <p className="mt-2">次の操作：文科省公式ページから取得した英語PDFを選び直してください。</p>
           </section>
         )}
 
@@ -275,7 +275,7 @@ export default function EnglishAnalysisPage() {
         <section className="mt-8 panel p-5 sm:p-6 md:p-8" aria-labelledby="meta-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">NOTES</p>
           <h2 id="meta-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">注記とタグ定義</h2>
-          <p className="mt-3">公開済みデータを集計しているブラウザ内ツールです。制度区分をまたいだ結果には注意書きを表示します。</p>
+          <p className="mt-3">端末内で抽出した出題傾向データを集計するツールです。問題文・設問文など著作物の表現は保存・再掲載せず、制度区分をまたいだ結果には注意書きを表示します。</p>
           <p className="mt-2">全解析ファイル：{allSummary.totalCount}件 / 表示中：{summary.totalCount}件</p>
           <div className="mt-4 space-y-3">
             <div className="border-2 border-ink bg-cream p-4">
@@ -299,7 +299,7 @@ export default function EnglishAnalysisPage() {
       <footer className="border-t-2 border-ink bg-ink px-4 py-6 text-cream sm:py-8 md:px-10">
         <div className="mx-auto max-w-7xl space-y-2">
           <p><strong>更新日</strong> 2026-05-02</p>
-          <p><strong>データ範囲</strong> ユーザーがブラウザ上でアップロードした文科省公開PDF。</p>
+          <p><strong>データ範囲</strong> ユーザーが正当に取得し、端末内で選択した文部科学省公式PDF。問題文・設問文の配布や再掲載は行いません。</p>
           <p><strong>注意書き</strong> 高認パスは文部科学省の公式サービスではありません。</p>
           <p><a className="text-yellow" href={officialPastExamUrl} target="_blank" rel="noopener">文部科学省 過去問題ページ</a></p>
         </div>

@@ -8,8 +8,8 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: '高認パス | 高卒認定試験 過去問頻出分析',
-  description: '高卒認定試験の過去問頻出傾向を科目別に可視化し、英語PDFのブラウザ内分析を提供するWebツール',
+  title: '高認パス | 高卒認定試験 公式PDF傾向分析',
+  description: 'ユーザーが正当に取得した高卒認定試験の公式PDFを端末内で解析し、出題傾向データを科目別に可視化するWebツール',
   icons: {
     icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%23FFD166'/%3E%3Ctext x='32' y='39' text-anchor='middle' font-size='22' font-family='serif' fill='%231A1A1A'%3EKP%3C/text%3E%3C/svg%3E"
   }

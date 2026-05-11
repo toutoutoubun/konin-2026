@@ -26,7 +26,7 @@ function subjectHref(slug: string) {
 }
 
 const navItems = [
-  { label: '過去問', href: '#past-exams' },
+  { label: '公式PDF', href: '#past-exams' },
   { label: 'ツール', href: '#tools' },
   { label: 'タグ定義', href: '/tags/' },
   { label: '更新履歴', href: '/updates/' },
@@ -36,7 +36,7 @@ const toolToc = [
   { id: 'tool-todo',      label: '出願Todoリスト' },
   { id: 'tool-route',     label: 'ルート比較' },
   { id: 'tool-exemption', label: '免除・必要科目確認' },
-  { id: 'tool-analysis',  label: '過去問頻出分析' },
+  { id: 'tool-analysis',  label: '公式PDF傾向分析' },
 ]
 
 export default function HomePage() {
@@ -53,11 +53,11 @@ export default function HomePage() {
             高認パス
           </h1>
           <p className="mt-5 max-w-3xl text-base leading-relaxed sm:mt-7 sm:text-xl">
-            高等学校卒業程度認定試験の情報整理ツールです。ルート比較・免除科目確認・過去問分析の三つの機能で、受験準備を支援します。
+            高等学校卒業程度認定試験の情報整理ツールです。ルート比較・免除科目確認・公式PDFの傾向分析で、受験準備を支援します。
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4" aria-label="主要操作">
             <a className="hard-button button-like bg-blue px-5 py-3 text-center text-white no-underline" href="#tools">ツールを見る</a>
-            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">過去問を入手</a>
+            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式PDFページへ</a>
           </div>
         </section>
 
@@ -72,10 +72,10 @@ export default function HomePage() {
             </div>
             <div className="space-y-4 text-base sm:text-lg">
               <p>
-                高認パスは、高等学校卒業程度認定試験（高認）の受験準備を支援する非公式Webツールです。ルート比較・免除科目確認・過去問頻出分析の三つの機能を提供します。
+                高認パスは、高等学校卒業程度認定試験（高認）の受験準備を支援する非公式Webツールです。ルート比較・免除科目確認・公式PDFの傾向分析の三つの機能を提供します。
               </p>
               <p>
-                制度・日程・出願書類は必ず公式情報を確認してください。データはサーバーへ送信せず、ブラウザ上で処理します。
+                高認パスは過去問そのものを提供しません。ユーザーが正当に取得した公式PDFを端末内で解析し、問題文などの著作物の表現ではなく、出題傾向データを可視化します。
               </p>
             </div>
           </div>
@@ -86,12 +86,12 @@ export default function HomePage() {
           <div className="grid gap-6 lg:grid-cols-[.95fr_1.05fr]">
             <div>
               <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">OFFICIAL SOURCE</p>
-              <h2 id="past-exams-title" className="mt-2 font-mincho text-3xl font-bold leading-tight sm:text-4xl md:text-[48px] md:leading-none">過去問の入手方法</h2>
+              <h2 id="past-exams-title" className="mt-2 font-mincho text-3xl font-bold leading-tight sm:text-4xl md:text-[48px] md:leading-none">公式PDFの確認方法</h2>
             </div>
             <div className="space-y-4 text-base sm:text-lg">
-              <p>文部科学省が公開している過去問PDFを端末に保存し、各科目の分析ページへアップロードします。</p>
+              <p>文部科学省の公式ページで公開されているPDFをユーザー自身で取得し、各科目の分析ページで端末内解析に使います。高認パス上で過去問本文や設問を配布・再掲載するものではありません。</p>
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-                <a className="hard-button button-like bg-orange px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省の過去問ページ</a>
+                <a className="hard-button button-like bg-orange px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式PDFページ</a>
                 <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialExamGuideUrl} target="_blank" rel="noopener">試験概要を確認</a>
               </div>
             </div>
@@ -132,18 +132,18 @@ export default function HomePage() {
             <div id="tool-exemption"><ExemptionCheck /></div>
           </div>
 
-          {/* ── 過去問頻出分析ツール ── */}
+          {/* ── 公式PDF傾向分析ツール ── */}
           <div id="tool-analysis" className="mt-10">
             <div className="mb-5">
               <p className="font-serifDisplay text-xs uppercase tracking-[.18em]">PAST EXAM ANALYSIS</p>
               <h3 className="mt-1 font-mincho text-2xl font-bold leading-tight sm:text-3xl md:text-4xl">
-                <ruby>過去問<rp>(</rp><rt>かこもん</rt><rp>)</rp></ruby>
+                <ruby>公式<rp>(</rp><rt>こうしき</rt><rp>)</rp></ruby>PDF
                 <ruby>頻出<rp>(</rp><rt>ひんしゅつ</rt><rp>)</rp></ruby>
                 <ruby>分析<rp>(</rp><rt>ぶんせき</rt><rp>)</rp></ruby>
                 ツール
               </h3>
               <p className="mt-2 max-w-2xl text-sm sm:text-base">
-                文科省公開の過去問PDFをブラウザ上で解析し、科目ごとの出題傾向・頻出トピックを可視化します。各カードから科目別ページへ移動してください。
+                ユーザーが取得した公式PDFをサーバーへ送信せず端末内で解析し、科目ごとの出題傾向・頻出トピックを可視化します。各カードから科目別ページへ移動してください。
               </p>
             </div>
 
@@ -180,7 +180,7 @@ export default function HomePage() {
       <footer className="border-t-2 border-ink bg-ink px-4 py-6 text-cream sm:py-8 md:px-10">
         <div className="mx-auto max-w-7xl space-y-2 text-sm sm:text-base">
           <p><strong>更新日</strong> 2026-05-04</p>
-          <p><strong>データ範囲</strong> 文部科学省が公開している過去問題PDF。分析はユーザーがブラウザ上でアップロードしたPDFを対象にします。</p>
+          <p><strong>データ範囲</strong> ユーザーが正当に取得し、端末内で選択した文部科学省公式PDF。問題文・設問文の配布や再掲載は行いません。</p>
           <p><strong>注意書き</strong> 高認パスは文部科学省の公式サービスではありません。</p>
           <p><a className="text-yellow" href={officialPastExamUrl} target="_blank" rel="noopener">文部科学省 過去問題ページ</a></p>
         </div>
