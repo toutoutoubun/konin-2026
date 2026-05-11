@@ -8,7 +8,7 @@ export function generateStaticParams() {
 }
 
 const formatRows = [
-  ['PDFアップロード', '文科省公開の過去問PDFをアップロードすると分析します。ドラッグ&ドロップと複数ファイル選択に対応する構成です。'],
+  ['公式PDFを選択', 'ユーザーが文科省公式ページから取得したPDFを端末内で解析します。ドラッグ&ドロップと複数ファイル選択に対応する構成です。'],
   ['よく出る単元ランキング', '順位・単元・出現回数・出現率を表で表示し、グラフとの切替を用意します。'],
   ['近年頻出ランキング', '重み付きスコアと直近出現回を表示します。'],
   ['出題形式分布', '形式・件数・構成比を表とグラフで併設します。'],
@@ -48,7 +48,7 @@ export default function SubjectPage({ params }: { params: { slug: string } }) {
           ) : (
             <div className="mt-8 flex flex-wrap gap-4" aria-label="主要操作">
               <a className="hard-button button-like bg-blue px-5 py-3 text-white no-underline" href="/subjects/english/">実装済みの英語分析を見る</a>
-              <a className="hard-button button-like bg-paper px-5 py-3 no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省の過去問ページ</a>
+              <a className="hard-button button-like bg-paper px-5 py-3 no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式PDFページ</a>
             </div>
           )}
         </section>
@@ -76,7 +76,7 @@ export default function SubjectPage({ params }: { params: { slug: string } }) {
       <footer className="border-t-2 border-ink bg-ink px-4 py-6 text-cream sm:py-8 md:px-10">
         <div className="mx-auto max-w-7xl space-y-2">
           <p><strong>更新日</strong> 2026-05-01</p>
-          <p><strong>データ範囲</strong> 文部科学省が公開している過去問題PDF。</p>
+          <p><strong>データ範囲</strong> ユーザーが正当に取得し、端末内で選択した文部科学省公式PDF。問題文・設問文の配布や再掲載は行いません。</p>
           <p><strong>注意書き</strong> 高認パスは文部科学省の公式サービスではありません。</p>
           <p><a className="text-yellow" href={officialPastExamUrl} target="_blank" rel="noopener">文部科学省 過去問題ページ</a></p>
         </div>

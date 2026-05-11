@@ -194,8 +194,8 @@ function baseLayout(options: { title: string; path: string; current: string; chi
 
   <footer class="site-footer" role="contentinfo">
     <p><strong>更新日</strong> 2026-05-01</p>
-    <p><strong>データ範囲</strong> 画面表示用のサンプルデータ。PDF解析はブラウザ内で扱う設計です。</p>
-    <p><strong>注意書き</strong> 高認パスは文部科学省の公式サービスではありません。公開済みデータを集計している補助ツールです。</p>
+    <p><strong>データ範囲</strong> ユーザーが正当に取得し、端末内で選択した文部科学省公式PDF。問題文・設問文の配布や再掲載は行いません。</p>
+    <p><strong>注意書き</strong> 高認パスは文部科学省の公式サービスではありません。端末内で抽出した出題傾向データを集計する補助ツールです。</p>
     <p><a href="${officialExamUrl}" target="_blank" rel="noopener">文部科学省 高等学校卒業程度認定試験ページ</a></p>
   </footer>
   <script src="/static/app.js" defer></script>
@@ -208,7 +208,7 @@ function homePage() {
     <article class="subject-card accent-${subject.accent}${subject.status === 'preparing' ? ' is-preparing' : ''}">
       <p class="eyebrow">SUBJECT</p>
       <h3>${subject.name}</h3>
-      <p>${subject.status === 'preparing' ? '分析機能は準備中です。' : 'PDFを読み込み、よく出る単元と出題形式を確認します。'}</p>
+      <p>${subject.status === 'preparing' ? '分析機能は準備中です。' : '公式PDFを端末内で読み込み、よく出る単元と出題形式を確認します。'}</p>
       ${subject.divisions ? `<p class="small-text">制度区分：${subject.divisions.join(' / ')}</p>` : ''}
       ${subject.note ? `<p class="small-text">${subject.note}</p>` : ''}
       <a class="card-link" href="/subjects/${subject.slug}" aria-label="${subject.name}の科目詳細ページへ">${subject.status === 'preparing' ? '状態を見る' : '分析画面へ'}</a>
@@ -222,10 +222,10 @@ function homePage() {
       <section class="hero" aria-labelledby="hero-title">
         <p class="eyebrow">PAST EXAM PATTERN TOOL</p>
         <h1 id="hero-title"><span class="latin">KONIN PASS</span><br><ruby>高認<rt>こうにん</rt></ruby>パス</h1>
-        <p class="lead">高等学校卒業程度認定試験の公開過去問を、科目別に読み解くためのブラウザ内ツール。PDFはサーバーへ送信せず、この端末上で扱う設計です。</p>
+        <p class="lead">ユーザーが正当に取得した高等学校卒業程度認定試験の公式PDFを端末内で解析し、出題傾向データを科目別に可視化するツール。PDFはサーバーへ送信せず、問題文や設問文は再掲載しません。</p>
         <div class="hero-actions" aria-label="主要操作">
           <a class="button button-primary" href="#subject-tools">科目を選ぶ</a>
-          <a class="button button-secondary" href="${officialPastExamUrl}" target="_blank" rel="noopener">過去問を入手</a>
+          <a class="button button-secondary" href="${officialPastExamUrl}" target="_blank" rel="noopener">文科省公式PDFページへ</a>
         </div>
       </section>
 
@@ -234,18 +234,18 @@ function homePage() {
           <p class="eyebrow">OVERVIEW</p>
           <h2 id="about-title" style="font-size: 40px;"><span>高認パスとは</span></h2>
         </div>
-        <p>公開済みデータを集計し、よく出る単元、出現回数、出現率を確認するためのツールです。</p>
+        <p>端末内で抽出した出題傾向データを集計し、よく出る単元、出現回数、出現率を確認するためのツールです。</p>
       </section>
 
       <section class="content-section guide-card" aria-labelledby="past-exam-title">
         <p class="eyebrow">SOURCE</p>
-        <h2 id="past-exam-title">過去問の入手方法ガイド</h2>
+        <h2 id="past-exam-title">公式PDFの確認方法</h2>
         <ol class="number-list">
           <li>文部科学省の過去問題ページを開く。</li>
-          <li>受験する科目と年度のPDFをダウンロードする。</li>
-          <li>各科目ページでPDFをアップロードする。</li>
+          <li>受験する科目と年度の公式PDFをユーザー自身で取得する。</li>
+          <li>各科目ページでPDFを端末内解析用に選択する。</li>
         </ol>
-        <a class="button button-secondary" href="${officialPastExamUrl}" target="_blank" rel="noopener">文科省の過去問ページはこちら</a>
+        <a class="button button-secondary" href="${officialPastExamUrl}" target="_blank" rel="noopener">文科省公式PDFページはこちら</a>
       </section>
 
       <section class="content-section" aria-labelledby="todo-title">
@@ -255,7 +255,7 @@ function homePage() {
         </div>
         <div class="todo-list" role="list" aria-describedby="todo-title">
           ${renderTodoStep('1', '試験を知る', ['高卒認定試験の概要確認', '受験資格の確認', '科目と合格要件の確認', '試験日程の確認', '既取得単位による科目免除の確認'])}
-          ${renderTodoStep('2', '科目を選ぶ', ['受験科目を決める', '免除申請できる科目を確認する', '過去問を文科省サイトからダウンロードする', '頻出分析ツールで出題傾向を確認する'])}
+          ${renderTodoStep('2', '科目を選ぶ', ['受験科目を決める', '免除申請できる科目を確認する', '公式PDFを文科省サイトから取得する', '頻出分析ツールで出題傾向を確認する'])}
           ${renderTodoStep('3', '出願する', ['願書を入手する', '出願期間を確認する', '必要書類を揃える（住民票・証明写真・検定料など）', '検定料を確認・納付する（収入印紙）', '願書を郵送する（簡易書留）', '受験票の到着を確認する'])}
           ${renderTodoStep('4', '試験当日', ['試験会場と時間を確認する', '持ち物を確認する（受験票・鉛筆・消しゴム・時計など）'])}
           ${renderTodoStep('5', '合格後', ['合格証書の受け取りを確認する', '一部科目合格の場合、次回の受験科目を確認する'])}
@@ -266,7 +266,7 @@ function homePage() {
         <div class="section-heading">
           <p class="eyebrow">TOOLS</p>
           <h2 id="tools-title">ツール一覧</h2>
-          <p>科目別カードから詳細ページへ進みます。主要操作はPDFアップロード、表示条件を変える、タグ定義の確認です。</p>
+          <p>科目別カードから詳細ページへ進みます。主要操作は公式PDFの選択、表示条件を変える、タグ定義の確認です。</p>
         </div>
         <div class="subject-grid">${subjectCards}</div>
       </section>
@@ -316,24 +316,24 @@ function subjectPage(subject: Subject) {
       <section class="hero compact accent-${subject.accent}" aria-labelledby="subject-title" data-subject="${subject.slug}">
         <p class="eyebrow">SUBJECT DETAIL</p>
         <h1 id="subject-title">${subject.name}</h1>
-        <p class="lead">文科省公開の過去問PDFをアップロードすると分析します。ファイルはブラウザ内で扱い、サーバーへ送信しません。</p>
+        <p class="lead">ユーザーが文科省公式ページから取得したPDFを選択すると、端末内で傾向データを集計します。PDFはサーバーへ送信せず、問題文や設問文は再掲載しません。</p>
         ${subject.divisions ? `<p class="division-note">制度区分：${subject.divisions.join(' / ')}</p>` : ''}
       </section>
 
       <section class="content-section upload-section" aria-labelledby="upload-title">
         <div class="section-heading">
           <p class="eyebrow">SECTION A</p>
-          <h2 id="upload-title">PDFアップロード</h2>
-          <p id="upload-help">文科省公開の過去問PDFをアップロードすると分析します。複数ファイルを年度別に選択できます。</p>
+          <h2 id="upload-title">公式PDFを選択</h2>
+          <p id="upload-help">ユーザーが文科省公式ページから取得したPDFを端末内解析用に選択します。複数ファイルを年度別に選択できます。</p>
         </div>
         <div class="upload-zone" id="upload-zone" role="button" tabindex="0" aria-describedby="upload-help upload-status">
-          <input id="pdf-input" type="file" accept="application/pdf,.pdf" multiple aria-label="過去問PDFを選択">
+          <input id="pdf-input" type="file" accept="application/pdf,.pdf" multiple aria-label="公式PDFを選択">
           <span class="upload-symbol" aria-hidden="true">PDF</span>
           <strong>ここへドラッグ&ドロップ</strong>
           <span>またはクリックしてPDFを選択</span>
         </div>
         <div id="upload-status" class="status-box" aria-live="polite">未解析。PDFを選択すると、解析したファイル名と試験回をここに表示します。</div>
-        <a class="button button-secondary" href="${officialPastExamUrl}" target="_blank" rel="noopener">文科省の過去問ページはこちら</a>
+        <a class="button button-secondary" href="${officialPastExamUrl}" target="_blank" rel="noopener">文科省公式PDFページはこちら</a>
       </section>
 
       <section class="content-section filter-section" aria-labelledby="filter-title">
@@ -421,7 +421,7 @@ function subjectPage(subject: Subject) {
       <section class="content-section note-section" aria-labelledby="note-title">
         <p class="eyebrow">SECTION G</p>
         <h2 id="note-title">注記とタグ定義</h2>
-        <p>タグ付けは単元、形式、制度区分の組み合わせで整理します。判定保留タグは、資料や設問文だけでは分類しきれない場合に使います。</p>
+        <p>タグ付けは単元、形式、制度区分の組み合わせで整理します。判定保留タグは、PDF抽出結果だけでは分類しきれない場合に使います。</p>
         <a class="button button-secondary" href="/tags">タグ定義を見る</a>
       </section>`
   })

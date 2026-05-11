@@ -33,8 +33,8 @@ export default function HistoryPDFUploader({ onComplete, onError }: Props) {
     } catch (error) {
       const message =
         error instanceof Error && error.message === 'NO_TEXT'
-          ? '該当データはない：PDFからテキストを抽出できませんでした。別の公開過去問PDFで試してください。'
-          : '解析できませんでした。PDFを選び直すか、文科省公開の過去問PDFか確認してください。'
+          ? '該当データはない：PDFからテキストを抽出できませんでした。別の公式PDFで試してください。'
+          : '解析できませんでした。PDFを選び直すか、文科省公式ページから取得したPDFか確認してください。'
       onError(message)
     } finally {
       setLoading(false)
@@ -45,12 +45,12 @@ export default function HistoryPDFUploader({ onComplete, onError }: Props) {
   return (
     <section className="panel p-6 md:p-8" aria-labelledby="history-upload-title">
       <div className="mb-6">
-        <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">UPLOAD</p>
+        <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">LOCAL PDF</p>
         <h2 id="history-upload-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
-          PDFアップロード
+          公式PDFを選択
         </h2>
         <p id="history-upload-help" className="mt-3 max-w-3xl">
-          文科省公開の歴史・世界史A過去問PDFをアップロードすると分析します。複数ファイルを同時に追加できます。PDFはサーバーへ送信せず、ブラウザ上で処理します。
+          ユーザーが文科省公式ページから取得した歴史・世界史AのPDFを選択すると、端末内で傾向データを集計します。複数ファイルを同時に追加できます。PDFはサーバーへ送信せず、問題文や設問文は再掲載しません。
         </p>
       </div>
 
@@ -58,7 +58,7 @@ export default function HistoryPDFUploader({ onComplete, onError }: Props) {
         role="button"
         tabIndex={0}
         aria-describedby="history-upload-help history-upload-status"
-        aria-label="歴史過去問PDFをアップロード"
+        aria-label="歴史の公式PDFを端末内解析用に選択"
         className={`grid min-h-[230px] place-items-center border-[3px] border-dashed border-ink bg-cream p-8 text-center ${dragging ? 'bg-yellow' : ''}`}
         onClick={() => inputRef.current?.click()}
         onKeyDown={(event) => {
@@ -101,7 +101,7 @@ export default function HistoryPDFUploader({ onComplete, onError }: Props) {
 
       <div id="history-upload-status" className="mt-5" aria-live="polite">
         {loading ? (
-          <SkeletonLoader label={progress?.message ?? 'PDFアップロード中'} />
+          <SkeletonLoader label={progress?.message ?? 'PDF解析中'} />
         ) : (
           <p className="border-2 border-ink bg-cream p-4">
             未解析。PDFを選択すると、解析したファイル名と検出した試験回・制度区分を表示します。

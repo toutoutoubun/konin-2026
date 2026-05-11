@@ -55,7 +55,7 @@ export default function SubjectDropdown() {
         aria-controls="subject-dropdown-menu"
         onClick={() => setOpen((v) => !v)}
       >
-        <span>過去問分析ツール</span>
+        <span>公式PDF傾向分析</span>
         <svg
           className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`}
           fill="none"

@@ -109,7 +109,7 @@ export default function MathAnalysisPage() {
       {/* ── ヘッダー ── */}
       <Header navItems={[
         { label: 'ツール一覧', href: '/#tools' },
-        { label: 'アップロード', href: '#math-upload-title' },
+        { label: 'PDF選択', href: '#math-upload-title' },
         { label: '集計', href: '#math-ranking-title' },
         { label: 'フィルタ', href: '#math-filter-title' },
         { label: 'タグ定義', href: '/tags/' },
@@ -148,7 +148,7 @@ export default function MathAnalysisPage() {
             頻出分析
           </h1>
           <p className="mt-5 max-w-3xl text-base leading-relaxed sm:mt-7 sm:text-xl">
-            文科省公開の数学過去問PDFをブラウザ上で解析し、大問（第1問〜第6問）ごとの出題単元と年度推移を可視化します。PDFはサーバーへ送信しません。
+            ユーザーが文科省公式ページから取得した数学PDFを端末内で解析し、大問（第1問〜第6問）ごとの出題単元と年度推移を可視化します。PDFはサーバーへ送信せず、問題文や設問文は再掲載しません。
           </p>
           <p className="mt-3 max-w-3xl">
             数学PDFは数式部分がCIDコードとして抽出されるため、数式のテキスト解析は行いません。正常に抽出できるテキストとページ位置で大問単位の集計を行います。
@@ -166,12 +166,12 @@ export default function MathAnalysisPage() {
               target="_blank"
               rel="noopener"
             >
-              過去問を入手
+              文科省公式PDFページへ
             </a>
           </div>
         </section>
 
-        {/* ── PDFアップロード ── */}
+        {/* ── PDF選択 ── */}
         <MathPDFUploader
           onComplete={(nextResults) => {
             setResults((prev) => {
@@ -204,7 +204,7 @@ export default function MathAnalysisPage() {
             </h2>
             <p className="mt-2">{error}</p>
             <p className="mt-2">
-              文科省公開の数学過去問PDFを選び直してください。
+              文科省公式ページから取得した数学PDFを選び直してください。
             </p>
           </section>
         )}
@@ -582,7 +582,7 @@ export default function MathAnalysisPage() {
                 {results[0]?.ruleSet.label ?? '標準（年度共通）'}）
               </p>
               <p className="mt-3 text-sm">
-                公開済みデータを集計しているブラウザ内ツールです。大問番号の検出精度はPDFのテキスト抽出結果に依存します。
+                端末内で抽出した出題傾向データを集計するツールです。問題文・設問文など著作物の表現は保存・再掲載せず、大問番号の検出精度はPDFのテキスト抽出結果に依存します。
               </p>
             </div>
           </div>
@@ -605,7 +605,7 @@ export default function MathAnalysisPage() {
           </p>
           <p>
             <strong>データ範囲</strong>{' '}
-            ユーザーがブラウザ上でアップロードした文科省公開PDF。
+            ユーザーが正当に取得し、端末内で選択した文部科学省公式PDF。問題文・設問文の配布や再掲載は行いません。
           </p>
           <p>
             <strong>注意書き</strong>{' '}

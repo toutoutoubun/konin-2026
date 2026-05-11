@@ -4,7 +4,7 @@ const updates = [
   ['2026-05-02', 'タグ定義', '英語以外の全11科目（国語・数学・歴史・地理・公民・科学と人間生活・物理基礎・化学基礎・生物基礎・地学基礎・情報）の単元タグ・形式タグ定義を追加。', 'タグ定義ページ'],
   ['2026-05-02', 'タグ定義', '科目タブ切り替えで各科目の固有タグ定義を表示可能に。全科目共通タグ（形式・制度区分）セクションを分離。', 'タグ定義ページ'],
   ['2026-05-01', '全体', '高認パスのトップページ、科目別カード、出願Todoリスト、タグ定義、更新履歴を追加。', 'Phase 1 UI構成'],
-  ['2026-05-01', '英語', '英語頻出分析を科目詳細ページの一部として統合。PDFアップロード、ランキング、形式分布、年度推移、フィルタを配置。', '英語詳細ページ'],
+  ['2026-05-01', '英語', '英語頻出分析を科目詳細ページの一部として統合。公式PDF選択、ランキング、形式分布、年度推移、フィルタを配置。', '英語詳細ページ'],
   ['2026-05-01', '英語', 'rule_set型変換を修正し、Next.js production buildを通過。', 'ビルド安定性'],
   ['2026-05-01', '情報', '準備中表示を追加。令和8年度第1回より追加予定、過去問未公開のため分析機能は非表示。', '科目カード・詳細ページ']
 ]
@@ -28,7 +28,7 @@ export default function UpdatesPage() {
         <section className="py-12 md:py-20" aria-labelledby="updates-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">CHANGE LOG</p>
           <h1 id="updates-title" className="mt-4 max-w-6xl font-mincho text-4xl font-bold leading-none tracking-[-.04em] sm:text-5xl md:text-7xl lg:text-9xl">更新履歴</h1>
-          <p className="mt-5 max-w-3xl text-base leading-relaxed sm:mt-7 sm:text-xl">日付、対象科目、変更内容、影響範囲を記録します。公開済みデータの集計条件に関わる変更はここに残します。</p>
+          <p className="mt-5 max-w-3xl text-base leading-relaxed sm:mt-7 sm:text-xl">日付、対象科目、変更内容、影響範囲を記録します。端末内で抽出する出題傾向データの集計条件に関わる変更はここに残します。</p>
         </section>
 
         <section className="panel p-6 md:p-8" aria-labelledby="updates-table-title">
