@@ -56,8 +56,8 @@ export const exemptionSubjects: ExemptionSubject[] = [
   {
     name: '地理',
     slug: 'geography',
-    category: 'select',
-    categoryLabel: '選択（地理総合/地理A/日本史など）',
+    category: 'required',
+    categoryLabel: '必修（地理総合または地理A・地理B）',
     exemptionConditions: [
       '高校で地理総合・地理A・地理Bの単位を規定数以上取得している場合',
     ],
