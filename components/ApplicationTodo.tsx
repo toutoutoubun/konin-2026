@@ -1,7 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { officialExamGuideUrl, officialPastExamUrl } from '@/data/subjects'
+import {
+  officialApplicationFlowUrl,
+  officialCreditCertificateUrl,
+  officialExamGuideUrl,
+  officialExemptionRequirementsUrl,
+  officialPastExamUrl,
+} from '@/data/subjects'
 
 type TodoItem = {
   id: string
@@ -22,14 +28,17 @@ const steps: TodoStep[] = [
       { id: 'eligibility', label: '受験資格の確認' },
       { id: 'requirements', label: '科目と合格要件の確認' },
       { id: 'schedule', label: '試験日程の確認' },
-      { id: 'exemption', label: '既取得単位による科目免除の確認' }
+      { id: 'exemption', label: '既取得単位による科目免除の注意点を確認する', href: officialExemptionRequirementsUrl }
     ]
   },
   {
     title: 'STEP 2：科目を選ぶ',
     items: [
       { id: 'subjects', label: '受験科目を決める' },
-      { id: 'exemption-subjects', label: '免除申請できる科目を確認する' },
+      { id: 'exemption-requirements', label: '免除要件で対象科目と必要単位数を照合する', href: officialExemptionRequirementsUrl },
+      { id: 'credit-certificate-form', label: '入学年度に合う単位修得証明書の文科省様式を選ぶ', href: officialCreditCertificateUrl },
+      { id: 'credit-certificate-request', label: '在籍校に証明書作成を依頼する（提出用は厳封、確認用も用意）' },
+      { id: 'exemption-subjects', label: '確認用の証明書を見ながら、免除申請できる科目を確認する' },
       { id: 'download-pdfs', label: '公式PDFを文科省サイトから取得する', href: officialPastExamUrl },
       { id: 'analysis', label: '頻出分析ツールで出題傾向を確認する', href: '#tools' }
     ]
@@ -39,7 +48,10 @@ const steps: TodoStep[] = [
     items: [
       { id: 'form', label: '願書を入手する' },
       { id: 'period', label: '出願期間を確認する' },
-      { id: 'documents', label: '必要書類を揃える（住民票・証明写真・検定料など）' },
+      { id: 'application-flow', label: '出願書類フローチャートで必要書類を確認する', href: officialApplicationFlowUrl },
+      { id: 'documents', label: '必要書類を揃える（願書・写真・住民票・収入印紙など）' },
+      { id: 'exemption-documents', label: '免除申請する場合は、厳封された単位修得証明書を同封する' },
+      { id: 'exemption-form-check', label: '願書の受験科目・免除科目を、確認用証明書と照合する' },
       { id: 'fee', label: '検定料を確認・納付する（収入印紙）' },
       { id: 'mail', label: '願書を郵送する（簡易書留）' },
       { id: 'ticket', label: '受験票の到着を確認する' }

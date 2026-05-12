@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type CSSProperties } from 'react'
 import type { GrammarVocabCrossCell, CefrLevel } from '@/lib/vocabAnalyzer'
 
 type Props = {
@@ -19,36 +19,46 @@ const cefrHeaderColors: Record<CefrLevel, string> = {
   unknown: 'bg-gray-500'
 }
 
-const cefrLabelMap: Record<string, string> = {
-  A1: 'A1', A2: 'A2', B1: 'B1', B2: 'B2',
-  'pre-CEFR': '試験語彙', unknown: '未分類'
+const cefrDetails: Record<CefrLevel, { label: string; hint: string }> = {
+  A1: { label: 'A1', hint: '基礎' },
+  A2: { label: 'A2', hint: '日常' },
+  B1: { label: 'B1', hint: '標準' },
+  B2: { label: 'B2', hint: '発展' },
+  'pre-CEFR': { label: '試験語彙', hint: '指示語等' },
+  unknown: { label: '未分類', hint: 'リスト外' }
 }
 
-function heatColor(value: number, max: number): string {
-  if (value === 0 || max === 0) return 'bg-cream'
-  const ratio = value / max
-  if (ratio > 0.7) return 'bg-red-200'
-  if (ratio > 0.4) return 'bg-orange-100'
-  if (ratio > 0.15) return 'bg-yellow-50'
-  return 'bg-cream'
+function cefrLabel(level: CefrLevel): string {
+  return cefrDetails[level]?.label ?? level
+}
+
+function heatStyle(value: number, rowMax: number): CSSProperties {
+  if (value === 0 || rowMax === 0) {
+    return { backgroundColor: '#FFFAF0', color: '#1A1A1A' }
+  }
+
+  const ratio = value / rowMax
+  const lightness = Math.max(38, 94 - Math.round(ratio * 50))
+
+  return {
+    backgroundColor: `hsl(22 100% ${lightness}%)`,
+    color: ratio >= 0.58 ? '#FFFAF0' : '#1A1A1A'
+  }
 }
 
 export default function GrammarVocabCrossTable({ rows, caption }: Props) {
   const [viewMode, setViewMode] = useState<'table' | 'heatmap'>('heatmap')
 
-  const { grammars, matrix, maxValue, topCombinations } = useMemo(() => {
+  const { grammars, matrix, rowTotals, rowMaxes, topCombinations } = useMemo(() => {
     const map = new Map<string, Map<CefrLevel, number>>()
-    let max = 0
 
     rows.forEach((cell) => {
       if (!map.has(cell.grammar)) map.set(cell.grammar, new Map())
       const grammarMap = map.get(cell.grammar)!
       const current = (grammarMap.get(cell.cefrLevel) ?? 0) + cell.count
       grammarMap.set(cell.cefrLevel, current)
-      if (current > max) max = current
     })
 
-    // Sort grammars by total count
     const grammarTotals = Array.from(map.entries())
       .map(([grammar, levelMap]) => ({
         grammar,
@@ -58,17 +68,23 @@ export default function GrammarVocabCrossTable({ rows, caption }: Props) {
 
     const sortedGrammars = grammarTotals.map((g) => g.grammar)
 
-    // Build matrix
     const matrixData: Record<string, Record<CefrLevel, number>> = {}
+    const totals: Record<string, number> = {}
+    const maxes: Record<string, number> = {}
+
     sortedGrammars.forEach((grammar) => {
       const levelMap = map.get(grammar)!
       matrixData[grammar] = {} as Record<CefrLevel, number>
+      totals[grammar] = 0
+      maxes[grammar] = 0
       cefrLevels.forEach((level) => {
-        matrixData[grammar][level] = levelMap.get(level) ?? 0
+        const count = levelMap.get(level) ?? 0
+        matrixData[grammar][level] = count
+        totals[grammar] += count
+        maxes[grammar] = Math.max(maxes[grammar], count)
       })
     })
 
-    // Top combinations
     const combos: Array<{ grammar: string; cefrLevel: CefrLevel; count: number }> = []
     sortedGrammars.forEach((grammar) => {
       cefrLevels.forEach((level) => {
@@ -78,7 +94,7 @@ export default function GrammarVocabCrossTable({ rows, caption }: Props) {
     })
     combos.sort((a, b) => b.count - a.count)
 
-    return { grammars: sortedGrammars, matrix: matrixData, maxValue: max, topCombinations: combos.slice(0, 5) }
+    return { grammars: sortedGrammars, matrix: matrixData, rowTotals: totals, rowMaxes: maxes, topCombinations: combos }
   }, [rows])
 
   if (!grammars.length) {
@@ -114,7 +130,10 @@ export default function GrammarVocabCrossTable({ rows, caption }: Props) {
 
       {viewMode === 'heatmap' ? (
         <div className="overflow-x-auto" role="region" aria-label={caption}>
-          <table className="w-full min-w-[600px] border-collapse" role="table">
+          <p className="mb-3 text-sm text-ink/70">
+            数字は語彙数、下段はその文法項目内での構成比です。色の濃さは行ごとに調整しているため、文法項目ごとの語彙レベルの偏りを比較できます。
+          </p>
+          <table className="w-full min-w-[860px] border-collapse" role="table">
             <caption className="py-3 text-left font-bold">{caption}</caption>
             <thead>
               <tr>
@@ -125,7 +144,8 @@ export default function GrammarVocabCrossTable({ rows, caption }: Props) {
                     scope="col"
                     className={`p-3 text-center text-white ${cefrHeaderColors[level]}`}
                   >
-                    {cefrLabelMap[level] ?? level}
+                    <span className="block text-sm font-bold">{cefrDetails[level].label}</span>
+                    <span className="block text-xs font-normal opacity-90">{cefrDetails[level].hint}</span>
                   </th>
                 ))}
                 <th scope="col" className="bg-ink p-3 text-center text-cream">合計</th>
@@ -133,19 +153,30 @@ export default function GrammarVocabCrossTable({ rows, caption }: Props) {
             </thead>
             <tbody>
               {grammars.map((grammar) => {
-                const rowTotal = cefrLevels.reduce((sum, level) => sum + (matrix[grammar]?.[level] ?? 0), 0)
+                const rowTotal = rowTotals[grammar] ?? 0
+                const rowMax = rowMaxes[grammar] ?? 0
                 return (
                   <tr key={grammar} className="border-b-2 border-ink">
                     <th scope="row" className="bg-paper p-3 text-left font-bold">{grammar}</th>
                     {cefrLevels.map((level) => {
                       const value = matrix[grammar]?.[level] ?? 0
+                      const rate = rowTotal > 0 ? Math.round((value / rowTotal) * 100) : 0
+                      const isStrong = rowMax > 0 && value / rowMax >= 0.58
                       return (
                         <td
                           key={level}
-                          className={`p-3 text-center tabular-nums ${heatColor(value, maxValue)} border-l border-ink/20`}
-                          title={`${grammar} × ${level}: ${value}件`}
+                          className="min-w-[96px] border-l border-ink/20 p-2 text-center tabular-nums"
+                          style={heatStyle(value, rowMax)}
+                          title={`${grammar} × ${cefrLabel(level)}: ${value}件 / 行内${rate}%`}
                         >
-                          {value > 0 ? value : <span className="text-ink/30">-</span>}
+                          {value > 0 ? (
+                            <span className="inline-flex flex-col items-center leading-tight">
+                              <span className="text-base font-bold">{value.toLocaleString()}</span>
+                              <span className={`text-[11px] ${isStrong ? 'text-cream/85' : 'text-ink/60'}`}>{rate}%</span>
+                            </span>
+                          ) : (
+                            <span className="text-ink/30">-</span>
+                          )}
                         </td>
                       )
                     })}
@@ -156,11 +187,11 @@ export default function GrammarVocabCrossTable({ rows, caption }: Props) {
             </tbody>
           </table>
           <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-ink/70">
-            <span>色の濃さ：</span>
-            <span className="inline-block h-4 w-8 rounded border border-ink/20 bg-cream" /> 少
-            <span className="inline-block h-4 w-8 rounded border border-ink/20 bg-yellow-50" />
-            <span className="inline-block h-4 w-8 rounded border border-ink/20 bg-orange-100" />
-            <span className="inline-block h-4 w-8 rounded border border-ink/20 bg-red-200" /> 多
+            <span>行内の多さ：</span>
+            <span className="inline-block h-4 w-8 rounded border border-ink/20" style={{ backgroundColor: '#FFFAF0' }} /> なし
+            <span className="inline-block h-4 w-8 rounded border border-ink/20" style={{ backgroundColor: 'hsl(22 100% 78%)' }} /> 少
+            <span className="inline-block h-4 w-8 rounded border border-ink/20" style={{ backgroundColor: 'hsl(22 100% 58%)' }} />
+            <span className="inline-block h-4 w-8 rounded border border-ink/20" style={{ backgroundColor: 'hsl(22 100% 44%)' }} /> 多
           </div>
         </div>
       ) : (
@@ -176,11 +207,11 @@ export default function GrammarVocabCrossTable({ rows, caption }: Props) {
               </tr>
             </thead>
             <tbody>
-              {topCombinations.map((combo, index) => (
+              {topCombinations.slice(0, 20).map((combo, index) => (
                 <tr key={`${combo.grammar}-${combo.cefrLevel}`} className="border-b-2 border-ink even:bg-blue/5">
                   <td className="p-3">{index + 1}</td>
                   <td className="p-3 font-bold">{combo.grammar}</td>
-                  <td className="p-3">{cefrLabelMap[combo.cefrLevel] ?? combo.cefrLevel}</td>
+                  <td className="p-3">{cefrLabel(combo.cefrLevel)}</td>
                   <td className="p-3 text-right tabular-nums">{combo.count}</td>
                 </tr>
               ))}
@@ -195,7 +226,7 @@ export default function GrammarVocabCrossTable({ rows, caption }: Props) {
           <ul className="mt-2 list-inside list-disc space-y-1 text-sm">
             {topCombinations.slice(0, 3).map((combo) => (
               <li key={`${combo.grammar}-${combo.cefrLevel}`}>
-                {combo.grammar}では{cefrLabelMap[combo.cefrLevel] ?? combo.cefrLevel}レベルの語彙が多く使われています（{combo.count}件）
+                {combo.grammar}では{cefrLabel(combo.cefrLevel)}レベルの語彙が多く使われています（{combo.count}件）
               </li>
             ))}
           </ul>
