@@ -47,7 +47,7 @@ const steps: TodoStep[] = [
       { id: 'skill-proof-documents', label: '資格・検定で申請する科目は、合格証明書など指定書類を確認する' },
       { id: 'exemption-subjects', label: '単位・技能審査の証明書類を見ながら、免除申請できる科目を確認する' },
       { id: 'download-pdfs', label: '公式PDFを文科省サイトから取得する', href: officialPastExamUrl },
-      { id: 'analysis', label: '頻出分析ツールで出題傾向を確認する', href: '#tools' }
+      { id: 'analysis', label: '頻出分析ツールで出題傾向を確認する', href: '/analysis/' }
     ]
   },
   {

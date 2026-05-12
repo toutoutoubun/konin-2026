@@ -73,7 +73,7 @@ export default function PhysicsPage() {
       <a className="skip-link" href="#main-content">本文へ移動</a>
 
       <Header navItems={[
-        { label: 'ツール一覧', href: '/#tools' },
+        { label: '分析一覧', href: '/analysis/' },
         { label: 'PDF選択', href: '#physics-upload-title' },
         { label: '集計', href: '#physics-ranking-title' },
         { label: 'フィルタ', href: '#physics-filter-title' },
@@ -84,7 +84,7 @@ export default function PhysicsPage() {
       <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a>
         <span aria-hidden="true">/</span>
-        <a href="/#tools">ツール一覧</a>
+        <a href="/analysis/">分析一覧</a>
         <span aria-hidden="true">/</span>
         <span aria-current="page">物理基礎頻出分析</span>
       </nav>

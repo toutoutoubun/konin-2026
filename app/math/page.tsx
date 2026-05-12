@@ -108,7 +108,7 @@ export default function MathAnalysisPage() {
 
       {/* ── ヘッダー ── */}
       <Header navItems={[
-        { label: 'ツール一覧', href: '/#tools' },
+        { label: '分析一覧', href: '/analysis/' },
         { label: 'PDF選択', href: '#math-upload-title' },
         { label: '集計', href: '#math-ranking-title' },
         { label: 'フィルタ', href: '#math-filter-title' },
@@ -123,7 +123,7 @@ export default function MathAnalysisPage() {
       >
         <a href="/">トップ</a>
         <span aria-hidden="true">/</span>
-        <a href="/#tools">ツール一覧</a>
+        <a href="/analysis/">分析一覧</a>
         <span aria-hidden="true">/</span>
         <span aria-current="page">数学頻出分析</span>
       </nav>

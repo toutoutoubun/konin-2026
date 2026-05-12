@@ -74,7 +74,7 @@ export default function EnglishAnalysisPage() {
     <>
       <a className="skip-link" href="#main-content">本文へ移動</a>
       <Header navItems={[
-        { label: 'ツール一覧', href: '/#tools' },
+        { label: '分析一覧', href: '/analysis/' },
         { label: 'PDF選択', href: '#upload-title' },
         { label: '集計', href: '#ranking-title' },
         { label: '語彙分析', href: '#vocab-title' },
@@ -84,7 +84,7 @@ export default function EnglishAnalysisPage() {
       ]} />
 
       <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
-        <a href="/">トップ</a><span aria-hidden="true">/</span><a href="/#tools">ツール一覧</a><span aria-hidden="true">/</span><span>英語頻出分析</span>
+        <a href="/">トップ</a><span aria-hidden="true">/</span><a href="/analysis/">分析一覧</a><span aria-hidden="true">/</span><span>英語頻出分析</span>
       </nav>
 
       <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
