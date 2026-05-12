@@ -15,6 +15,7 @@ export const officialExamGuideUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken
 export const officialExemptionRequirementsUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/06033010/007.htm'
 export const officialCreditCertificateUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/05033001.htm'
 export const officialApplicationFlowUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/mext_01821.html'
+export const officialSkillExemptionUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/06033010/20260227-mxt_syogai02-3ginou01.pdf'
 
 export const subjects: Subject[] = [
   { slug: 'japanese', name: '国語', label: 'JAPANESE', status: 'placeholder', accent: 'blue', description: '現代文・古文・漢文を含む公式PDF由来の傾向データ集計画面。' },

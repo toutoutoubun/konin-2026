@@ -26,10 +26,10 @@ export const exemptionSubjects: ExemptionSubject[] = [
     categoryLabel: '必修',
     exemptionConditions: [
       '高校で数学Ⅰの単位を規定数以上取得している場合',
-      '実用数学技能検定（数検）2級以上を取得している場合',
+      '実用数学技能検定（数検）2級以上に合格している場合',
     ],
     creditThreshold: 3,
-    qualificationExemptions: [{ name: '数検', level: '2級' }],
+    qualificationExemptions: [{ name: '実用数学技能検定', level: '2級以上' }],
   },
   {
     name: '英語',
@@ -38,10 +38,16 @@ export const exemptionSubjects: ExemptionSubject[] = [
     categoryLabel: '必修',
     exemptionConditions: [
       '高校で英語の単位を規定数以上取得している場合',
-      '実用英語技能検定（英検）準2級以上を取得している場合',
+      '実用英語技能検定（英検）準2級以上（準2級プラスを含む）に合格している場合',
+      '全国商業高等学校協会 英語検定試験2級以上に合格している場合',
+      '国際連合公用語英語検定試験C級以上に合格している場合',
     ],
     creditThreshold: 3,
-    qualificationExemptions: [{ name: '英検', level: '準2級' }],
+    qualificationExemptions: [
+      { name: '実用英語技能検定', level: '準2級以上（準2級プラスを含む）' },
+      { name: '全国商業高等学校協会 英語検定試験', level: '2級以上' },
+      { name: '国際連合公用語英語検定試験', level: 'C級以上' },
+    ],
   },
   {
     name: '歴史',
@@ -50,8 +56,10 @@ export const exemptionSubjects: ExemptionSubject[] = [
     categoryLabel: '必修（歴史総合または世界史A）',
     exemptionConditions: [
       '高校で歴史総合または世界史Aの単位を規定数以上取得している場合',
+      '歴史能力検定の世界史3級以上と日本史3級以上の両方に合格している場合',
     ],
     creditThreshold: 2,
+    qualificationExemptions: [{ name: '歴史能力検定', level: '世界史3級以上＋日本史3級以上' }],
   },
   {
     name: '地理',
@@ -123,17 +131,42 @@ export const exemptionSubjects: ExemptionSubject[] = [
     ],
     creditThreshold: 2,
   },
+  {
+    name: '情報',
+    slug: 'informatics',
+    category: 'required',
+    categoryLabel: '必修（令和8年度から）',
+    exemptionConditions: [
+      '高校で情報Ⅰの単位を規定数以上取得している場合',
+      '情報処理技術者試験のうち、ITパスポート試験に合格している場合',
+    ],
+    creditThreshold: 2,
+    qualificationExemptions: [{ name: 'ITパスポート試験', level: '合格' }],
+  },
 ]
 
-export type QualificationLevel = 'なし' | '3級' | '準2級' | '2級' | '準1級' | '1級'
-export const qualificationLevels: QualificationLevel[] = ['なし', '3級', '準2級', '2級', '準1級', '1級']
+export type EikenLevel = 'なし' | '3級' | '準2級' | '準2級プラス' | '2級' | '準1級' | '1級'
+export type CommonQualificationLevel = 'なし' | '3級' | '準2級' | '2級' | '準1級' | '1級'
+export type HistoryExamLevel = 'なし' | '3級' | '2級' | '1級'
+export type ZenshoEnglishLevel = 'なし' | '2級' | '1級'
+export type UnitedNationsEnglishLevel = 'なし' | 'C級' | 'B級' | 'A級' | '特A級'
+
+export const eikenLevels: EikenLevel[] = ['なし', '3級', '準2級', '準2級プラス', '2級', '準1級', '1級']
+export const sukenLevels: CommonQualificationLevel[] = ['なし', '3級', '準2級', '2級', '準1級', '1級']
+export const historyExamLevels: HistoryExamLevel[] = ['なし', '3級', '2級', '1級']
+export const zenshoEnglishLevels: ZenshoEnglishLevel[] = ['なし', '2級', '1級']
+export const unitedNationsEnglishLevels: UnitedNationsEnglishLevel[] = ['なし', 'C級', 'B級', 'A級', '特A級']
 
 export interface ExemptionInput {
   enrolled: boolean
   credits: Record<string, number>
-  eiken: QualificationLevel
-  suken: QualificationLevel
-  kanken: QualificationLevel
+  eiken: EikenLevel
+  suken: CommonQualificationLevel
+  rekikenWorld: HistoryExamLevel
+  rekikenJapan: HistoryExamLevel
+  zenshoEnglish: ZenshoEnglishLevel
+  unEnglish: UnitedNationsEnglishLevel
+  itPassport: boolean
   otherQualification: string
 }
 
@@ -142,7 +175,11 @@ export const defaultExemptionInput: ExemptionInput = {
   credits: {},
   eiken: 'なし',
   suken: 'なし',
-  kanken: 'なし',
+  rekikenWorld: 'なし',
+  rekikenJapan: 'なし',
+  zenshoEnglish: 'なし',
+  unEnglish: 'なし',
+  itPassport: false,
   otherQualification: '',
 }
 
@@ -152,19 +189,32 @@ export function evaluateExemption(
   subject: ExemptionSubject,
   input: ExemptionInput
 ): ExemptionStatus {
+  const rekikenWorld = input.rekikenWorld ?? 'なし'
+  const rekikenJapan = input.rekikenJapan ?? 'なし'
+
   // 英検による英語免除
-  if (subject.slug === 'english' && input.eiken !== 'なし') {
-    const levelOrder: QualificationLevel[] = ['なし', '3級', '準2級', '2級', '準1級', '1級']
+  if (subject.slug === 'english') {
+    const levelOrder: EikenLevel[] = ['なし', '3級', '準2級', '準2級プラス', '2級', '準1級', '1級']
     const idx = levelOrder.indexOf(input.eiken)
     if (idx >= 2) return 'possible' // 準2級以上
+    if (input.zenshoEnglish && input.zenshoEnglish !== 'なし') return 'possible' // 全商英検2級以上
+    if (input.unEnglish && input.unEnglish !== 'なし') return 'possible' // 国連英検C級以上
   }
 
   // 数検による数学免除
   if (subject.slug === 'math' && input.suken !== 'なし') {
-    const levelOrder: QualificationLevel[] = ['なし', '3級', '準2級', '2級', '準1級', '1級']
+    const levelOrder: CommonQualificationLevel[] = ['なし', '3級', '準2級', '2級', '準1級', '1級']
     const idx = levelOrder.indexOf(input.suken)
     if (idx >= 3) return 'possible' // 2級以上
   }
+
+  // 歴史能力検定による歴史免除（世界史・日本史の両方が必要）
+  if (subject.slug === 'history' && rekikenWorld !== 'なし' && rekikenJapan !== 'なし') {
+    return 'possible'
+  }
+
+  // ITパスポート試験による情報免除
+  if (subject.slug === 'informatics' && input.itPassport) return 'possible'
 
   // 高校単位による免除
   if (input.enrolled) {
