@@ -1,15 +1,18 @@
 {
   "name": "webapp",
   "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0 --port 3000",
-    "dev:sandbox": "wrangler pages dev out --ip 0.0.0.0 --port 3000",
+    "dev:sandbox": "npx wrangler pages dev out --ip 0.0.0.0 --port 3000",
     "build": "next build",
-    "preview": "wrangler pages dev out --ip 0.0.0.0 --port 3000",
-    "deploy": "npm run build && wrangler pages deploy out --project-name webapp",
+    "preview": "npx wrangler pages dev out --ip 0.0.0.0 --port 3000",
+    "deploy": "npm run build && npx wrangler pages deploy out --project-name webapp",
     "clean-port": "fuser -k 3000/tcp 2>/dev/null || true",
     "test": "curl http://localhost:3000/english/",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "cf-typegen": "npx wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
     "@types/node": "^20.11.0",
@@ -28,6 +31,6 @@
   "devDependencies": {
     "tailwindcss": "^3.4.17",
     "typescript": "^5.3.3",
-    "wrangler": "^3.78.0"
+    "wrangler": "^4.90.0"
   }
 }
