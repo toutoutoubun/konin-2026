@@ -67,7 +67,7 @@ export default function ExemptionInputForm({ input, onChange, onClear }: Props) 
       {input.enrolled && (
         <div className="mt-3">
           <p className="text-sm font-bold">科目ごとの取得単位数</p>
-          <p className="mt-0.5 text-xs text-ink/60">在籍校の成績証明書で確認できます。不明な場合は空欄のまま。</p>
+          <p className="mt-0.5 text-xs text-ink/60">文部科学省様式の単位修得証明書で確認します。入学時期によって、複数科目の合計や「両方必要」の条件があります。</p>
           <div className="mt-2 grid grid-cols-2 gap-2">
             {exemptionSubjects.map((subject) => (
               <div key={subject.slug}>

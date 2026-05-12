@@ -6,6 +6,7 @@ import {
   officialCreditCertificateUrl,
   officialExamGuideUrl,
   officialExemptionRequirementsUrl,
+  officialHighSchoolCreditExemptionUrl,
   officialPastExamUrl,
   officialSkillExemptionUrl,
 } from '@/data/subjects'
@@ -37,9 +38,12 @@ const steps: TodoStep[] = [
     items: [
       { id: 'subjects', label: '受験科目を決める' },
       { id: 'exemption-requirements', label: '免除要件で対象科目と必要単位数を照合する', href: officialExemptionRequirementsUrl },
+      { id: 'high-school-credit-exemption', label: '入学時期A〜E別の高校単位免除要件を確認する', href: officialHighSchoolCreditExemptionUrl },
+      { id: 'credit-subject-combinations', label: '「両方必要」「いずれか1科目」「組み合わせて合計単位」の備考を確認する' },
       { id: 'skill-exemption-requirements', label: '技能審査による免除対象（歴検・数検・英検等・ITパスポート）を確認する', href: officialSkillExemptionUrl },
       { id: 'credit-certificate-form', label: '入学年度に合う単位修得証明書の文科省様式を選ぶ', href: officialCreditCertificateUrl },
       { id: 'credit-certificate-request', label: '在籍校に証明書作成を依頼する（提出用は厳封、確認用も用意）' },
+      { id: 'credit-certificate-available', label: '単位修得証明書で修得単位が確認できるか確認する' },
       { id: 'skill-proof-documents', label: '資格・検定で申請する科目は、合格証明書など指定書類を確認する' },
       { id: 'exemption-subjects', label: '単位・技能審査の証明書類を見ながら、免除申請できる科目を確認する' },
       { id: 'download-pdfs', label: '公式PDFを文科省サイトから取得する', href: officialPastExamUrl },

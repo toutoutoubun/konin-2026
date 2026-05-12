@@ -3,6 +3,7 @@ import {
   officialCreditCertificateUrl,
   officialExamGuideUrl,
   officialExemptionRequirementsUrl,
+  officialHighSchoolCreditExemptionUrl,
   officialSkillExemptionUrl,
 } from '@/data/subjects'
 
@@ -11,8 +12,11 @@ export default function ExemptionNote() {
     <aside className="mt-4 border-2 border-ink/20 bg-cream p-3 sm:p-4" aria-label="免除確認に関する注意事項">
       <h3 className="text-sm font-bold">免除申請チェックリスト</h3>
       <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-sm leading-relaxed">
-        <li>単位で申請する場合は、文部科学省の免除要件で修得科目と単位数を確認します。</li>
+        <li>単位で申請する場合は、入学時期（A：令和4年4月以降、B：平成24年4月〜令和4年3月、C：平成15年4月〜平成24年3月、D：平成6年4月〜平成15年3月、E：昭和57年4月〜平成6年3月）を確認します。</li>
+        <li>入学時期ごとの表で、免除を受けたい試験科目に対応する高校科目と必要単位数を確認します。</li>
+        <li>備考欄の「両方必要」「いずれか1科目で免除可能」「組み合わせて合計単位以上が必要」を確認します。</li>
         <li>入学年度に合う文部科学省様式の単位修得証明書を選び、在籍していた学校等に作成を依頼します。</li>
+        <li>単位修得証明書で修得単位が確認できない場合は、単位による免除申請はできません。</li>
         <li>技能審査で申請する場合は、公式一覧で対象の試験・級が科目免除に相当するか確認します。</li>
         <li>英語は英検準2級以上（準2級プラスを含む）、全商英検2級以上、国連英検C級以上のいずれかを確認します。</li>
         <li>歴史は歴検の世界史3級以上と日本史3級以上の両方、数学は数検2級以上、情報はITパスポート試験の合格を確認します。</li>
@@ -25,6 +29,9 @@ export default function ExemptionNote() {
       <div className="mt-3 flex flex-wrap gap-2 text-sm">
         <a href={officialExemptionRequirementsUrl} target="_blank" rel="noopener" className="font-bold">
           免除要件
+        </a>
+        <a href={officialHighSchoolCreditExemptionUrl} target="_blank" rel="noopener" className="font-bold">
+          高校単位免除要件
         </a>
         <a href={officialCreditCertificateUrl} target="_blank" rel="noopener" className="font-bold">
           単位修得証明書様式

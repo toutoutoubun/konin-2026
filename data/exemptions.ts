@@ -15,7 +15,7 @@ export const exemptionSubjects: ExemptionSubject[] = [
     category: 'required',
     categoryLabel: '必修',
     exemptionConditions: [
-      '高校で国語総合または現代の国語・言語文化の単位を規定数以上取得している場合',
+      '高校で現代の国語と言語文化、または旧課程の国語総合等を規定単位数以上修得している場合',
     ],
     creditThreshold: 4,
   },
@@ -37,7 +37,7 @@ export const exemptionSubjects: ExemptionSubject[] = [
     category: 'required',
     categoryLabel: '必修',
     exemptionConditions: [
-      '高校で英語の単位を規定数以上取得している場合',
+      '高校で英語コミュニケーションⅠ、英語Ⅰ、旧課程の英語科目の組み合わせ等を規定単位数以上修得している場合',
       '実用英語技能検定（英検）準2級以上（準2級プラスを含む）に合格している場合',
       '全国商業高等学校協会 英語検定試験2級以上に合格している場合',
       '国際連合公用語英語検定試験C級以上に合格している場合',
@@ -55,7 +55,7 @@ export const exemptionSubjects: ExemptionSubject[] = [
     category: 'required',
     categoryLabel: '必修（歴史総合または世界史A）',
     exemptionConditions: [
-      '高校で歴史総合または世界史Aの単位を規定数以上取得している場合',
+      '高校で歴史総合、世界史A・B、日本史A・B等を入学時期別の条件で規定単位数以上修得している場合',
       '歴史能力検定の世界史3級以上と日本史3級以上の両方に合格している場合',
     ],
     creditThreshold: 2,
@@ -67,7 +67,7 @@ export const exemptionSubjects: ExemptionSubject[] = [
     category: 'required',
     categoryLabel: '必修（地理総合または地理A・地理B）',
     exemptionConditions: [
-      '高校で地理総合・地理A・地理Bの単位を規定数以上取得している場合',
+      '高校で地理総合・地理A・地理B等を入学時期別の条件で規定単位数以上修得している場合',
     ],
     creditThreshold: 2,
   },
@@ -77,7 +77,7 @@ export const exemptionSubjects: ExemptionSubject[] = [
     category: 'select',
     categoryLabel: '選択（公共/現代社会/倫理/政治経済）',
     exemptionConditions: [
-      '高校で公共・現代社会・倫理・政治経済の単位を規定数以上取得している場合',
+      '高校で公共、現代社会、倫理、政治・経済等を入学時期別の条件で規定単位数以上修得している場合',
     ],
     creditThreshold: 2,
   },
@@ -137,7 +137,7 @@ export const exemptionSubjects: ExemptionSubject[] = [
     category: 'required',
     categoryLabel: '必修（令和8年度から）',
     exemptionConditions: [
-      '高校で情報Ⅰの単位を規定数以上取得している場合',
+      '高校で情報Ⅰ、社会と情報、情報の科学、情報A・B・C等を入学時期別の条件で規定単位数以上修得している場合',
       '情報処理技術者試験のうち、ITパスポート試験に合格している場合',
     ],
     creditThreshold: 2,

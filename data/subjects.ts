@@ -13,6 +13,7 @@ export type Subject = {
 export const officialPastExamUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/1421021.htm'
 export const officialExamGuideUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/index.htm'
 export const officialExemptionRequirementsUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/06033010/007.htm'
+export const officialHighSchoolCreditExemptionUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/06033010/20260227-mxt_syogai02-1koutou01.pdf'
 export const officialCreditCertificateUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/05033001.htm'
 export const officialApplicationFlowUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/mext_01821.html'
 export const officialSkillExemptionUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/06033010/20260227-mxt_syogai02-3ginou01.pdf'
