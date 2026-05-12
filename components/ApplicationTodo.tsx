@@ -7,6 +7,7 @@ import {
   officialExamGuideUrl,
   officialExemptionRequirementsUrl,
   officialHighSchoolCreditExemptionUrl,
+  officialKosenCreditExemptionUrl,
   officialPastExamUrl,
   officialSkillExemptionUrl,
 } from '@/data/subjects'
@@ -39,6 +40,7 @@ const steps: TodoStep[] = [
       { id: 'subjects', label: '受験科目を決める' },
       { id: 'exemption-requirements', label: '免除要件で対象科目と必要単位数を照合する', href: officialExemptionRequirementsUrl },
       { id: 'high-school-credit-exemption', label: '入学時期A〜E別の高校単位免除要件を確認する', href: officialHighSchoolCreditExemptionUrl },
+      { id: 'kosen-credit-exemption', label: '高専で修得した単位がある場合は、高専単位免除要件を確認する', href: officialKosenCreditExemptionUrl },
       { id: 'credit-subject-combinations', label: '「両方必要」「いずれか1科目」「組み合わせて合計単位」の備考を確認する' },
       { id: 'skill-exemption-requirements', label: '技能審査による免除対象（歴検・数検・英検等・ITパスポート）を確認する', href: officialSkillExemptionUrl },
       { id: 'credit-certificate-form', label: '入学年度に合う単位修得証明書の文科省様式を選ぶ', href: officialCreditCertificateUrl },

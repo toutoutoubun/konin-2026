@@ -5,6 +5,7 @@ import {
   officialCreditCertificateUrl,
   officialExemptionRequirementsUrl,
   officialHighSchoolCreditExemptionUrl,
+  officialKosenCreditExemptionUrl,
   officialSkillExemptionUrl,
 } from '@/data/subjects'
 import { getToolPage, toolPages } from '@/data/toolPages'
@@ -49,12 +50,14 @@ export default function ExemptionCheckPage() {
               </p>
               <ul className="list-inside list-disc space-y-1 text-sm">
                 <li>高校単位で申請する場合は、入学時期A〜Eごとの表を確認します。</li>
+                <li>高専単位で申請する場合は、平成15年4月以降に入学した方向けの高専確認表を使います。</li>
                 <li>単位修得証明書で修得単位が確認できない場合、単位による免除申請はできません。</li>
                 <li>技能審査は、英検、全商英検、国連英検、数検、歴検、ITパスポートなど、公式一覧にあるものだけを確認します。</li>
               </ul>
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialExemptionRequirementsUrl} target="_blank" rel="noopener">免除要件</a>
                 <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialHighSchoolCreditExemptionUrl} target="_blank" rel="noopener">高校単位免除要件</a>
+                <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialKosenCreditExemptionUrl} target="_blank" rel="noopener">高専単位免除要件</a>
                 <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialSkillExemptionUrl} target="_blank" rel="noopener">技能審査一覧</a>
                 <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialCreditCertificateUrl} target="_blank" rel="noopener">証明書様式</a>
                 <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialApplicationFlowUrl} target="_blank" rel="noopener">出願書類</a>

@@ -29,7 +29,7 @@ export default function HomePage() {
             高認パス
           </h1>
           <p className="mt-5 max-w-3xl text-base leading-relaxed sm:mt-7 sm:text-xl">
-            高等学校卒業程度認定試験の準備を、出願、進路比較、免除確認、公式PDF傾向分析に分けて整理する非公式Webツールです。トップページは全体の入口として使い、各機能は専用ページで落ち着いて操作できます。
+            高等学校卒業程度認定試験の準備を、出願、進路比較、免除確認、公式PDF傾向分析に分けて整理する非公式Webツールです。
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4" aria-label="主要操作">
             <a className="hard-button button-like bg-blue px-5 py-3 text-center text-white no-underline" href="#tools">ツールを選ぶ</a>
@@ -79,7 +79,7 @@ export default function HomePage() {
             <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">TOOLS</p>
             <h2 id="tools-title" className="mt-2 font-mincho text-3xl font-bold leading-tight sm:text-4xl md:text-6xl md:leading-none">ツールを選ぶ</h2>
             <p className="mt-3 max-w-3xl text-base leading-relaxed sm:text-lg">
-              4つのツールはそれぞれ別ページに分けました。出願準備、進路比較、免除確認、過去問分析のどこから始めたいかを選んでください。
+              出願準備、進路比較、免除確認、過去問分析のどこから始めたいかを選んでください。
             </p>
           </div>
 

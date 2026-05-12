@@ -5,6 +5,8 @@ import {
   type ExemptionStatus,
   exemptionSubjects,
   evaluateExemption,
+  formatRequirementGroup,
+  getCreditRequirementGroups,
 } from '@/data/exemptions'
 
 type Props = {
@@ -88,28 +90,47 @@ export default function ExemptionResult({ input }: Props) {
               {config.label}
             </h4>
             <ul className="mt-1.5 space-y-1" role="list">
-              {items.map(({ subject }) => (
-                <li
-                  key={subject.slug}
-                  className={`border ${config.borderClass} ${config.bgClass} p-2`}
-                >
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-sm font-bold">{subject.name}</span>
-                    <span className="border border-ink/20 bg-paper px-1.5 py-0.5 text-xs">
-                      {subject.categoryLabel}
-                    </span>
-                  </div>
-                  {subject.exemptionConditions.length > 0 && (
-                    <ul className="mt-1 space-y-0.5">
-                      {subject.exemptionConditions.map((cond, i) => (
-                        <li key={i} className="text-xs leading-relaxed pl-2.5 relative before:absolute before:left-0 before:content-['・']">
-                          {cond}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
+              {items.map(({ subject }) => {
+                const requirementGroups = input.admissionPeriod
+                  ? getCreditRequirementGroups(input.admissionPeriod, subject.slug)
+                  : []
+
+                return (
+                  <li
+                    key={subject.slug}
+                    className={`border ${config.borderClass} ${config.bgClass} p-2`}
+                  >
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="text-sm font-bold">{subject.name}</span>
+                      <span className="border border-ink/20 bg-paper px-1.5 py-0.5 text-xs">
+                        {subject.categoryLabel}
+                      </span>
+                    </div>
+                    {subject.exemptionConditions.length > 0 && (
+                      <ul className="mt-1 space-y-0.5">
+                        {subject.exemptionConditions.map((cond, i) => (
+                          <li key={i} className="text-xs leading-relaxed pl-2.5 relative before:absolute before:left-0 before:content-['・']">
+                            {cond}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {requirementGroups.length > 0 && (
+                      <div className="mt-2 border border-ink/15 bg-paper p-2">
+                        <p className="text-xs font-bold">選択した入学時期の単位要件</p>
+                        <ul className="mt-1 space-y-0.5">
+                          {requirementGroups.map((group) => (
+                            <li key={`${group.subjectSlug}-${group.label}`} className="text-xs leading-relaxed pl-2.5 relative before:absolute before:left-0 before:content-['・']">
+                              {formatRequirementGroup(group)}
+                              {group.note ? ` / ${group.note}` : ''}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </li>
+                )
+              })}
             </ul>
           </div>
         )

@@ -54,7 +54,7 @@ export default function RouteComparePage() {
         <div className="grid gap-6 lg:grid-cols-[.95fr_1.05fr] lg:items-start">
           <section className="panel p-5 sm:p-6" aria-labelledby="route-support-title">
             <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">WHAT THIS HELPS</p>
-            <h2 id="route-support-title" className="mt-2 font-mincho text-2xl font-bold sm:text-3xl">比較前に置いておく前提</h2>
+            <h2 id="route-support-title" className="mt-2 font-mincho text-2xl font-bold sm:text-3xl">こんな人のためのツール</h2>
             <div className="mt-4 space-y-3">
               {tool.bestFor.map((item) => (
                 <p key={item} className="border-2 border-ink bg-cream p-3 text-sm font-bold">{item}</p>
