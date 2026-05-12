@@ -15,6 +15,7 @@ const analysisSlugs = subjects
       s.slug === 'history' ? '/history/' :
       s.slug === 'geography' ? '/geography/' :
       s.slug === 'science-life' ? '/science-society/' :
+      s.slug === 'physics' ? '/physics/' :
       `/subjects/${s.slug}/`,
   }))
 

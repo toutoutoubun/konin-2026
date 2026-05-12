@@ -215,7 +215,7 @@ const subjectTabs: SubjectTab[] = [
     slug: 'physics',
     name: '物理基礎',
     accent: 'orange',
-    status: 'placeholder',
+    status: 'active',
     unitRows: buildUnitRows(physicsTags.rule_sets[0].units),
     formatTags: physicsTags.format_tags,
     ruleSets: physicsTags.rule_sets.map((r) => ({ code: r.code, label: r.label, detail: `全${r.total_blocks}大問` })),

@@ -21,7 +21,7 @@ export const subjects: Subject[] = [
   { slug: 'geography', name: '地理', label: 'GEOGRAPHY', status: 'active', accent: 'orange', description: 'ユーザーが取得した地理・地理A・地理Bの公式PDFを端末内で解析し、テーマ別・地域別・出題形式別の頻出傾向を表示します。', legacy: '旧課程：地理A・地理B' },
   { slug: 'civics', name: '公民', label: 'CIVICS', status: 'placeholder', accent: 'yellow', description: '政治、経済、倫理、現代社会領域を制度区分付きで整理します。', legacy: '旧課程：現代社会・倫理・政治経済' },
   { slug: 'science-life', name: '科学と人間生活', label: 'SCIENCE & LIFE', status: 'active', accent: 'blue', description: 'ユーザーが取得した科学と人間生活の公式PDFを端末内で解析し、物理系・化学系・生物系・地学系の分野別頻出傾向を表示します。' },
-  { slug: 'physics', name: '物理基礎', label: 'PHYSICS', status: 'placeholder', accent: 'orange', description: '力学・波・電気などの単元傾向を扱う予定です。' },
+  { slug: 'physics', name: '物理基礎', label: 'PHYSICS', status: 'active', accent: 'orange', description: 'ユーザーが取得した物理基礎の公式PDFを端末内で解析し、頻出分野、年度別推移、大問構成、出題形式を表示します。' },
   { slug: 'chemistry', name: '化学基礎', label: 'CHEMISTRY', status: 'placeholder', accent: 'yellow', description: '物質量、酸化還元、酸・塩基などの出現傾向を扱う予定です。' },
   { slug: 'biology', name: '生物基礎', label: 'BIOLOGY', status: 'placeholder', accent: 'blue', description: '細胞、遺伝、生態系などの出現傾向を扱う予定です。' },
   { slug: 'earth-science', name: '地学基礎', label: 'EARTH SCIENCE', status: 'placeholder', accent: 'orange', description: '地質、気象、天文などの出現傾向を扱う予定です。' },
