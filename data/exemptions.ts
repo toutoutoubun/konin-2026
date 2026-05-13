@@ -225,7 +225,7 @@ export const exemptionSubjects: ExemptionSubject[] = [
     creditThreshold: 2,
   },
   {
-    name: '公民',
+    name: '公共',
     slug: 'civics',
     category: 'select',
     categoryLabel: '選択（公共/現代社会/倫理/政治経済）',

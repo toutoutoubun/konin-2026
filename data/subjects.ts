@@ -26,7 +26,7 @@ export const subjects: Subject[] = [
   { slug: 'english', name: '英語', label: 'ENGLISH', status: 'active', accent: 'yellow', description: 'ユーザーが取得した英語の公式PDFを端末内で解析し、よく出る単元、出題形式、年度推移を表示します。' },
   { slug: 'history', name: '歴史', label: 'HISTORY', status: 'active', accent: 'blue', description: 'ユーザーが取得した歴史・世界史Aの公式PDFを端末内で解析し、テーマ別・時代別・地域別・出題形式別の頻出傾向を表示します。', legacy: '旧課程：世界史A' },
   { slug: 'geography', name: '地理', label: 'GEOGRAPHY', status: 'active', accent: 'orange', description: 'ユーザーが取得した地理・地理A・地理Bの公式PDFを端末内で解析し、テーマ別・地域別・出題形式別の頻出傾向を表示します。', legacy: '旧課程：地理A・地理B' },
-  { slug: 'civics', name: '公民', label: 'CIVICS', status: 'placeholder', accent: 'yellow', description: '政治、経済、倫理、現代社会領域を制度区分付きで整理します。', legacy: '旧課程：現代社会・倫理・政治経済' },
+  { slug: 'civics', name: '公共', label: 'PUBLIC', status: 'active', accent: 'yellow', description: 'ユーザーが取得した公共の公式PDFを端末内で解析し、頻出分野、年度別推移、大問構成、出題形式を表示します。', legacy: '旧課程：現代社会・倫理・政治経済は参考区分' },
   { slug: 'science-life', name: '科学と人間生活', label: 'SCIENCE & LIFE', status: 'active', accent: 'blue', description: 'ユーザーが取得した科学と人間生活の公式PDFを端末内で解析し、物理系・化学系・生物系・地学系の分野別頻出傾向を表示します。' },
   { slug: 'physics', name: '物理基礎', label: 'PHYSICS', status: 'active', accent: 'orange', description: 'ユーザーが取得した物理基礎の公式PDFを端末内で解析し、頻出分野、年度別推移、大問構成、出題形式を表示します。' },
   { slug: 'chemistry', name: '化学基礎', label: 'CHEMISTRY', status: 'active', accent: 'yellow', description: 'ユーザーが取得した化学基礎の公式PDFを端末内で解析し、頻出分野、年度別推移、大問構成、出題形式を表示します。' },

@@ -403,13 +403,27 @@ const subjectTabs: SubjectTab[] = [
   },
   {
     slug: 'civics',
-    name: '公民',
+    name: '公共',
     accent: 'yellow',
-    status: 'placeholder',
-    summary: '公民は現代社会、倫理、政治経済、公共のルールセットを分けて定義しています。分析画面は未実装です。',
+    status: 'active',
+    summary: '公共は新課程の公共PDFを主対象に、公共的な空間、法、人権、政治参加、経済・労働、持続可能な社会を判定します。現代社会、倫理、政治・経済は旧課程の参考区分として扱います。',
     unitRows: buildTopicRowsFromRuleSets(civicsTags.rule_sets as RuleSetLike[], civicsTags.keyword_map as Record<string, KeywordConfig>),
     formatTags: civicsTags.format_tags,
     ruleSets: buildRuleSets(civicsTags.rule_sets),
+    extraSections: (
+      <div className="mt-6">
+        <h4 className="font-mincho text-xl font-bold">制度区分の扱い</h4>
+        <div className="mt-3 grid gap-3 md:grid-cols-2">
+          {((civicsTags as any).observed_subjects ?? []).map((item: { subject_name: string; period: string; question_count: string; block_style: string }) => (
+            <div key={item.subject_name} className="border-2 border-ink bg-cream p-4">
+              <strong>{item.subject_name}</strong>
+              <p className="mt-1 text-sm">{item.period} / {item.question_count}</p>
+              <p className="mt-2 text-sm leading-relaxed">{item.block_style}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
   },
   {
     slug: 'science-life',
