@@ -26,7 +26,7 @@ export default function SubjectPage({ params }: { params: { slug: string } }) {
     <>
       <a className="skip-link" href="#main-content">本文へ移動</a>
       <Header navItems={[
-        { label: 'ツール一覧', href: '/#tools' },
+        { label: '分析一覧', href: '/analysis/' },
         { label: '英語分析', href: '/subjects/english/' },
         { label: '数学分析', href: '/math/' },
         { label: 'タグ定義', href: '/tags/' },
@@ -34,7 +34,7 @@ export default function SubjectPage({ params }: { params: { slug: string } }) {
       ]} />
 
       <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
-        <a href="/">トップ</a><span aria-hidden="true">/</span><a href="/#tools">ツール一覧</a><span aria-hidden="true">/</span><span>{subject.name}</span>
+        <a href="/">トップ</a><span aria-hidden="true">/</span><a href="/analysis/">分析一覧</a><span aria-hidden="true">/</span><span>{subject.name}</span>
       </nav>
 
       <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>

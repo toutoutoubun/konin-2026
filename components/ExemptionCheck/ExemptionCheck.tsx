@@ -15,7 +15,10 @@ export default function ExemptionCheck() {
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(STORAGE_KEY)
-      if (saved) setInput(JSON.parse(saved))
+      if (saved) {
+        const parsed = JSON.parse(saved) as Partial<ExemptionInput>
+        setInput({ ...defaultExemptionInput, ...parsed, credits: parsed.credits ?? {} })
+      }
     } catch { /* ignore */ }
     setLoaded(true)
   }, [])
@@ -54,7 +57,7 @@ export default function ExemptionCheck() {
           </ruby>
         </h2>
         <p className="mt-2 text-sm">
-          取得済みの単位・資格から、免除できる可能性がある科目と受験が必要な可能性がある科目を整理します。
+          取得済みの単位・技能審査から、免除できる可能性がある科目と受験が必要な可能性がある科目を整理します。単位による免除は学校種別と入学時期ごとに対象科目と必要単位数が変わるため、文部科学省様式の単位修得証明書で確認します。
         </p>
       </div>
 

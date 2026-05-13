@@ -3,15 +3,15 @@
 import { useMemo, useState } from 'react'
 import Header from '@/components/Header'
 import FrequencyChart from '@/components/FrequencyChart'
-import PhysicsPDFUploader from '@/components/PhysicsPDFUploader'
-import PhysicsFilterPanel from '@/components/PhysicsFilterPanel'
+import JapaneseFilterPanel from '@/components/JapaneseFilterPanel'
+import JapanesePDFUploader from '@/components/JapanesePDFUploader'
 import {
-  aggregatePhysicsResults,
-  filterPhysicsResults,
-  initialPhysicsFilters,
-  type PhysicsFilters
-} from '@/lib/physicsScoreCalculator'
-import type { PhysicsAnalysisResult } from '@/lib/physicsTagMapper'
+  aggregateJapaneseResults,
+  filterJapaneseResults,
+  initialJapaneseFilters,
+  type JapaneseFilters
+} from '@/lib/japaneseScoreCalculator'
+import type { JapaneseAnalysisResult } from '@/lib/japaneseTagMapper'
 import {
   Bar,
   BarChart,
@@ -28,30 +28,30 @@ import {
 const officialPastExamUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/1421021.htm'
 
 const TOPIC_COLORS: Record<string, string> = {
-  '物理量と測定': '#6B7280',
-  '力と運動': '#1A5CFF',
-  'エネルギーと仕事': '#FF6B35',
-  '熱': '#E11D48',
-  '波・音・光': '#9370DB',
-  '電気': '#2E8B57',
+  '言語知識': '#1A5CFF',
+  '実用的な文章・話合い': '#FF6B35',
+  '現代文（評論・説明）': '#2E8B57',
+  '現代文（文学的文章）': '#9370DB',
+  '古典・言語文化': '#E11D48',
+  '漢文': '#6B7280',
   '判定保留': '#999999'
 }
 
-export default function PhysicsPage() {
-  const [results, setResults] = useState<PhysicsAnalysisResult[]>([])
-  const [filters, setFilters] = useState<PhysicsFilters>(initialPhysicsFilters)
+export default function JapanesePage() {
+  const [results, setResults] = useState<JapaneseAnalysisResult[]>([])
+  const [filters, setFilters] = useState<JapaneseFilters>(initialJapaneseFilters)
   const [error, setError] = useState('')
 
   const filteredResults = useMemo(
-    () => filterPhysicsResults(results, filters),
+    () => filterJapaneseResults(results, filters),
     [results, filters]
   )
   const summary = useMemo(
-    () => aggregatePhysicsResults(filteredResults),
+    () => aggregateJapaneseResults(filteredResults),
     [filteredResults]
   )
   const allSummary = useMemo(
-    () => aggregatePhysicsResults(results),
+    () => aggregateJapaneseResults(results),
     [results]
   )
   const hasResults = results.length > 0
@@ -74,9 +74,9 @@ export default function PhysicsPage() {
 
       <Header navItems={[
         { label: '分析一覧', href: '/analysis/' },
-        { label: 'PDF選択', href: '#physics-upload-title' },
-        { label: '集計', href: '#physics-ranking-title' },
-        { label: 'フィルタ', href: '#physics-filter-title' },
+        { label: 'PDF選択', href: '#japanese-upload-title' },
+        { label: '集計', href: '#japanese-ranking-title' },
+        { label: 'フィルタ', href: '#japanese-filter-title' },
         { label: 'タグ定義', href: '/tags/' },
         { label: '更新履歴', href: '/updates/' },
       ]} />
@@ -86,51 +86,51 @@ export default function PhysicsPage() {
         <span aria-hidden="true">/</span>
         <a href="/analysis/">分析一覧</a>
         <span aria-hidden="true">/</span>
-        <span aria-current="page">物理基礎頻出分析</span>
+        <span aria-current="page">国語頻出分析</span>
       </nav>
 
       <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
-        <section className="py-12 md:py-20" aria-labelledby="physics-hero-title">
-          <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">PHYSICS PAST EXAM ANALYZER</p>
-          <h1 id="physics-hero-title" className="mt-4 max-w-5xl font-mincho text-[48px] font-bold leading-none tracking-[-.04em]">
-            <ruby>物理<rt>ぶつり</rt></ruby><ruby>基礎<rt>きそ</rt></ruby><ruby>頻出<rt>ひんしゅつ</rt></ruby><ruby>分析<rt>ぶんせき</rt></ruby>
+        <section className="py-12 md:py-20" aria-labelledby="japanese-hero-title">
+          <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">JAPANESE PAST EXAM ANALYZER</p>
+          <h1 id="japanese-hero-title" className="mt-4 max-w-5xl font-mincho text-[48px] font-bold leading-none tracking-[-.04em]">
+            <ruby>国語<rt>こくご</rt></ruby><ruby>頻出<rt>ひんしゅつ</rt></ruby><ruby>分析<rt>ぶんせき</rt></ruby>
           </h1>
           <p className="mt-5 max-w-3xl text-base leading-relaxed sm:mt-7 sm:text-xl">
-            ユーザーが文科省公式ページから取得した物理基礎PDFを端末内で解析し、頻出分野・年度別推移・大問構成を可視化します。PDFはサーバーへ送信せず、問題文や設問文は再掲載しません。
+            ユーザーが文科省公式ページから取得した国語PDFを端末内で解析し、頻出分野・年度別推移・大問構成を可視化します。PDFはサーバーへ送信せず、問題文や設問文は再掲載しません。
           </p>
           <p className="mt-3 max-w-3xl">
-            物理基礎は大問内で小問番号がリセットされるため、「問1〜問Nに答えよ。」の見出しで大問を分割し、各大問の本文キーワードから分野と出題形式を判定します。
+            国語は年度によって知識問題、実用的な文章、現代文、古典、漢文の並びが変わります。「問1〜問Nに答えよ」の見出しで大問を分割し、各大問の本文キーワードから分野と出題形式を判定します。
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4" aria-label="主要操作">
-            <a className="hard-button button-like bg-blue px-5 py-3 text-center text-white no-underline" href="#physics-upload-title">PDFを分析する</a>
+            <a className="hard-button button-like bg-blue px-5 py-3 text-center text-white no-underline" href="#japanese-upload-title">PDFを分析する</a>
             <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式PDFページへ</a>
           </div>
         </section>
 
-        <PhysicsPDFUploader
+        <JapanesePDFUploader
           onComplete={(nextResults) => {
             setResults((prev) => {
               const existingNames = new Set(nextResults.map((result) => result.fileName))
               const kept = prev.filter((result) => !existingNames.has(result.fileName))
               return [...kept, ...nextResults]
             })
-            setFilters(initialPhysicsFilters)
+            setFilters(initialJapaneseFilters)
             setError('')
           }}
           onError={setError}
         />
 
         {error && (
-          <section className="panel mt-8 border-orange bg-paper p-6" aria-live="polite" aria-labelledby="physics-error-title">
-            <h2 id="physics-error-title" className="font-mincho text-3xl font-bold">解析できませんでした</h2>
+          <section className="panel mt-8 border-orange bg-paper p-6" aria-live="polite" aria-labelledby="japanese-error-title">
+            <h2 id="japanese-error-title" className="font-mincho text-3xl font-bold">解析できませんでした</h2>
             <p className="mt-2">{error}</p>
-            <p className="mt-2">文科省公式ページから取得した物理基礎PDFを選び直してください。</p>
+            <p className="mt-2">文科省公式ページから取得した国語PDFを選び直してください。</p>
           </section>
         )}
 
-        <section className="panel mt-8 p-6 md:p-8" aria-labelledby="physics-status-title" aria-live="polite">
+        <section className="panel mt-8 p-6 md:p-8" aria-labelledby="japanese-status-title" aria-live="polite">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">ANALYSIS STATUS</p>
-          <h2 id="physics-status-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">解析結果</h2>
+          <h2 id="japanese-status-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">解析結果</h2>
           {hasResults ? (
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               {results.map((result) => (
@@ -172,13 +172,13 @@ export default function PhysicsPage() {
           )}
         </section>
 
-        <section className="panel mt-8 p-6 md:p-8" aria-labelledby="physics-ranking-title">
+        <section className="panel mt-8 p-6 md:p-8" aria-labelledby="japanese-ranking-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION A</p>
-          <h2 id="physics-ranking-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
+          <h2 id="japanese-ranking-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             <ruby>頻出<rt>ひんしゅつ</rt></ruby><ruby>分野<rt>ぶんや</rt></ruby>ランキング
           </h2>
           <p className="mt-3 max-w-3xl">
-            大問ごとに最も強く出た分野を集計します。年度で分野順が変わる場合も、問題文キーワードから判定します。
+            大問ごとに最も強く出た分野を集計します。年度によって構成が変わるため、本文キーワードから知識・実用文・現代文・古典・漢文を判定します。
           </p>
           <div className="mt-5 grid gap-6 lg:grid-cols-[1fr_.9fr]">
             <FrequencyChart
@@ -186,21 +186,21 @@ export default function PhysicsPage() {
               xKey="name"
               yKey="count"
               label="頻出分野の出現回数"
-              color="#FF6B35"
+              color="#1A5CFF"
             />
             <RankingTable rows={summary.topicRanking} />
           </div>
         </section>
 
-        <section className="panel mt-8 p-6 md:p-8" aria-labelledby="physics-recent-title">
+        <section className="panel mt-8 p-6 md:p-8" aria-labelledby="japanese-recent-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION B</p>
-          <h2 id="physics-recent-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
+          <h2 id="japanese-recent-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             <ruby>近年<rt>きんねん</rt></ruby><ruby>頻出<rt>ひんしゅつ</rt></ruby>ランキング
           </h2>
           <p className="mt-3 max-w-3xl">
             recent_weighted_score = &Sigma;(出現回数 &times; session_weight)。最新回 1.0、一つ前 0.8、二つ前 0.6、三つ前 0.4、それ以前 0.2 で算出します。
           </p>
-          <div className="mt-5 overflow-x-auto" role="region" aria-label="物理基礎の近年頻出ランキング表" tabIndex={0}>
+          <div className="mt-5 overflow-x-auto" role="region" aria-label="国語の近年頻出ランキング表" tabIndex={0}>
             <table className="w-full min-w-[520px] border-collapse bg-paper" role="table">
               <caption className="py-3 text-left font-bold">近年頻出ランキング。重み付きスコアと直近の出現。</caption>
               <thead className="bg-ink text-cream">
@@ -229,15 +229,15 @@ export default function PhysicsPage() {
           </div>
         </section>
 
-        <section className="panel mt-8 p-6 md:p-8" aria-labelledby="physics-block-title">
+        <section className="panel mt-8 p-6 md:p-8" aria-labelledby="japanese-block-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION C</p>
-          <h2 id="physics-block-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
+          <h2 id="japanese-block-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             <ruby>大問<rt>だいもん</rt></ruby><ruby>構成<rt>こうせい</rt></ruby>
           </h2>
           <p className="mt-3 max-w-3xl">
             各PDFの大問ごとに、小問数、解答番号範囲、判定分野、出題形式を整理します。
           </p>
-          <div className="mt-5 overflow-x-auto" role="region" aria-label="物理基礎の大問構成表" tabIndex={0}>
+          <div className="mt-5 overflow-x-auto" role="region" aria-label="国語の大問構成表" tabIndex={0}>
             <table className="w-full min-w-[980px] border-collapse bg-paper" role="table">
               <caption className="py-3 text-left font-bold">試験回別の大問構成。</caption>
               <thead className="bg-ink text-cream">
@@ -274,9 +274,9 @@ export default function PhysicsPage() {
           </div>
         </section>
 
-        <section className="panel mt-8 p-6 md:p-8" aria-labelledby="physics-trend-title">
+        <section className="panel mt-8 p-6 md:p-8" aria-labelledby="japanese-trend-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION D</p>
-          <h2 id="physics-trend-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
+          <h2 id="japanese-trend-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             <ruby>年度別<rt>ねんどべつ</rt></ruby><ruby>推移<rt>すいい</rt></ruby>
           </h2>
           <p className="mt-3 max-w-3xl">
@@ -288,9 +288,9 @@ export default function PhysicsPage() {
           </div>
         </section>
 
-        <section className="panel mt-8 p-6 md:p-8" aria-labelledby="physics-format-title">
+        <section className="panel mt-8 p-6 md:p-8" aria-labelledby="japanese-format-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">FORMAT DISTRIBUTION</p>
-          <h2 id="physics-format-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
+          <h2 id="japanese-format-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             <ruby>出題<rt>しゅつだい</rt></ruby><ruby>形式<rt>けいしき</rt></ruby><ruby>分布<rt>ぶんぷ</rt></ruby>
           </h2>
           <p className="mt-3 max-w-3xl">
@@ -315,7 +315,7 @@ export default function PhysicsPage() {
         </section>
 
         <div className="mt-8">
-          <PhysicsFilterPanel
+          <JapaneseFilterPanel
             value={filters}
             onChange={setFilters}
             availableTopics={allSummary.availableTopics}
@@ -324,9 +324,9 @@ export default function PhysicsPage() {
           />
         </div>
 
-        <section className="panel mt-8 p-6 md:p-8" aria-labelledby="physics-meta-title">
+        <section className="panel mt-8 p-6 md:p-8" aria-labelledby="japanese-meta-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">NOTES</p>
-          <h2 id="physics-meta-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
+          <h2 id="japanese-meta-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
             注記
           </h2>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
@@ -341,12 +341,12 @@ export default function PhysicsPage() {
               </p>
             </div>
             <div className="border-2 border-ink bg-cream p-4">
-              <h3 className="text-xl font-bold">物理基礎の解析方法</h3>
+              <h3 className="text-xl font-bold">国語の解析方法</h3>
               <p className="mt-3">
-                大問見出しの「問1〜問Nに答えよ。」を検出し、各大問の解答番号範囲と小問数を推定します。
+                大問見出しの「問1〜問Nに答えよ」を検出し、各大問の解答番号範囲と小問数を推定します。
               </p>
               <p className="mt-2 text-sm">
-                分野順は年度によって変わるため、力と運動、熱、波・音・光、電気、エネルギーと仕事、物理量と測定のキーワードスコアで大問ごとに分類します。
+                国語は実用的な文章、現代文、古典、漢文、知識問題が年度で入れ替わるため、見出しと本文キーワードを併用して大問ごとに分類します。
               </p>
             </div>
           </div>
@@ -358,7 +358,7 @@ export default function PhysicsPage() {
 
       <footer className="border-t-2 border-ink bg-ink px-4 py-6 text-cream sm:py-8 md:px-10">
         <div className="mx-auto max-w-7xl space-y-2">
-          <p><strong>更新日</strong> 2026-05-12</p>
+          <p><strong>更新日</strong> 2026-05-13</p>
           <p><strong>データ範囲</strong> ユーザーが正当に取得し、端末内で選択した文部科学省公式PDF。問題文・設問文の配布や再掲載は行いません。</p>
           <p><strong>注意書き</strong> 高認パスは文部科学省の公式サービスではありません。</p>
           <p><a className="text-yellow" href={officialPastExamUrl} target="_blank" rel="noopener">文部科学省 過去問題ページ</a></p>
@@ -370,7 +370,7 @@ export default function PhysicsPage() {
 
 function RankingTable({ rows }: { rows: Array<{ topic: string; count: number; rate: number }> }) {
   return (
-    <div className="overflow-x-auto" role="region" aria-label="物理基礎の頻出分野ランキング表" tabIndex={0}>
+    <div className="overflow-x-auto" role="region" aria-label="国語の頻出分野ランキング表" tabIndex={0}>
       <table className="w-full min-w-[420px] border-collapse bg-paper" role="table">
         <caption className="py-3 text-left font-bold">頻出分野ランキング。順位、分野、出現回数、割合。</caption>
         <thead className="bg-ink text-cream">
@@ -402,7 +402,7 @@ function RankingTable({ rows }: { rows: Array<{ topic: string; count: number; ra
 
 function FormatTable({ rows }: { rows: Array<{ format: string; count: number; rate: number }> }) {
   return (
-    <div className="mt-5 overflow-x-auto" role="region" aria-label="物理基礎の出題形式分布表" tabIndex={0}>
+    <div className="mt-5 overflow-x-auto" role="region" aria-label="国語の出題形式分布表" tabIndex={0}>
       <table className="w-full min-w-[420px] border-collapse bg-paper" role="table">
         <caption className="py-3 text-left font-bold">出題形式ごとの出現回数と割合。</caption>
         <thead className="bg-ink text-cream">

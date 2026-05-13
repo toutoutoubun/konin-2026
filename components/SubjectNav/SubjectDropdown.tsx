@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { subjects } from '@/data/subjects'
+import { subjectHref } from '@/lib/subjectHref'
 
 const analysisSlugs = subjects
   .filter((s) => s.status === 'active' || s.status === 'coming-soon')
@@ -9,14 +10,7 @@ const analysisSlugs = subjects
     slug: s.slug,
     name: s.name,
     label: s.label,
-    href:
-      s.slug === 'english' ? '/subjects/english/' :
-      s.slug === 'math' ? '/math/' :
-      s.slug === 'history' ? '/history/' :
-      s.slug === 'geography' ? '/geography/' :
-      s.slug === 'science-life' ? '/science-society/' :
-      s.slug === 'physics' ? '/physics/' :
-      `/subjects/${s.slug}/`,
+    href: subjectHref(s.slug),
   }))
 
 export default function SubjectDropdown() {

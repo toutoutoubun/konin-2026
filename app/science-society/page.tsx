@@ -106,7 +106,7 @@ export default function ScienceSocietyPage() {
 
       {/* ── ヘッダー ── */}
       <Header navItems={[
-        { label: 'ツール一覧', href: '/#tools' },
+        { label: '分析一覧', href: '/analysis/' },
         { label: 'PDF選択', href: '#sci-upload-title' },
         { label: '集計', href: '#sci-ranking-title' },
         { label: 'フィルタ', href: '#sci-filter-title' },
@@ -118,7 +118,7 @@ export default function ScienceSocietyPage() {
       <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a>
         <span aria-hidden="true">/</span>
-        <a href="/#tools">ツール一覧</a>
+        <a href="/analysis/">分析一覧</a>
         <span aria-hidden="true">/</span>
         <span aria-current="page"><ruby>科学<rt>かがく</rt></ruby>と<ruby>人間<rt>にんげん</rt></ruby><ruby>生活<rt>せいかつ</rt></ruby>頻出分析</span>
       </nav>

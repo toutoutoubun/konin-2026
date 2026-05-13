@@ -15,6 +15,15 @@ import type { CefrLevel } from '@/lib/vocabAnalyzer'
 
 const officialPastExamUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/1421021.htm'
 
+const cefrGuideRows = [
+  { level: 'A1', label: '基礎', description: '短い日常表現や基本語が中心。' },
+  { level: 'A2', label: '日常', description: '身近な話題の説明ややり取りで使う語が中心。' },
+  { level: 'B1', label: '標準', description: 'まとまった文章の理解に出やすい、やや抽象的な語を含む。' },
+  { level: 'B2', label: '発展', description: '論説・説明文で使われる専門寄り、抽象寄りの語を含む。' },
+  { level: '試験語彙', label: 'CEFR外', description: '月名、曜日、国名形容詞、設問指示語など高認で頻出する専用語。' },
+  { level: '未分類', label: 'リスト外', description: '辞書照合では判定できなかった語。固有名詞は別扱いで除外。' }
+]
+
 function filterResults(results: AnalysisResult[], filters: EnglishFilters): AnalysisResult[] {
   let next = [...results].sort((a, b) => (b.examYear ?? 0) - (a.examYear ?? 0) || b.examSession.localeCompare(a.examSession))
 
@@ -65,7 +74,7 @@ export default function EnglishAnalysisPage() {
     <>
       <a className="skip-link" href="#main-content">本文へ移動</a>
       <Header navItems={[
-        { label: 'ツール一覧', href: '/#tools' },
+        { label: '分析一覧', href: '/analysis/' },
         { label: 'PDF選択', href: '#upload-title' },
         { label: '集計', href: '#ranking-title' },
         { label: '語彙分析', href: '#vocab-title' },
@@ -75,7 +84,7 @@ export default function EnglishAnalysisPage() {
       ]} />
 
       <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
-        <a href="/">トップ</a><span aria-hidden="true">/</span><a href="/#tools">ツール一覧</a><span aria-hidden="true">/</span><span>英語頻出分析</span>
+        <a href="/">トップ</a><span aria-hidden="true">/</span><a href="/analysis/">分析一覧</a><span aria-hidden="true">/</span><span>英語頻出分析</span>
       </nav>
 
       <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
@@ -209,6 +218,25 @@ export default function EnglishAnalysisPage() {
                 <span className="ml-1">/ 固有名詞 {summary.properNounCount.toLocaleString()} 語</span>
               )}
             </p>
+            <div className="mt-5 grid gap-3 md:grid-cols-[1.05fr_.95fr]">
+              <div className="border-2 border-ink bg-cream p-4">
+                <h3 className="font-bold">CEFRとは</h3>
+                <p className="mt-2 text-sm leading-relaxed">
+                  Common European Framework of Reference for Languagesの略で、外国語の習熟度をA1からC2までの段階で表す共通のものさしです。この画面では高認の問題文に出る内容語を、A1からB2、試験語彙、未分類に分けて傾向を見ます。
+                </p>
+              </div>
+              <div className="border-2 border-ink bg-paper p-4">
+                <h3 className="font-bold">レベルの読み方</h3>
+                <dl className="mt-2 grid gap-2 text-sm sm:grid-cols-2">
+                  {cefrGuideRows.map((row) => (
+                    <div key={row.level} className="border border-ink/20 bg-cream p-2">
+                      <dt className="font-bold">{row.level}：{row.label}</dt>
+                      <dd className="mt-1 text-ink/70">{row.description}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </div>
           </div>
 
           <div className="mb-6">
@@ -255,7 +283,7 @@ export default function EnglishAnalysisPage() {
           </div>
           <GrammarVocabCrossTable
             rows={summary.grammarVocabCross}
-            caption="文法項目×CEFRレベルのクロス集計。ヒートマップ形式。"
+            caption="文法項目×CEFRレベルのクロス集計。数字は語彙数。"
           />
         </section>
 
@@ -298,7 +326,7 @@ export default function EnglishAnalysisPage() {
 
       <footer className="border-t-2 border-ink bg-ink px-4 py-6 text-cream sm:py-8 md:px-10">
         <div className="mx-auto max-w-7xl space-y-2">
-          <p><strong>更新日</strong> 2026-05-02</p>
+          <p><strong>更新日</strong> 2026-05-12</p>
           <p><strong>データ範囲</strong> ユーザーが正当に取得し、端末内で選択した文部科学省公式PDF。問題文・設問文の配布や再掲載は行いません。</p>
           <p><strong>注意書き</strong> 高認パスは文部科学省の公式サービスではありません。</p>
           <p><a className="text-yellow" href={officialPastExamUrl} target="_blank" rel="noopener">文部科学省 過去問題ページ</a></p>
