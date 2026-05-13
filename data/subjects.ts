@@ -18,6 +18,7 @@ export const officialKosenCreditExemptionUrl = 'https://www.mext.go.jp/a_menu/ko
 export const officialCreditCertificateUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/05033001.htm'
 export const officialApplicationFlowUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/mext_01821.html'
 export const officialSkillExemptionUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/06033010/20260227-mxt_syogai02-3ginou01.pdf'
+export const officialSpecialAccommodationUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/06033010/005.htm'
 
 export const subjects: Subject[] = [
   { slug: 'japanese', name: '国語', label: 'JAPANESE', status: 'active', accent: 'blue', description: 'ユーザーが取得した国語の公式PDFを端末内で解析し、言語知識、実用的な文章、現代文、古典、漢文の頻出傾向を表示します。' },

@@ -1,6 +1,7 @@
 import ApplicationTodo from '@/components/ApplicationTodo'
+import ApplicationDocumentsChart from '@/components/ApplicationDocumentsChart'
 import Header from '@/components/Header'
-import { officialApplicationFlowUrl, officialExamGuideUrl, officialPastExamUrl } from '@/data/subjects'
+import { officialApplicationFlowUrl, officialExamGuideUrl, officialPastExamUrl, officialSpecialAccommodationUrl } from '@/data/subjects'
 import { getToolPage, toolPages } from '@/data/toolPages'
 
 const tool = getToolPage('application-todo')!
@@ -45,15 +46,19 @@ export default function ApplicationTodoPage() {
                 <li>文部科学省の受験案内で日程、出願期間、必要書類を確認します。</li>
                 <li>既取得単位がある場合は、入学時期に合う単位修得証明書の様式を確認します。</li>
                 <li>英検・数検・歴検・ITパスポートなどで申請する場合は、技能審査の対象級と証明書類を確認します。</li>
+                <li>身体上の障害等により受験上の特別措置を希望する場合は、通常書類に追加する申請書類を確認します。</li>
               </ul>
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialExamGuideUrl} target="_blank" rel="noopener">試験概要</a>
                 <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialApplicationFlowUrl} target="_blank" rel="noopener">出願書類フローチャート</a>
+                <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialSpecialAccommodationUrl} target="_blank" rel="noopener">特別措置</a>
                 <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">公式PDF</a>
               </div>
             </div>
           </div>
         </section>
+
+        <ApplicationDocumentsChart />
 
         <div className="grid gap-6 lg:grid-cols-[.95fr_1.05fr] lg:items-start">
           <section className="panel p-5 sm:p-6" aria-labelledby="todo-support-title">

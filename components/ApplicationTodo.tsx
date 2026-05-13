@@ -10,6 +10,7 @@ import {
   officialKosenCreditExemptionUrl,
   officialPastExamUrl,
   officialSkillExemptionUrl,
+  officialSpecialAccommodationUrl,
 } from '@/data/subjects'
 
 type TodoItem = {
@@ -61,6 +62,9 @@ const steps: TodoStep[] = [
       { id: 'documents', label: '必要書類を揃える（願書・写真・住民票・収入印紙など）' },
       { id: 'exemption-documents', label: '免除申請する場合は、単位修得証明書または技能審査の証明書類を同封する' },
       { id: 'exemption-form-check', label: '願書の受験科目・免除科目を、証明書類と照合する' },
+      { id: 'special-accommodation-check', label: '身体上の障害等で受験上の特別措置を希望するか確認する', href: officialSpecialAccommodationUrl },
+      { id: 'special-accommodation-documents', label: '特別措置を希望する場合は、特別措置申請書と医師の診断・意見書等を通常の出願書類に同封する' },
+      { id: 'special-accommodation-prior-year', label: '前年度の特別措置内容決定通知書を使う場合も、特別措置申請書が必要か確認する' },
       { id: 'fee', label: '検定料を確認・納付する（収入印紙）' },
       { id: 'mail', label: '願書を郵送する（簡易書留）' },
       { id: 'ticket', label: '受験票の到着を確認する' }
