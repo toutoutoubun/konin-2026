@@ -6,5 +6,6 @@ export function subjectHref(slug: string) {
   if (slug === 'geography') return '/geography/'
   if (slug === 'science-life') return '/science-society/'
   if (slug === 'physics') return '/physics/'
+  if (slug === 'chemistry') return '/chemistry/'
   return `/subjects/${slug}/`
 }
