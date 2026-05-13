@@ -465,9 +465,9 @@ const subjectTabs: SubjectTab[] = [
     slug: 'biology',
     name: '生物基礎',
     accent: 'blue',
-    status: 'placeholder',
-    summary: '生物基礎は標準5大問の単元定義を用意しています。分析画面は未実装です。',
-    unitRows: buildFixedUnitRows(biologyTags.rule_sets[0].code, biologyTags.rule_sets[0].units, 'fixed'),
+    status: 'active',
+    summary: '生物基礎は公式PDFの大問見出しと本文キーワードから、生物の特徴、遺伝子、体内環境、免疫、植生、生態系保全を判定します。',
+    unitRows: buildFixedUnitRows(biologyTags.rule_sets[0].code, biologyTags.rule_sets[0].units, 'keyword'),
     subtopicRows: buildSubtopicRowsFromUnits(biologyTags.rule_sets[0].code, biologyTags.rule_sets[0].units),
     formatTags: biologyTags.format_tags,
     ruleSets: buildRuleSets(biologyTags.rule_sets),
@@ -476,12 +476,25 @@ const subjectTabs: SubjectTab[] = [
     slug: 'earth-science',
     name: '地学基礎',
     accent: 'orange',
-    status: 'placeholder',
-    summary: '地学基礎は標準5大問の単元定義を用意しています。分析画面は未実装です。',
-    unitRows: buildFixedUnitRows(earthScienceTags.rule_sets[0].code, earthScienceTags.rule_sets[0].units, 'fixed'),
+    status: 'active',
+    summary: '地学基礎は公式PDFの大問見出しと本文キーワードから、地球の概観、固体地球、大気と海洋、宇宙、地層・岩石・地史、自然災害と防災、地球環境を判定します。',
+    unitRows: buildFixedUnitRows(earthScienceTags.rule_sets[0].code, earthScienceTags.rule_sets[0].units, 'keyword'),
     subtopicRows: buildSubtopicRowsFromUnits(earthScienceTags.rule_sets[0].code, earthScienceTags.rule_sets[0].units),
     formatTags: earthScienceTags.format_tags,
     ruleSets: buildRuleSets(earthScienceTags.rule_sets),
+    extraSections: (
+      <div className="mt-6">
+        <h4 className="font-mincho text-xl font-bold">参照した大問見出し例</h4>
+        <div className="mt-3 grid gap-3 md:grid-cols-2">
+          {((earthScienceTags as any).observed_blocks ?? []).map((item: { session: string; headings: string[] }) => (
+            <div key={item.session} className="border-2 border-ink bg-cream p-4">
+              <strong>{item.session}</strong>
+              <p className="mt-2 text-sm leading-relaxed">{item.headings.join('、')}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
   },
   {
     slug: 'informatics',

@@ -30,8 +30,8 @@ export const subjects: Subject[] = [
   { slug: 'science-life', name: '科学と人間生活', label: 'SCIENCE & LIFE', status: 'active', accent: 'blue', description: 'ユーザーが取得した科学と人間生活の公式PDFを端末内で解析し、物理系・化学系・生物系・地学系の分野別頻出傾向を表示します。' },
   { slug: 'physics', name: '物理基礎', label: 'PHYSICS', status: 'active', accent: 'orange', description: 'ユーザーが取得した物理基礎の公式PDFを端末内で解析し、頻出分野、年度別推移、大問構成、出題形式を表示します。' },
   { slug: 'chemistry', name: '化学基礎', label: 'CHEMISTRY', status: 'active', accent: 'yellow', description: 'ユーザーが取得した化学基礎の公式PDFを端末内で解析し、頻出分野、年度別推移、大問構成、出題形式を表示します。' },
-  { slug: 'biology', name: '生物基礎', label: 'BIOLOGY', status: 'placeholder', accent: 'blue', description: '細胞、遺伝、生態系などの出現傾向を扱う予定です。' },
-  { slug: 'earth-science', name: '地学基礎', label: 'EARTH SCIENCE', status: 'placeholder', accent: 'orange', description: '地質、気象、天文などの出現傾向を扱う予定です。' },
+  { slug: 'biology', name: '生物基礎', label: 'BIOLOGY', status: 'active', accent: 'blue', description: 'ユーザーが取得した生物基礎の公式PDFを端末内で解析し、頻出分野、年度別推移、大問構成、出題形式を表示します。' },
+  { slug: 'earth-science', name: '地学基礎', label: 'EARTH SCIENCE', status: 'active', accent: 'orange', description: 'ユーザーが取得した地学基礎の公式PDFを端末内で解析し、地球の概観、固体地球、大気海洋、宇宙、地史、環境の頻出傾向を表示します。' },
   { slug: 'informatics', name: '情報', label: 'INFORMATICS', status: 'coming-soon', accent: 'yellow', description: '令和8年度第1回より追加予定。現在過去問未公開のため分析機能は準備中です。' }
 ]
 
