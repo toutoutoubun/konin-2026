@@ -92,13 +92,14 @@ const l2Keywords: Record<string, { parent: string; keywords: string[] }> = {
   '人物描写': { parent: '現代文（文学的文章）', keywords: ['登場人物', '人物', '描写', '会話文'] },
   '表現技法': { parent: '現代文（文学的文章）', keywords: ['表現技法', '比喩', '象徴', '効果', '表現している'] },
   '随筆': { parent: '現代文（文学的文章）', keywords: ['随筆', '筆者が体験', '体験した出来事'] },
-  '古文読解': { parent: '古典・言語文化', keywords: ['古文', '現代語訳', '助動詞', '助詞', '敬語', '古語'] },
-  '漢文読解': { parent: '古典・言語文化', keywords: ['漢文', '書き下し', '返り点', '句法', '訓読'] },
+  '古文読解': { parent: '古典・言語文化', keywords: ['古文', '現代語訳', '助動詞', '助詞', '古語'] },
   '和歌': { parent: '古典・言語文化', keywords: ['和歌', '万葉集', '歌', '梅の花', '短歌'] },
   '古典と現代文の読み比べ': { parent: '古典・言語文化', keywords: ['文章Ⅰ', '文章Ⅱ', '読み比べ', '資料Ⅰ', '資料Ⅱ', '現代の小説'] },
-  '言語文化': { parent: '古典・言語文化', keywords: ['言語文化', '能', '平家物語', '海道記', '栄花物語'] },
+  '言語文化': { parent: '古典・言語文化', keywords: ['言語文化', '能楽', '謡曲', '平家物語', '海道記', '栄花物語'] },
+  '漢文読解': { parent: '漢文', keywords: ['漢文', '唐', '太宗', '孔子', '孟子', '論語', '故事成語'] },
   '返り点・書き下し': { parent: '漢文', keywords: ['返り点', '書き下し', 'レ点', '一二点', '訓読'] },
   '句法': { parent: '漢文', keywords: ['句法', '否定', '使役', '受身', '反語'] },
+  '内容読解': { parent: '漢文', keywords: ['内容として', '理由として', '説明として', '適当なもの'] },
   '漢詩': { parent: '漢文', keywords: ['漢詩', '詩', '絶句', '律詩'] }
 }
 
@@ -133,6 +134,18 @@ function escapeRegExp(value: string): string {
 function countKeyword(text: string, keyword: string): number {
   const matches = text.match(new RegExp(escapeRegExp(keyword), 'g'))
   return matches?.length ?? 0
+}
+
+function getHit(topicHits: JapaneseTopicHit[], topic: string): JapaneseTopicHit | null {
+  return topicHits.find((hit) => hit.topic_l1 === topic) ?? null
+}
+
+function countAny(text: string, keywords: string[]): number {
+  return keywords.reduce((sum, keyword) => sum + countKeyword(text, keyword), 0)
+}
+
+function strongestHit(topicHits: JapaneseTopicHit[]): JapaneseTopicHit | null {
+  return topicHits[0] ?? null
 }
 
 export function detectJapaneseExamYear(text: string, fileName = ''): number | null {
@@ -301,24 +314,85 @@ function detectFormatTags(text: string): string[] {
 }
 
 function choosePrimaryTopic(blockText: string, topicHits: JapaneseTopicHit[]): JapaneseTopicHit {
-  if (/漢文|書き下し|返り点|訓読|於|乎|焉/.test(blockText)) {
-    return topicHits.find((hit) => hit.topic_l1 === '漢文') ?? {
+  const topHit = strongestHit(topicHits)
+  const kanbunHit = getHit(topicHits, '漢文')
+  const classicHit = getHit(topicHits, '古典・言語文化')
+
+  const strongKanbunEvidence = countAny(blockText, [
+    '漢文',
+    '書き下し',
+    '返り点',
+    'レ点',
+    '一二点',
+    '訓読',
+    '句法',
+    '漢詩',
+    '唐',
+    '太宗',
+    '孔子',
+    '孟子',
+    '論語',
+    '故事成語'
+  ])
+  const weakKanbunEvidence = countAny(blockText, ['於', '乎', '焉'])
+
+  if (
+    kanbunHit &&
+    (
+      strongKanbunEvidence >= 2 ||
+      /漢文|漢詩|返り点|書き下し/.test(blockText) ||
+      (strongKanbunEvidence >= 1 && weakKanbunEvidence >= 2)
+    )
+  ) {
+    return kanbunHit
+  }
+
+  if (!kanbunHit && (strongKanbunEvidence >= 2 || /漢文|漢詩|返り点|書き下し/.test(blockText))) {
+    return {
       topic_l1: '漢文',
-      count: 1,
+      count: strongKanbunEvidence,
       matchedKeywords: ['漢文']
     }
   }
 
-  if (/言語文化|古文|古典|和歌|万葉集|平家物語|海道記|栄花物語|能|現代語訳/.test(blockText)) {
-    return topicHits.find((hit) => hit.topic_l1 === '古典・言語文化') ?? {
+  const classicEvidence = countAny(blockText, [
+    '言語文化',
+    '古文',
+    '古典',
+    '和歌',
+    '万葉集',
+    '平家物語',
+    '海道記',
+    '栄花物語',
+    '現代語訳',
+    '古語',
+    '助動詞'
+  ])
+  if (
+    classicHit &&
+    (
+      classicHit === topHit ||
+      classicHit.count >= Math.max(6, (topHit?.count ?? 0) * 0.7) ||
+      classicEvidence >= 4
+    )
+  ) {
+    return classicHit
+  }
+
+  if (!classicHit && classicEvidence >= 3) {
+    return {
       topic_l1: '古典・言語文化',
-      count: 1,
+      count: classicEvidence,
       matchedKeywords: ['古典']
     }
   }
 
+  if (topHit && topHit.count >= 2) {
+    return topHit
+  }
+
   if (/話合い|発表原稿|企画書|依頼文|ワークシート|校内新聞|生徒会|実行委員会/.test(blockText)) {
-    return topicHits.find((hit) => hit.topic_l1 === '実用的な文章・話合い') ?? {
+    return getHit(topicHits, '実用的な文章・話合い') ?? {
       topic_l1: '実用的な文章・話合い',
       count: 1,
       matchedKeywords: ['話合い']
@@ -326,7 +400,7 @@ function choosePrimaryTopic(blockText: string, topicHits: JapaneseTopicHit[]): J
   }
 
   if (/漢字|熟語|慣用句|敬語|時候|手紙|同じ漢字/.test(blockText) && blockText.length < 5000) {
-    return topicHits.find((hit) => hit.topic_l1 === '言語知識') ?? {
+    return getHit(topicHits, '言語知識') ?? {
       topic_l1: '言語知識',
       count: 1,
       matchedKeywords: ['漢字']
@@ -334,14 +408,14 @@ function choosePrimaryTopic(blockText: string, topicHits: JapaneseTopicHit[]): J
   }
 
   if (/小説|随筆|心情|登場人物|場面|描写|僕|私/.test(blockText)) {
-    return topicHits.find((hit) => hit.topic_l1 === '現代文（文学的文章）') ?? {
+    return getHit(topicHits, '現代文（文学的文章）') ?? {
       topic_l1: '現代文（文学的文章）',
       count: 1,
       matchedKeywords: ['小説']
     }
   }
 
-  return topicHits[0] ?? {
+  return topHit ?? {
     topic_l1: '判定保留',
     count: 0,
     matchedKeywords: []
