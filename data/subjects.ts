@@ -20,7 +20,7 @@ export const officialApplicationFlowUrl = 'https://www.mext.go.jp/a_menu/koutou/
 export const officialSkillExemptionUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/06033010/20260227-mxt_syogai02-3ginou01.pdf'
 
 export const subjects: Subject[] = [
-  { slug: 'japanese', name: '国語', label: 'JAPANESE', status: 'placeholder', accent: 'blue', description: '現代文・古文・漢文を含む公式PDF由来の傾向データ集計画面。' },
+  { slug: 'japanese', name: '国語', label: 'JAPANESE', status: 'active', accent: 'blue', description: 'ユーザーが取得した国語の公式PDFを端末内で解析し、言語知識、実用的な文章、現代文、古典、漢文の頻出傾向を表示します。' },
   { slug: 'math', name: '数学', label: 'MATH', status: 'active', accent: 'orange', description: 'ユーザーが取得した数学の公式PDFを端末内で解析し、大問ごとの出題単元、頻出トピック、年度推移を表示します。' },
   { slug: 'english', name: '英語', label: 'ENGLISH', status: 'active', accent: 'yellow', description: 'ユーザーが取得した英語の公式PDFを端末内で解析し、よく出る単元、出題形式、年度推移を表示します。' },
   { slug: 'history', name: '歴史', label: 'HISTORY', status: 'active', accent: 'blue', description: 'ユーザーが取得した歴史・世界史Aの公式PDFを端末内で解析し、テーマ別・時代別・地域別・出題形式別の頻出傾向を表示します。', legacy: '旧課程：世界史A' },

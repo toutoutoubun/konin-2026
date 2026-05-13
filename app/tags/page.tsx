@@ -59,7 +59,7 @@ const subjectTabs: SubjectTab[] = [
     slug: 'japanese',
     name: '国語',
     accent: 'blue',
-    status: 'placeholder',
+    status: 'active',
     unitRows: buildUnitRows(japaneseTags.rule_sets[0].units),
     formatTags: japaneseTags.format_tags,
     ruleSets: japaneseTags.rule_sets.map((r) => ({ code: r.code, label: r.label, detail: `全${r.total_blocks}大問` })),

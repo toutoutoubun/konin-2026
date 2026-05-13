@@ -1,4 +1,5 @@
 export function subjectHref(slug: string) {
+  if (slug === 'japanese') return '/japanese/'
   if (slug === 'english') return '/subjects/english/'
   if (slug === 'math') return '/math/'
   if (slug === 'history') return '/history/'
