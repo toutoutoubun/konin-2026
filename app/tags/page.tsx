@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from 'react'
 import Header from '@/components/Header'
+import SiteFooter from '@/components/SiteFooter'
 import englishTags from '@/data/englishTags.json'
 import mathTags from '@/data/mathTags.json'
 import historyTags from '@/data/historyTags.json'
@@ -589,11 +590,7 @@ export default function TagsPage() {
   return (
     <>
       <a className="skip-link" href="#main-content">本文へ移動</a>
-      <Header navItems={[
-        { label: 'ツール一覧', href: '/#tools' },
-        { label: 'タグ定義', href: '/tags/' },
-        { label: '更新履歴', href: '/updates/' },
-      ]} />
+      <Header showSubjectDropdown={true} />
 
       <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a><span aria-hidden="true">/</span><span>タグ定義</span>
@@ -707,6 +704,7 @@ export default function TagsPage() {
           </div>
         </section>
       </main>
+      <SiteFooter />
     </>
   )
 }

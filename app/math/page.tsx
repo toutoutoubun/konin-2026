@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import Header from '@/components/Header'
+import SiteFooter from '@/components/SiteFooter'
 import FrequencyChart from '@/components/FrequencyChart'
 import MathFilterPanel from '@/components/MathFilterPanel'
 import MathPDFUploader from '@/components/MathPDFUploader'
@@ -107,14 +108,7 @@ export default function MathAnalysisPage() {
       </a>
 
       {/* ── ヘッダー ── */}
-      <Header navItems={[
-        { label: '分析一覧', href: '/analysis/' },
-        { label: 'PDF選択', href: '#math-upload-title' },
-        { label: '集計', href: '#math-ranking-title' },
-        { label: 'フィルタ', href: '#math-filter-title' },
-        { label: 'タグ定義', href: '/tags/' },
-        { label: '更新履歴', href: '/updates/' },
-      ]} />
+      <Header showSubjectDropdown={true} />
 
       {/* ── パンくずリスト ── */}
       <nav
@@ -123,7 +117,7 @@ export default function MathAnalysisPage() {
       >
         <a href="/">トップ</a>
         <span aria-hidden="true">/</span>
-        <a href="/analysis/">分析一覧</a>
+        <a href="/analysis/">公式PDF傾向分析</a>
         <span aria-hidden="true">/</span>
         <span aria-current="page">数学頻出分析</span>
       </nav>
@@ -598,31 +592,7 @@ export default function MathAnalysisPage() {
       </main>
 
       {/* ── フッター ── */}
-      <footer className="border-t-2 border-ink bg-ink px-4 py-6 text-cream sm:py-8 md:px-10">
-        <div className="mx-auto max-w-7xl space-y-2">
-          <p>
-            <strong>更新日</strong> 2026-05-01
-          </p>
-          <p>
-            <strong>データ範囲</strong>{' '}
-            ユーザーが正当に取得し、端末内で選択した文部科学省公式PDF。問題文・設問文の配布や再掲載は行いません。
-          </p>
-          <p>
-            <strong>注意書き</strong>{' '}
-            高認パスは文部科学省の公式サービスではありません。
-          </p>
-          <p>
-            <a
-              className="text-yellow"
-              href={officialPastExamUrl}
-              target="_blank"
-              rel="noopener"
-            >
-              文部科学省 過去問題ページ
-            </a>
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   )
 }

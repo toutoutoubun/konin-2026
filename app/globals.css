@@ -24,11 +24,46 @@ body {
   line-height: var(--line);
   letter-spacing: var(--letter);
 }
-body.text-large { --body-size: 18px; }
+body.text-small { --body-size: 14px; }
+body.text-large { --body-size: 19px; }
 body.ud-font { font-family: 'BIZ UDMincho', serif; }
-body.wide-line { --line: 2.05; }
+body.wide-line { --line: 1.9; }
+body.wider-line { --line: 2.2; }
 body.wide-letter { --letter: 0.1em; }
 body:not(.ruby-on) rt { display: none; }
+
+/* Review C-2: dark mode. We keep the retro-modern tone by swapping ink
+   and cream rather than going pure black. */
+body.dark-mode {
+  --cream: #1B1916;
+  --ink: #F2EDE4;
+  --paper: #25221E;
+  --blue: #6FA1FF;
+  --orange: #FF9466;
+  --yellow: #FFD166;
+}
+body.dark-mode::before { opacity: .12; }
+body.dark-mode .panel { background: rgba(37, 34, 30, .82); }
+
+/* Review C-2: high-contrast mode targeting WCAG 2.1 AAA. */
+body.high-contrast {
+  --cream: #FFFFFF;
+  --ink: #000000;
+  --paper: #FFFFFF;
+  --blue: #0033CC;
+  --orange: #BF360C;
+  --yellow: #FFEE58;
+}
+body.high-contrast::before { opacity: 0; }
+body.high-contrast a { text-decoration: underline; }
+body.high-contrast.dark-mode {
+  --cream: #000000;
+  --ink: #FFFFFF;
+  --paper: #000000;
+  --blue: #82B1FF;
+  --orange: #FFAB91;
+  --yellow: #FFF59D;
+}
 body::before {
   content: '';
   position: fixed;
@@ -40,7 +75,21 @@ body::before {
   z-index: -1;
 }
 
-:focus-visible { outline: 4px solid var(--blue); outline-offset: 4px; }
+/* Review C-3: explicit focus ring on every interactive element.
+   We use double outline + shadow so it stays visible against both
+   light cream and the ink-colored footer. */
+:focus { outline: none; }
+:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(245, 240, 232, 0.95);
+  border-radius: 2px;
+}
+.bg-ink :focus-visible,
+footer :focus-visible {
+  outline-color: var(--yellow);
+  box-shadow: 0 0 0 6px rgba(26, 26, 26, 0.85);
+}
 a { text-underline-offset: .18em; }
 button, a.button-like { min-height: 44px; }
 .skip-link {
@@ -52,8 +101,12 @@ button, a.button-like { min-height: 44px; }
   color: var(--cream);
   padding: .85rem 1rem;
   z-index: 100;
+  font-weight: 700;
+  text-decoration: none;
+  border: 2px solid var(--ink);
 }
-.skip-link:focus { transform: translateY(0); }
+.skip-link:focus,
+.skip-link:focus-visible { transform: translateY(0); }
 
 .hard-button {
   min-height: 44px;

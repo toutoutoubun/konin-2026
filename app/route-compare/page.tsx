@@ -1,22 +1,16 @@
 import Header from '@/components/Header'
+import SiteFooter from '@/components/SiteFooter'
 import RouteCompare from '@/components/RouteCompare/RouteCompare'
 import { officialExamGuideUrl } from '@/data/subjects'
 import { getToolPage, toolPages } from '@/data/toolPages'
 
 const tool = getToolPage('route-compare')!
 
-const navItems = [
-  { label: 'トップ', href: '/' },
-  { label: '出願Todo', href: '/application-todo/' },
-  { label: '免除確認', href: '/exemption-check/' },
-  { label: '分析科目', href: '/analysis/' },
-]
-
 export default function RouteComparePage() {
   return (
     <>
       <a className="skip-link" href="#main-content">本文へ移動</a>
-      <Header navItems={navItems} showSubjectDropdown={true} />
+      <Header showSubjectDropdown={true} />
 
       <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a><span aria-hidden="true">/</span><span>{tool.title}</span>
@@ -46,7 +40,8 @@ export default function RouteComparePage() {
                 <li>通信制高校は卒業できれば高卒資格になりますが、学費やスクーリング条件が学校ごとに異なります。</li>
                 <li>在籍継続は学校内の支援や単位状況を確認しながら判断します。</li>
               </ul>
-              <a className="hard-button button-like inline-flex bg-paper px-4 py-2 no-underline" href={officialExamGuideUrl} target="_blank" rel="noopener">文部科学省の試験概要</a>
+              {/* Review A-2: orange = external official source. */}
+              <a className="hard-button button-like inline-flex bg-orange px-4 py-2 no-underline" href={officialExamGuideUrl} target="_blank" rel="noopener">文部科学省の試験概要</a>
             </div>
           </div>
         </section>
@@ -79,6 +74,8 @@ export default function RouteComparePage() {
           </div>
         </section>
       </main>
+
+      <SiteFooter />
     </>
   )
 }

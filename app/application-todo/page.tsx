@@ -1,23 +1,19 @@
 import ApplicationTodo from '@/components/ApplicationTodo'
 import ApplicationDocumentsChart from '@/components/ApplicationDocumentsChart'
 import Header from '@/components/Header'
+import SiteFooter from '@/components/SiteFooter'
 import { officialApplicationFlowUrl, officialExamGuideUrl, officialPastExamUrl, officialSpecialAccommodationUrl } from '@/data/subjects'
 import { getToolPage, toolPages } from '@/data/toolPages'
 
 const tool = getToolPage('application-todo')!
 
-const navItems = [
-  { label: 'トップ', href: '/' },
-  { label: '免除確認', href: '/exemption-check/' },
-  { label: '分析科目', href: '/analysis/' },
-  { label: '更新履歴', href: '/updates/' },
-]
-
 export default function ApplicationTodoPage() {
   return (
     <>
       <a className="skip-link" href="#main-content">本文へ移動</a>
-      <Header navItems={navItems} showSubjectDropdown={true} />
+      {/* Review B-1: use the shared primary nav. The four tools + top
+          stay visible on every page so the site structure is always legible. */}
+      <Header showSubjectDropdown={true} />
 
       <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a><span aria-hidden="true">/</span><span>{tool.title}</span>
@@ -40,6 +36,8 @@ export default function ApplicationTodoPage() {
             </div>
             <div className="space-y-4 text-base leading-relaxed">
               <p>
+                {/* Review D-1: avoid 欠乏/不安駆動 framing — say "後戻りが少なくなる"
+                    rather than "漏れにくくなる". */}
                 このTodoは、公式情報の確認、受験科目の整理、免除申請書類の準備、願書郵送、受験票確認までをひと続きの作業として扱います。特に免除申請は、単位修得証明書や技能審査の証明書類を願書と一緒に出す必要があるため、科目選びより前に確認しておくと後戻りが少なくなります。
               </p>
               <ul className="list-inside list-disc space-y-1 text-sm">
@@ -49,10 +47,11 @@ export default function ApplicationTodoPage() {
                 <li>身体上の障害等により受験上の特別措置を希望する場合は、通常書類に追加する申請書類を確認します。</li>
               </ul>
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialExamGuideUrl} target="_blank" rel="noopener">試験概要</a>
-                <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialApplicationFlowUrl} target="_blank" rel="noopener">出願書類フローチャート</a>
-                <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialSpecialAccommodationUrl} target="_blank" rel="noopener">特別措置</a>
-                <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">公式PDF</a>
+                {/* Review A-2: orange = external official source. */}
+                <a className="hard-button button-like bg-orange px-4 py-2 no-underline" href={officialExamGuideUrl} target="_blank" rel="noopener">試験概要</a>
+                <a className="hard-button button-like bg-orange px-4 py-2 no-underline" href={officialApplicationFlowUrl} target="_blank" rel="noopener">出願書類フローチャート</a>
+                <a className="hard-button button-like bg-orange px-4 py-2 no-underline" href={officialSpecialAccommodationUrl} target="_blank" rel="noopener">特別措置</a>
+                <a className="hard-button button-like bg-orange px-4 py-2 no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">公式PDF</a>
               </div>
             </div>
           </div>
@@ -90,6 +89,8 @@ export default function ApplicationTodoPage() {
           </div>
         </section>
       </main>
+
+      <SiteFooter />
     </>
   )
 }

@@ -1,4 +1,5 @@
 import Header from '@/components/Header'
+import SiteFooter from '@/components/SiteFooter'
 
 const updates = [
   ['2026-05-13', '公共', '公共PDFの端末内分析を追加。新課程の公共を主対象に、旧課程の現代社会・倫理・政治・経済は参考区分として制度フィルタで扱う構成に変更。', '公共分析ページ・タグ定義ページ'],
@@ -26,12 +27,7 @@ export default function UpdatesPage() {
   return (
     <>
       <a className="skip-link" href="#main-content">本文へ移動</a>
-      <Header navItems={[
-        { label: 'ツール一覧', href: '/#tools' },
-        { label: '英語分析', href: '/subjects/english/' },
-        { label: 'タグ定義', href: '/tags/' },
-        { label: '更新履歴', href: '/updates/' },
-      ]} />
+      <Header showSubjectDropdown={true} />
 
       <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a><span aria-hidden="true">/</span><span>更新履歴</span>
@@ -56,6 +52,7 @@ export default function UpdatesPage() {
           </div>
         </section>
       </main>
+      <SiteFooter />
     </>
   )
 }
