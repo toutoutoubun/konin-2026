@@ -74,15 +74,15 @@ export default function ChemistryPage() {
 
       <Header showSubjectDropdown={true} />
 
-      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
+      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 lg:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a>
         <span aria-hidden="true">/</span>
-        <a href="/analysis/">公式PDF傾向分析</a>
+        <a href="/analysis/">公式過去問PDF傾向分析</a>
         <span aria-hidden="true">/</span>
         <span aria-current="page">化学基礎頻出分析</span>
       </nav>
 
-      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
+      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 lg:px-10" tabIndex={-1}>
         <section className="py-12 md:py-20" aria-labelledby="chemistry-hero-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">CHEMISTRY PAST EXAM ANALYZER</p>
           <h1 id="chemistry-hero-title" className="mt-4 max-w-5xl font-mincho text-[48px] font-bold leading-none tracking-normal">
@@ -96,7 +96,7 @@ export default function ChemistryPage() {
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4" aria-label="主要操作">
             <a className="hard-button button-like bg-blue px-5 py-3 text-center text-white no-underline" href="#chemistry-upload-title">PDFを分析する</a>
-            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式PDFページへ</a>
+            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式過去問PDFページへ</a>
           </div>
         </section>
 
@@ -336,7 +336,7 @@ export default function ChemistryPage() {
             <div className="border-2 border-ink bg-cream p-4">
               <h3 className="text-xl font-bold">化学基礎の解析方法</h3>
               <p className="mt-3">
-                公式PDFの見出しで大問を分割し、各大問の解答番号範囲と小問数を推定します。
+                公式過去問PDFの見出しで大問を分割し、各大問の解答番号範囲と小問数を推定します。
               </p>
               <p className="mt-2 text-sm">
                 分野は、化学と人間生活・物質の構成粒子、物質と化学結合、物質量と化学反応式、化学反応（酸・塩基）、化学反応（酸化還元）のキーワードスコアで分類します。

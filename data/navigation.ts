@@ -4,7 +4,7 @@
 //   That structure should be visible on every page so users can
 //   always see the whole and where they currently are.
 //
-// "公式PDF傾向分析" is rendered separately as a subject dropdown
+// "公式過去問PDF傾向分析" is rendered separately as a subject dropdown
 // in the Header, so it is not included in this list.
 export type NavItem = { label: string; href: string }
 

@@ -189,7 +189,9 @@ export default function DisplaySettings() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <h2 id="settings-title" className="font-mincho text-2xl font-bold sm:text-3xl">表示設定</h2>
-              <p id="settings-help" className="mt-1 text-sm">読みやすさの設定はこの端末に保存されます。</p>
+              <p id="settings-help" className="mt-1 text-sm leading-relaxed">
+                読みやすさの設定はお使いのブラウザに保存されます（LocalStorage）。ブラウザの履歴・サイトデータを消去すると、設定は初期状態に戻ります。
+              </p>
             </div>
             <button
               type="button"

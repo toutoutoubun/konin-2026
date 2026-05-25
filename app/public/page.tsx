@@ -76,15 +76,15 @@ export default function PublicPage() {
 
       <Header showSubjectDropdown={true} />
 
-      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
+      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 lg:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a>
         <span aria-hidden="true">/</span>
-        <a href="/analysis/">公式PDF傾向分析</a>
+        <a href="/analysis/">公式過去問PDF傾向分析</a>
         <span aria-hidden="true">/</span>
         <span aria-current="page">公共頻出分析</span>
       </nav>
 
-      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
+      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 lg:px-10" tabIndex={-1}>
         <section className="py-12 md:py-20" aria-labelledby="public-hero-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">PUBLIC PAST EXAM ANALYZER</p>
           <h1 id="public-hero-title" className="mt-4 max-w-5xl font-mincho text-[48px] font-bold leading-none tracking-normal">
@@ -98,7 +98,7 @@ export default function PublicPage() {
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4" aria-label="主要操作">
             <a className="hard-button button-like bg-blue px-5 py-3 text-center text-white no-underline" href="#public-upload-title">PDFを分析する</a>
-            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式PDFページへ</a>
+            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式過去問PDFページへ</a>
           </div>
         </section>
 
@@ -341,7 +341,7 @@ export default function PublicPage() {
             <div className="border-2 border-ink bg-cream p-4">
               <h3 className="text-xl font-bold">公共の解析方法</h3>
               <p className="mt-3">
-                公式PDFの「問1〜問Nに答えよ」を大問境界として分割し、各大問の解答番号範囲と小問数を推定します。
+                公式過去問PDFの「問1〜問Nに答えよ」を大問境界として分割し、各大問の解答番号範囲と小問数を推定します。
               </p>
               <p className="mt-2 text-sm">
                 新課程の公共を主対象とし、旧課程の現代社会・倫理・政治・経済は制度区分つきの参考データとして扱います。

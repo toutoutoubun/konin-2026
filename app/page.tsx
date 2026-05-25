@@ -9,14 +9,14 @@ export default function HomePage() {
       <a className="skip-link" href="#main-content">本文へ移動</a>
       <Header showSubjectDropdown={true} />
 
-      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
+      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 lg:px-10" tabIndex={-1}>
         <section className="py-10 md:py-20" aria-labelledby="home-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">KONIN PASS</p>
           <h1 id="home-title" className="mt-4 max-w-6xl font-mincho text-4xl font-bold leading-none tracking-[-.04em] sm:text-5xl md:text-7xl lg:text-9xl">
             高認パス
           </h1>
           <p className="mt-5 max-w-3xl text-base leading-relaxed sm:mt-7 sm:text-xl">
-            高等学校卒業程度認定試験の準備を、出願、進路比較、免除確認、公式PDF傾向分析に分けて整理する非公式Webツールです。
+            高等学校卒業程度認定試験の準備を、出願、進路比較、免除確認、公式過去問PDF傾向分析に分けて整理する非公式Webツールです。
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4" aria-label="主要操作">
             {/* Color semantics (review A-2):
@@ -24,7 +24,7 @@ export default function HomePage() {
                   orange = external / official source link
                   white  = secondary / supporting action */}
             <a className="hard-button button-like bg-blue px-5 py-3 text-center text-white no-underline" href="#tools">ツールを選ぶ</a>
-            <a className="hard-button button-like bg-orange px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式PDFページへ</a>
+            <a className="hard-button button-like bg-orange px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式過去問PDFページへ</a>
           </div>
         </section>
 
@@ -41,7 +41,7 @@ export default function HomePage() {
                 高認パスは、受験準備で散らばりやすい情報を「行動に移しやすい単位」に分けるための作業場です。公式情報そのものの代わりではなく、文部科学省ページや在籍校で確認する前後に、必要事項を整理するために使います。
               </p>
               <p>
-                公式PDF傾向分析では、ユーザーが正当に取得したPDFを端末内で解析します。問題文や設問文などの著作物を保存・再掲載せず、学習計画に使う集計データだけを表示します。
+                公式過去問PDF傾向分析では、ユーザーが正当に取得したPDFを端末内で解析します。問題文や設問文などの著作物を保存・再掲載せず、学習計画に使う集計データだけを表示します。
               </p>
             </div>
           </div>
@@ -59,7 +59,7 @@ export default function HomePage() {
               </p>
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
                 {/* Review A-2: orange for external official sources. */}
-                <a className="hard-button button-like bg-orange px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式PDFページ</a>
+                <a className="hard-button button-like bg-orange px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式過去問PDFページ</a>
                 <a className="hard-button button-like bg-orange px-5 py-3 text-center no-underline" href={officialExamGuideUrl} target="_blank" rel="noopener">試験概要を確認</a>
               </div>
             </div>

@@ -16,6 +16,12 @@
 }
 
 html { font-size: var(--body-size); scroll-behavior: smooth; }
+html, body {
+  /* Prevent any stray wide element (charts, long tables, hero typography)
+     from causing horizontal scroll on narrow tablets like iPad-portrait. */
+  overflow-x: hidden;
+  max-width: 100%;
+}
 body {
   margin: 0;
   background: var(--cream);
@@ -23,6 +29,9 @@ body {
   font-family: 'Shippori Mincho', serif;
   line-height: var(--line);
   letter-spacing: var(--letter);
+  /* Soft wrap long words / URLs that would otherwise push the viewport. */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 body.text-small { --body-size: 14px; }
 body.text-large { --body-size: 19px; }

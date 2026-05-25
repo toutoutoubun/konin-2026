@@ -15,11 +15,11 @@ export default function ApplicationTodoPage() {
           stay visible on every page so the site structure is always legible. */}
       <Header showSubjectDropdown={true} />
 
-      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
+      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 lg:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a><span aria-hidden="true">/</span><span>{tool.title}</span>
       </nav>
 
-      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
+      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 lg:px-10" tabIndex={-1}>
         <section className="py-10 md:py-16" aria-labelledby="application-todo-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">{tool.label}</p>
           <h1 id="application-todo-title" className="mt-4 max-w-5xl font-mincho text-4xl font-bold leading-none tracking-[-.04em] sm:text-5xl md:text-7xl">
@@ -51,7 +51,7 @@ export default function ApplicationTodoPage() {
                 <a className="hard-button button-like bg-orange px-4 py-2 no-underline" href={officialExamGuideUrl} target="_blank" rel="noopener">試験概要</a>
                 <a className="hard-button button-like bg-orange px-4 py-2 no-underline" href={officialApplicationFlowUrl} target="_blank" rel="noopener">出願書類フローチャート</a>
                 <a className="hard-button button-like bg-orange px-4 py-2 no-underline" href={officialSpecialAccommodationUrl} target="_blank" rel="noopener">特別措置</a>
-                <a className="hard-button button-like bg-orange px-4 py-2 no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">公式PDF</a>
+                <a className="hard-button button-like bg-orange px-4 py-2 no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">公式過去問PDF</a>
               </div>
             </div>
           </div>
@@ -71,7 +71,7 @@ export default function ApplicationTodoPage() {
               ))}
             </div>
             <p className="mt-4 text-sm leading-relaxed text-ink/70">
-              チェックはこの端末に保存されます。公的な提出状況を記録するものではないため、最終確認は願書、受験案内、文部科学省ページで行ってください。
+              チェックはお使いのブラウザ（端末側）に保存されます。サーバーには送信されません。ブラウザの履歴・サイトデータを消去すると、チェック内容も消えます。また、公的な提出状況を記録するものではないため、最終確認は願書、受験案内、文部科学省ページで行ってください。
             </p>
           </section>
 

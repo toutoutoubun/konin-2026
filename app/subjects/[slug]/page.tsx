@@ -9,7 +9,7 @@ export function generateStaticParams() {
 }
 
 const formatRows = [
-  ['公式PDFを選択', 'ユーザーが文科省公式ページから取得したPDFを端末内で解析します。ドラッグ&ドロップと複数ファイル選択に対応する構成です。'],
+  ['公式過去問PDFを選択', 'ユーザーが文科省公式ページから取得したPDFを端末内で解析します。ドラッグ&ドロップと複数ファイル選択に対応する構成です。'],
   ['よく出る単元ランキング', '順位・単元・出現回数・出現率を表で表示し、グラフとの切替を用意します。'],
   ['近年頻出ランキング', '重み付きスコアと直近出現回を表示します。'],
   ['出題形式分布', '形式・件数・構成比を表とグラフで併設します。'],
@@ -28,11 +28,11 @@ export default function SubjectPage({ params }: { params: { slug: string } }) {
       <a className="skip-link" href="#main-content">本文へ移動</a>
       <Header showSubjectDropdown={true} />
 
-      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
-        <a href="/">トップ</a><span aria-hidden="true">/</span><a href="/analysis/">公式PDF傾向分析</a><span aria-hidden="true">/</span><span>{subject.name}</span>
+      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 lg:px-10" aria-label="パンくずリスト">
+        <a href="/">トップ</a><span aria-hidden="true">/</span><a href="/analysis/">公式過去問PDF傾向分析</a><span aria-hidden="true">/</span><span>{subject.name}</span>
       </nav>
 
-      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
+      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 lg:px-10" tabIndex={-1}>
         <section className="py-12 md:py-20" aria-labelledby="subject-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">{subject.label}</p>
           <h1 id="subject-title" className="mt-4 max-w-6xl font-mincho text-4xl font-bold leading-none tracking-[-.04em] sm:text-5xl md:text-7xl lg:text-9xl">{subject.name}<br />頻出分析</h1>
@@ -43,7 +43,7 @@ export default function SubjectPage({ params }: { params: { slug: string } }) {
           ) : (
             <div className="mt-8 flex flex-wrap gap-4" aria-label="主要操作">
               <a className="hard-button button-like bg-blue px-5 py-3 text-white no-underline" href="/subjects/english/">実装済みの英語分析を見る</a>
-              <a className="hard-button button-like bg-paper px-5 py-3 no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式PDFページ</a>
+              <a className="hard-button button-like bg-paper px-5 py-3 no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式過去問PDFページ</a>
             </div>
           )}
         </section>

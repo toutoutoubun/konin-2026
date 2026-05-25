@@ -8,8 +8,8 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: '高認パス | 高卒認定試験 公式PDF傾向分析',
-  description: 'ユーザーが正当に取得した高卒認定試験の公式PDFを端末内で解析し、出題傾向データを科目別に可視化するWebツール',
+  title: '高認パス | 高卒認定試験 公式過去問PDF傾向分析',
+  description: 'ユーザーが正当に取得した高卒認定試験の公式過去問PDFを端末内で解析し、出題傾向データを科目別に可視化するWebツール',
   icons: {
     // Wordmark-style favicon — matches the header logo change (review A-1):
     // dropped the round "KP" badge in favour of typography.

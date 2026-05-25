@@ -75,15 +75,15 @@ export default function PhysicsPage() {
 
       <Header showSubjectDropdown={true} />
 
-      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
+      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 lg:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a>
         <span aria-hidden="true">/</span>
-        <a href="/analysis/">公式PDF傾向分析</a>
+        <a href="/analysis/">公式過去問PDF傾向分析</a>
         <span aria-hidden="true">/</span>
         <span aria-current="page">物理基礎頻出分析</span>
       </nav>
 
-      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
+      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 lg:px-10" tabIndex={-1}>
         <section className="py-12 md:py-20" aria-labelledby="physics-hero-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">PHYSICS PAST EXAM ANALYZER</p>
           <h1 id="physics-hero-title" className="mt-4 max-w-5xl font-mincho text-[48px] font-bold leading-none tracking-[-.04em]">
@@ -97,7 +97,7 @@ export default function PhysicsPage() {
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4" aria-label="主要操作">
             <a className="hard-button button-like bg-blue px-5 py-3 text-center text-white no-underline" href="#physics-upload-title">PDFを分析する</a>
-            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式PDFページへ</a>
+            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式過去問PDFページへ</a>
           </div>
         </section>
 

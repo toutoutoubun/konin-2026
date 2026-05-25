@@ -12,11 +12,11 @@ export default function RouteComparePage() {
       <a className="skip-link" href="#main-content">本文へ移動</a>
       <Header showSubjectDropdown={true} />
 
-      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
+      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 lg:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a><span aria-hidden="true">/</span><span>{tool.title}</span>
       </nav>
 
-      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
+      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 lg:px-10" tabIndex={-1}>
         <section className="py-10 md:py-16" aria-labelledby="route-compare-page-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">{tool.label}</p>
           <h1 id="route-compare-page-title" className="mt-4 max-w-5xl font-mincho text-4xl font-bold leading-none tracking-[-.04em] sm:text-5xl md:text-7xl">
@@ -56,7 +56,7 @@ export default function RouteComparePage() {
               ))}
             </div>
             <p className="mt-4 text-sm leading-relaxed text-ink/70">
-              入力内容はこの端末に保存されます。最終的な判断は、在籍校、保護者、通信制高校、自治体窓口などに確認しながら行ってください。
+              入力内容はお使いのブラウザ（端末側）に保存されます。サーバーには送信されません。ブラウザの履歴・サイトデータを消去すると、入力内容も消えます。最終的な判断は、在籍校、保護者、通信制高校、自治体窓口などに確認しながら行ってください。
             </p>
           </section>
 

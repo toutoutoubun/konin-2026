@@ -15,7 +15,7 @@ type SiteFooterProps = {
  */
 export default function SiteFooter({ updateDate }: SiteFooterProps) {
   return (
-    <footer className="border-t-2 border-ink bg-ink px-4 py-6 text-cream sm:py-8 md:px-10">
+    <footer className="border-t-2 border-ink bg-ink px-4 py-6 text-cream sm:py-8 lg:px-10">
       <div className="mx-auto max-w-7xl space-y-5 text-sm sm:text-base">
         <nav aria-label="サブナビゲーション">
           <ul className="flex flex-wrap gap-x-5 gap-y-2 font-bold">
@@ -44,8 +44,12 @@ export default function SiteFooter({ updateDate }: SiteFooterProps) {
             <p><strong>更新日</strong> {updateDate}</p>
           )}
           <p>
+            <strong>データの保存場所</strong>{' '}
+            各ツールの入力・チェック状態は、お使いのブラウザ（端末側）に保存されます（LocalStorage）。サーバーには送信されません。ブラウザの履歴・キャッシュ・サイトデータを消去すると、保存内容も一緒に消えます。重要な情報は別途メモを取ることをおすすめします。
+          </p>
+          <p>
             <strong>データ範囲</strong>{' '}
-            ユーザーが正当に取得し、端末内で選択した文部科学省公式PDF。問題文・設問文の配布や再掲載は行いません。
+            ユーザーが正当に取得し、端末内で選択した文部科学省公式過去問PDF。問題文・設問文の配布や再掲載は行いません。
           </p>
           <p>
             <strong>注意書き</strong>{' '}

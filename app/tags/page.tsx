@@ -470,7 +470,7 @@ const subjectTabs: SubjectTab[] = [
     name: '化学基礎',
     accent: 'yellow',
     status: 'active',
-    summary: '化学基礎は公式PDFの大問見出しと本文キーワードから、物質の構成、化学結合、物質量、酸・塩基、酸化還元を判定します。',
+    summary: '化学基礎は公式過去問PDFの大問見出しと本文キーワードから、物質の構成、化学結合、物質量、酸・塩基、酸化還元を判定します。',
     unitRows: buildFixedUnitRows(chemistryTags.rule_sets[0].code, chemistryTags.rule_sets[0].units, 'keyword'),
     subtopicRows: buildSubtopicRowsFromUnits(chemistryTags.rule_sets[0].code, chemistryTags.rule_sets[0].units),
     formatTags: chemistryTags.format_tags,
@@ -481,7 +481,7 @@ const subjectTabs: SubjectTab[] = [
     name: '生物基礎',
     accent: 'blue',
     status: 'active',
-    summary: '生物基礎は公式PDFの大問見出しと本文キーワードから、生物の特徴、遺伝子、体内環境、免疫、植生、生態系保全を判定します。',
+    summary: '生物基礎は公式過去問PDFの大問見出しと本文キーワードから、生物の特徴、遺伝子、体内環境、免疫、植生、生態系保全を判定します。',
     unitRows: buildFixedUnitRows(biologyTags.rule_sets[0].code, biologyTags.rule_sets[0].units, 'keyword'),
     subtopicRows: buildSubtopicRowsFromUnits(biologyTags.rule_sets[0].code, biologyTags.rule_sets[0].units),
     formatTags: biologyTags.format_tags,
@@ -492,7 +492,7 @@ const subjectTabs: SubjectTab[] = [
     name: '地学基礎',
     accent: 'orange',
     status: 'active',
-    summary: '地学基礎は公式PDFの大問見出しと本文キーワードから、地球の概観、固体地球、大気と海洋、宇宙、地層・岩石・地史、自然災害と防災、地球環境を判定します。',
+    summary: '地学基礎は公式過去問PDFの大問見出しと本文キーワードから、地球の概観、固体地球、大気と海洋、宇宙、地層・岩石・地史、自然災害と防災、地球環境を判定します。',
     unitRows: buildFixedUnitRows(earthScienceTags.rule_sets[0].code, earthScienceTags.rule_sets[0].units, 'keyword'),
     subtopicRows: buildSubtopicRowsFromUnits(earthScienceTags.rule_sets[0].code, earthScienceTags.rule_sets[0].units),
     formatTags: earthScienceTags.format_tags,
@@ -592,11 +592,11 @@ export default function TagsPage() {
       <a className="skip-link" href="#main-content">本文へ移動</a>
       <Header showSubjectDropdown={true} />
 
-      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
+      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 lg:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a><span aria-hidden="true">/</span><span>タグ定義</span>
       </nav>
 
-      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
+      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 lg:px-10" tabIndex={-1}>
         <section className="py-12 md:py-20" aria-labelledby="tags-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">TAG DICTIONARY</p>
           <h1 id="tags-title" className="mt-4 max-w-6xl font-mincho text-4xl font-bold leading-none tracking-[-.04em] sm:text-5xl md:text-7xl lg:text-9xl">タグ定義</h1>

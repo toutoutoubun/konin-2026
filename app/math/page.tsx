@@ -112,19 +112,19 @@ export default function MathAnalysisPage() {
 
       {/* ── パンくずリスト ── */}
       <nav
-        className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10"
+        className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 lg:px-10"
         aria-label="パンくずリスト"
       >
         <a href="/">トップ</a>
         <span aria-hidden="true">/</span>
-        <a href="/analysis/">公式PDF傾向分析</a>
+        <a href="/analysis/">公式過去問PDF傾向分析</a>
         <span aria-hidden="true">/</span>
         <span aria-current="page">数学頻出分析</span>
       </nav>
 
       <main
         id="main-content"
-        className="mx-auto max-w-7xl px-4 pb-20 md:px-10"
+        className="mx-auto max-w-7xl px-4 pb-20 lg:px-10"
         tabIndex={-1}
       >
         {/* ── ヒーロー ── */}
@@ -160,7 +160,7 @@ export default function MathAnalysisPage() {
               target="_blank"
               rel="noopener"
             >
-              文科省公式PDFページへ
+              文科省公式過去問PDFページへ
             </a>
           </div>
         </section>

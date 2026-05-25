@@ -19,11 +19,11 @@ export default function ExemptionCheckPage() {
       <a className="skip-link" href="#main-content">本文へ移動</a>
       <Header showSubjectDropdown={true} />
 
-      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
+      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 lg:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a><span aria-hidden="true">/</span><span>{tool.title}</span>
       </nav>
 
-      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
+      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 lg:px-10" tabIndex={-1}>
         <section className="py-10 md:py-16" aria-labelledby="exemption-check-page-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">{tool.label}</p>
           <h1 id="exemption-check-page-title" className="mt-4 max-w-5xl font-mincho text-4xl font-bold leading-none tracking-[-.04em] sm:text-5xl md:text-7xl">
@@ -40,7 +40,7 @@ export default function ExemptionCheckPage() {
             </div>
             <div className="space-y-4 text-base leading-relaxed">
               <p>
-                免除は「単位を修得したから自動で反映される」ものではなく、出願時に申請し、証明書類を提出して確認されます。入学時期、修得した高校科目、必要単位数、技能審査の対象級がずれると判定が変わるため、公式PDFと証明書類を並べて確認します。
+                免除は「単位を修得したから自動で反映される」ものではなく、出願時に申請し、証明書類を提出して確認されます。入学時期、修得した高校科目、必要単位数、技能審査の対象級がずれると判定が変わるため、公式過去問PDFと証明書類を並べて確認します。
               </p>
               <ul className="list-inside list-disc space-y-1 text-sm">
                 <li>高校単位で申請する場合は、入学時期A〜Eごとの表を確認します。</li>
