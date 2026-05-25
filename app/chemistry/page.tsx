@@ -107,7 +107,6 @@ export default function ChemistryPage() {
               const kept = prev.filter((result) => !existingNames.has(result.fileName))
               return [...kept, ...nextResults]
             })
-            setFilters(initialChemistryFilters)
             setError('')
           }}
           onError={setError}
@@ -164,6 +163,18 @@ export default function ChemistryPage() {
             </p>
           )}
         </section>
+
+        {hasResults && (
+        <div className="mt-8">
+          <ChemistryFilterPanel
+            value={filters}
+            onChange={setFilters}
+            availableTopics={allSummary.availableTopics}
+            availableFormats={allSummary.availableFormats}
+            resultCount={filteredResults.length}
+          />
+        </div>
+        )}
 
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="chemistry-ranking-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION A</p>
@@ -306,16 +317,6 @@ export default function ChemistryPage() {
             )}
           </div>
         </section>
-
-        <div className="mt-8">
-          <ChemistryFilterPanel
-            value={filters}
-            onChange={setFilters}
-            availableTopics={allSummary.availableTopics}
-            availableFormats={allSummary.availableFormats}
-            resultCount={filteredResults.length}
-          />
-        </div>
 
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="chemistry-meta-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">NOTES</p>

@@ -144,7 +144,6 @@ export default function ScienceSocietyPage() {
               const kept = prev.filter((r) => !existingNames.has(r.fileName))
               return [...kept, ...nextResults]
             })
-            setFilters(initialSciFilters)
             setError('')
           }}
           onError={setError}
@@ -206,6 +205,17 @@ export default function ScienceSocietyPage() {
         </section>
 
         {/* ── Section A: 分野別頻出単元ランキング ── */}
+        {hasResults && (
+        <div className="mt-8">
+          <ScienceFilterPanel
+            value={filters}
+            onChange={setFilters}
+            availableGroups={allSummary.availableGroups}
+            resultCount={filteredResults.length}
+          />
+        </div>
+        )}
+
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="sci-ranking-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION A</p>
           <h2 id="sci-ranking-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
@@ -353,15 +363,6 @@ export default function ScienceSocietyPage() {
         </section>
 
         {/* ── Section E: フィルタ ── */}
-        <div className="mt-8">
-          <ScienceFilterPanel
-            value={filters}
-            onChange={setFilters}
-            availableGroups={allSummary.availableGroups}
-            resultCount={filteredResults.length}
-          />
-        </div>
-
         {/* ── 注記 ── */}
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="sci-meta-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">NOTES</p>

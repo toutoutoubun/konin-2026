@@ -177,7 +177,6 @@ export default function MathAnalysisPage() {
               )
               return [...kept, ...nextResults]
             })
-            setFilters(initialMathFilters)
             setError('')
           }}
           onError={setError}
@@ -271,6 +270,19 @@ export default function MathAnalysisPage() {
         </section>
 
         {/* ── Section A: よく出る単元ランキング ── */}
+        {hasResults && (
+        <div className="mt-8">
+          <MathFilterPanel
+            value={filters}
+            onChange={setFilters}
+            availableBlocks={allSummary.availableBlocks}
+            availableL1={allSummary.availableL1}
+            availableL2={allSummary.availableL2}
+            resultCount={filteredResults.length}
+          />
+        </div>
+        )}
+
         <section
           className="panel mt-8 p-6 md:p-8"
           aria-labelledby="math-ranking-title"
@@ -509,17 +521,6 @@ export default function MathAnalysisPage() {
         </section>
 
         {/* ── Section E: フィルタ ── */}
-        <div className="mt-8">
-          <MathFilterPanel
-            value={filters}
-            onChange={setFilters}
-            availableBlocks={allSummary.availableBlocks}
-            availableL1={allSummary.availableL1}
-            availableL2={allSummary.availableL2}
-            resultCount={filteredResults.length}
-          />
-        </div>
-
         {/* ── Section F: 解析対象外件数 + 注記 ── */}
         <section
           className="panel mt-8 p-6 md:p-8"

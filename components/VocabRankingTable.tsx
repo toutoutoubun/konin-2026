@@ -12,13 +12,21 @@ type Props = {
   limit?: number
 }
 
-const cefrColors: Record<CefrLevel, string> = {
-  A1: 'bg-green-100 text-green-800 border-green-300',
-  A2: 'bg-blue-100 text-blue-800 border-blue-300',
-  B1: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-  B2: 'bg-orange-100 text-orange-800 border-orange-300',
-  'pre-CEFR': 'bg-violet-100 text-violet-800 border-violet-300',
-  unknown: 'bg-gray-100 text-gray-600 border-gray-300'
+// CEFRレベルチップ用の色。Tailwindのカスタムカラー設定でshade派生が生成されない
+// 環境でも常に発色するよう、直接HEXを指定する。
+type ChipStyle = { backgroundColor: string; color: string; borderColor: string }
+const cefrChipStyles: Record<CefrLevel, ChipStyle> = {
+  A1: { backgroundColor: '#DCFCE7', color: '#166534', borderColor: '#86EFAC' },
+  A2: { backgroundColor: '#DBEAFE', color: '#1E40AF', borderColor: '#93C5FD' },
+  B1: { backgroundColor: '#FEF9C3', color: '#854D0E', borderColor: '#FDE047' },
+  B2: { backgroundColor: '#FFEDD5', color: '#9A3412', borderColor: '#FDBA74' },
+  'pre-CEFR': { backgroundColor: '#EDE9FE', color: '#5B21B6', borderColor: '#C4B5FD' },
+  unknown: { backgroundColor: '#F3F4F6', color: '#4B5563', borderColor: '#D1D5DB' }
+}
+const properNounChipStyle: ChipStyle = {
+  backgroundColor: '#F3E8FF',
+  color: '#6B21A8',
+  borderColor: '#D8B4FE'
 }
 
 function cefrLabel(level: CefrLevel, category?: string): string {
@@ -29,6 +37,8 @@ function cefrLabel(level: CefrLevel, category?: string): string {
 }
 
 function methodLabel(item: AggregatedVocabItem): React.ReactNode {
+  // blue/yellow/orange は tailwind.config.ts でカスタムカラー単一値に上書きされていて
+  // shade派生（text-blue-600 等）が生成されないため、blue系のみ inline-style 指定。
   if (item.category === 'properNoun' && item.cefrLevel === 'pre-CEFR') {
     return <span className="text-violet-600">試験語彙（国名形容詞等）</span>
   }
@@ -36,7 +46,7 @@ function methodLabel(item: AggregatedVocabItem): React.ReactNode {
     return <span className="text-purple-600">NLP固有名詞検出</span>
   }
   if (item.resolvedVia) {
-    return <span className="text-blue-600">語幹 &quot;{item.resolvedVia}&quot; で照合</span>
+    return <span style={{ color: '#2563EB' }}>語幹 &quot;{item.resolvedVia}&quot; で照合</span>
   }
   if (item.cefrLevel === 'pre-CEFR') {
     return <span className="text-violet-600">試験頻出語彙</span>
@@ -93,11 +103,14 @@ export default function VocabRankingTable({ rows, caption, cefrFilter = 'all', p
               <td className="p-3 font-bold font-mono">{row.word}</td>
               <td className="p-3">{row.posJa}</td>
               <td className="p-3">
-                <span className={`inline-block rounded border px-2 py-0.5 text-xs font-bold ${
-                  row.category === 'properNoun' && row.cefrLevel !== 'pre-CEFR'
-                    ? 'bg-purple-100 text-purple-800 border-purple-300'
-                    : cefrColors[row.cefrLevel] ?? cefrColors.unknown
-                }`}>
+                <span
+                  className="inline-block rounded border px-2 py-0.5 text-xs font-bold"
+                  style={
+                    row.category === 'properNoun' && row.cefrLevel !== 'pre-CEFR'
+                      ? properNounChipStyle
+                      : cefrChipStyles[row.cefrLevel] ?? cefrChipStyles.unknown
+                  }
+                >
                   {cefrLabel(row.cefrLevel, row.category)}
                 </span>
               </td>

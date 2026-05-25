@@ -109,7 +109,6 @@ export default function PublicPage() {
               const kept = prev.filter((result) => !existingNames.has(result.fileName))
               return [...kept, ...nextResults]
             })
-            setFilters(initialPublicFilters)
             setError('')
           }}
           onError={setError}
@@ -166,6 +165,19 @@ export default function PublicPage() {
             </p>
           )}
         </section>
+
+        {hasResults && (
+        <div className="mt-8">
+          <PublicFilterPanel
+            value={filters}
+            onChange={setFilters}
+            availableTopics={allSummary.availableTopics}
+            availableFormats={allSummary.availableFormats}
+            availableRuleSets={allSummary.availableRuleSets}
+            resultCount={filteredResults.length}
+          />
+        </div>
+        )}
 
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="public-ranking-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION A</p>
@@ -310,17 +322,6 @@ export default function PublicPage() {
             )}
           </div>
         </section>
-
-        <div className="mt-8">
-          <PublicFilterPanel
-            value={filters}
-            onChange={setFilters}
-            availableTopics={allSummary.availableTopics}
-            availableFormats={allSummary.availableFormats}
-            availableRuleSets={allSummary.availableRuleSets}
-            resultCount={filteredResults.length}
-          />
-        </div>
 
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="public-meta-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">NOTES</p>

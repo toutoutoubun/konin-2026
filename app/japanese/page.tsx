@@ -108,7 +108,6 @@ export default function JapanesePage() {
               const kept = prev.filter((result) => !existingNames.has(result.fileName))
               return [...kept, ...nextResults]
             })
-            setFilters(initialJapaneseFilters)
             setError('')
           }}
           onError={setError}
@@ -165,6 +164,18 @@ export default function JapanesePage() {
             </p>
           )}
         </section>
+
+        {hasResults && (
+        <div className="mt-8">
+          <JapaneseFilterPanel
+            value={filters}
+            onChange={setFilters}
+            availableTopics={allSummary.availableTopics}
+            availableFormats={allSummary.availableFormats}
+            resultCount={filteredResults.length}
+          />
+        </div>
+        )}
 
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="japanese-ranking-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION A</p>
@@ -307,16 +318,6 @@ export default function JapanesePage() {
             )}
           </div>
         </section>
-
-        <div className="mt-8">
-          <JapaneseFilterPanel
-            value={filters}
-            onChange={setFilters}
-            availableTopics={allSummary.availableTopics}
-            availableFormats={allSummary.availableFormats}
-            resultCount={filteredResults.length}
-          />
-        </div>
 
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="japanese-meta-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">NOTES</p>

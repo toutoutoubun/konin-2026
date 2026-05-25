@@ -109,7 +109,6 @@ export default function EarthSciencePage() {
               const kept = prev.filter((result) => !existingNames.has(result.fileName))
               return [...kept, ...nextResults]
             })
-            setFilters(initialEarthScienceFilters)
             setError('')
           }}
           onError={setError}
@@ -166,6 +165,18 @@ export default function EarthSciencePage() {
             </p>
           )}
         </section>
+
+        {hasResults && (
+        <div className="mt-8">
+          <EarthScienceFilterPanel
+            value={filters}
+            onChange={setFilters}
+            availableTopics={allSummary.availableTopics}
+            availableFormats={allSummary.availableFormats}
+            resultCount={filteredResults.length}
+          />
+        </div>
+        )}
 
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="earth-science-ranking-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION A</p>
@@ -308,16 +319,6 @@ export default function EarthSciencePage() {
             )}
           </div>
         </section>
-
-        <div className="mt-8">
-          <EarthScienceFilterPanel
-            value={filters}
-            onChange={setFilters}
-            availableTopics={allSummary.availableTopics}
-            availableFormats={allSummary.availableFormats}
-            resultCount={filteredResults.length}
-          />
-        </div>
 
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="earth-science-meta-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">NOTES</p>

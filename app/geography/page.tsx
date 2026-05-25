@@ -173,7 +173,6 @@ export default function GeographyAnalysisPage() {
               const kept = prev.filter((r) => !existingNames.has(r.fileName))
               return [...kept, ...nextResults]
             })
-            setFilters(initialGeoFilters)
             setError('')
           }}
           onError={setError}
@@ -240,6 +239,22 @@ export default function GeographyAnalysisPage() {
         </section>
 
         {/* ── Section A: よく出るテーマランキング ── */}
+        {hasResults && (
+        <div className="mt-8">
+          <GeographyFilterPanel
+            value={filters}
+            onChange={setFilters}
+            availableTopicL1={allSummary.availableTopicL1}
+            availableRegions={allSummary.availableRegions}
+            availableFormats={allSummary.availableFormats}
+            detectedSubjects={allSummary.detectedSubjects}
+            resultCount={filteredResults.length}
+            mixedRuleSets={mixedRuleSets}
+            mixedSubjects={mixedSubjects}
+          />
+        </div>
+        )}
+
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="geo-ranking-title">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -432,20 +447,6 @@ export default function GeographyAnalysisPage() {
         </section>
 
         {/* ── Section F: フィルタ ── */}
-        <div className="mt-8">
-          <GeographyFilterPanel
-            value={filters}
-            onChange={setFilters}
-            availableTopicL1={allSummary.availableTopicL1}
-            availableRegions={allSummary.availableRegions}
-            availableFormats={allSummary.availableFormats}
-            detectedSubjects={allSummary.detectedSubjects}
-            resultCount={filteredResults.length}
-            mixedRuleSets={mixedRuleSets}
-            mixedSubjects={mixedSubjects}
-          />
-        </div>
-
         {/* ── 注記とタグ定義 ── */}
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="geo-meta-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">NOTES</p>

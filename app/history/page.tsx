@@ -187,7 +187,6 @@ export default function HistoryAnalysisPage() {
               const kept = prev.filter((r) => !existingNames.has(r.fileName))
               return [...kept, ...nextResults]
             })
-            setFilters(initialHistoryFilters)
             setError('')
           }}
           onError={setError}
@@ -248,6 +247,21 @@ export default function HistoryAnalysisPage() {
         </section>
 
         {/* ── Section A: よく出るテーマランキング ── */}
+        {hasResults && (
+        <div className="mt-8">
+          <HistoryFilterPanel
+            value={filters}
+            onChange={setFilters}
+            availableTopicL1={allSummary.availableTopicL1}
+            availableEras={allSummary.availableEras}
+            availableRegions={allSummary.availableRegions}
+            availableFormats={allSummary.availableFormats}
+            resultCount={filteredResults.length}
+            mixedRuleSets={mixedRuleSets}
+          />
+        </div>
+        )}
+
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="history-ranking-title">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -495,19 +509,6 @@ export default function HistoryAnalysisPage() {
         </section>
 
         {/* ── Section G: フィルタ ── */}
-        <div className="mt-8">
-          <HistoryFilterPanel
-            value={filters}
-            onChange={setFilters}
-            availableTopicL1={allSummary.availableTopicL1}
-            availableEras={allSummary.availableEras}
-            availableRegions={allSummary.availableRegions}
-            availableFormats={allSummary.availableFormats}
-            resultCount={filteredResults.length}
-            mixedRuleSets={mixedRuleSets}
-          />
-        </div>
-
         {/* ── 注記とタグ定義 ── */}
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="history-meta-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">NOTES</p>
