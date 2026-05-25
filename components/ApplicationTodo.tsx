@@ -49,7 +49,7 @@ const steps: TodoStep[] = [
       { id: 'credit-certificate-available', label: '単位修得証明書で修得単位が確認できるか確認する' },
       { id: 'skill-proof-documents', label: '資格・検定で申請する科目は、合格証明書など指定書類を確認する' },
       { id: 'exemption-subjects', label: '単位・技能審査の証明書類を見ながら、免除申請できる科目を確認する' },
-      { id: 'download-pdfs', label: '公式PDFを文科省サイトから取得する', href: officialPastExamUrl },
+      { id: 'download-pdfs', label: '公式過去問PDFを文科省サイトから取得する', href: officialPastExamUrl },
       { id: 'analysis', label: '頻出分析ツールで出題傾向を確認する', href: '/analysis/' }
     ]
   },
@@ -118,7 +118,9 @@ export default function ApplicationTodo() {
         </h2>
       </div>
 
-      <p className="mt-3 text-xs text-ink/60">チェック状態はこの端末に保存されます。</p>
+      <p className="mt-3 text-xs leading-relaxed text-ink/60">
+        チェック状態はお使いのブラウザに保存されます（LocalStorage）。サーバーには送信されません。ブラウザの履歴・サイトデータを消去すると保存内容も消えます。
+      </p>
 
       {/* Accordion steps */}
       <div className="mt-3 flex-1 space-y-1.5 overflow-y-auto" role="group" aria-label="出願Todoチェックリスト">

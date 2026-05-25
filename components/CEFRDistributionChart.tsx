@@ -25,13 +25,15 @@ const cefrColors: Record<string, string> = {
   unknown: '#9ca3af'
 }
 
-const cefrBgClasses: Record<string, string> = {
-  A1: 'bg-green-100 text-green-800 border-green-300',
-  A2: 'bg-blue-100 text-blue-800 border-blue-300',
-  B1: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-  B2: 'bg-orange-100 text-orange-800 border-orange-300',
-  'pre-CEFR': 'bg-violet-100 text-violet-800 border-violet-300',
-  unknown: 'bg-gray-100 text-gray-600 border-gray-300'
+// CEFRレベルチップの背景・文字・枠色。Tailwindのカスタムカラー設定の影響で
+// `bg-blue-100` 等の派生shadeクラスが生成されないため、直接HEXで指定する。
+const cefrChipStyles: Record<string, { backgroundColor: string; color: string; borderColor: string }> = {
+  A1: { backgroundColor: '#DCFCE7', color: '#166534', borderColor: '#86EFAC' },
+  A2: { backgroundColor: '#DBEAFE', color: '#1E40AF', borderColor: '#93C5FD' },
+  B1: { backgroundColor: '#FEF9C3', color: '#854D0E', borderColor: '#FDE047' },
+  B2: { backgroundColor: '#FFEDD5', color: '#9A3412', borderColor: '#FDBA74' },
+  'pre-CEFR': { backgroundColor: '#EDE9FE', color: '#5B21B6', borderColor: '#C4B5FD' },
+  unknown: { backgroundColor: '#F3F4F6', color: '#4B5563', borderColor: '#D1D5DB' }
 }
 
 const cefrLabelMap: Record<string, string> = {
@@ -103,7 +105,10 @@ export default function CEFRDistributionChart({ rows, viewMode, caption, properN
             {rows.map((row) => (
               <tr key={row.level} className="border-b-2 border-ink even:bg-blue/5">
                 <td className="p-3">
-                  <span className={`inline-block rounded border px-2 py-0.5 text-xs font-bold ${cefrBgClasses[row.level] ?? cefrBgClasses.unknown}`}>
+                  <span
+                    className="inline-block rounded border px-2 py-0.5 text-xs font-bold"
+                    style={cefrChipStyles[row.level] ?? cefrChipStyles.unknown}
+                  >
                     {cefrLabelMap[row.level] ?? row.level}
                   </span>
                 </td>
@@ -133,25 +138,25 @@ export default function CEFRDistributionChart({ rows, viewMode, caption, properN
           <div className="mt-2 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
             {unknownBreakdown && unknownBreakdown.resolvedByStem > 0 && (
               <div className="flex items-center gap-2">
-                <span className="inline-block h-3 w-3 rounded-full bg-blue-400" />
+                <span className="inline-block h-3 w-3 rounded-full" style={{ backgroundColor: '#60A5FA' }} />
                 <span>語幹照合で分類済：<strong>{unknownBreakdown.resolvedByStem.toLocaleString()}</strong> 語</span>
               </div>
             )}
             {unknownBreakdown && unknownBreakdown.preCefr > 0 && (
               <div className="flex items-center gap-2">
-                <span className="inline-block h-3 w-3 rounded-full bg-violet-400" />
+                <span className="inline-block h-3 w-3 rounded-full" style={{ backgroundColor: '#A78BFA' }} />
                 <span>試験語彙（pre-CEFR）：<strong>{unknownBreakdown.preCefr.toLocaleString()}</strong> 語</span>
               </div>
             )}
             {unknownBreakdown && unknownBreakdown.trulyUnknown > 0 && (
               <div className="flex items-center gap-2">
-                <span className="inline-block h-3 w-3 rounded-full bg-gray-400" />
+                <span className="inline-block h-3 w-3 rounded-full" style={{ backgroundColor: '#9CA3AF' }} />
                 <span>リスト外（未分類）：<strong>{unknownBreakdown.trulyUnknown.toLocaleString()}</strong> 語</span>
               </div>
             )}
             {properNounCount != null && properNounCount > 0 && (
               <div className="flex items-center gap-2">
-                <span className="inline-block h-3 w-3 rounded-full bg-purple-400" />
+                <span className="inline-block h-3 w-3 rounded-full" style={{ backgroundColor: '#C084FC' }} />
                 <span>固有名詞（除外）：<strong>{properNounCount.toLocaleString()}</strong> 語</span>
               </div>
             )}

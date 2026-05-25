@@ -10,13 +10,16 @@ type Props = {
 
 const cefrLevels: CefrLevel[] = ['A1', 'A2', 'B1', 'B2', 'pre-CEFR', 'unknown']
 
-const cefrHeaderColors: Record<CefrLevel, string> = {
-  A1: 'bg-green-600',
-  A2: 'bg-blue-600',
-  B1: 'bg-yellow-600',
-  B2: 'bg-orange-600',
-  'pre-CEFR': 'bg-violet-600',
-  unknown: 'bg-gray-500'
+// CEFRレベルごとのヘッダー色。Tailwindのカスタムカラー設定（blue/yellow/orange を
+// 単一文字列に上書き）の影響で `bg-blue-600` などの shade 派生クラスが生成されないため、
+// 直接インラインstyleでHEX指定して常に発色するようにする。
+const cefrHeaderStyles: Record<CefrLevel, { backgroundColor: string; color: string }> = {
+  A1: { backgroundColor: '#16A34A', color: '#FFFFFF' }, // green-600
+  A2: { backgroundColor: '#2563EB', color: '#FFFFFF' }, // blue-600
+  B1: { backgroundColor: '#D97706', color: '#FFFFFF' }, // amber-600（B1: 視認性のため茶系の濃色）
+  B2: { backgroundColor: '#EA580C', color: '#FFFFFF' }, // orange-600
+  'pre-CEFR': { backgroundColor: '#7C3AED', color: '#FFFFFF' }, // violet-600
+  unknown: { backgroundColor: '#6B7280', color: '#FFFFFF' } // gray-500
 }
 
 const cefrDetails: Record<CefrLevel, { label: string; hint: string }> = {
@@ -142,7 +145,8 @@ export default function GrammarVocabCrossTable({ rows, caption }: Props) {
                   <th
                     key={level}
                     scope="col"
-                    className={`p-3 text-center text-white ${cefrHeaderColors[level]}`}
+                    className="p-3 text-center"
+                    style={cefrHeaderStyles[level]}
                   >
                     <span className="block text-sm font-bold">{cefrDetails[level].label}</span>
                     <span className="block text-xs font-normal opacity-90">{cefrDetails[level].hint}</span>

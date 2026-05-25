@@ -1,4 +1,5 @@
 import Header from '@/components/Header'
+import SiteFooter from '@/components/SiteFooter'
 
 const updates = [
   ['2026-05-13', '公共', '公共PDFの端末内分析を追加。新課程の公共を主対象に、旧課程の現代社会・倫理・政治・経済は参考区分として制度フィルタで扱う構成に変更。', '公共分析ページ・タグ定義ページ'],
@@ -8,7 +9,7 @@ const updates = [
   ['2026-05-13', '出願Todo', '文部科学省の「身体上の障害等にかかる特別措置」を出願書類チャートに追加し、特別措置申請書・診断意見書・前年度通知書の確認項目をTodoに反映。', '出願書類チャート・出願Todo'],
   ['2026-05-13', '国語', '国語PDFの端末内分析を追加。大問見出し「問1〜問Nに答えよ。」で分割し、頻出分野、年度別推移、大問構成、出題形式を表示。', '国語分析ページ'],
   ['2026-05-13', '免除確認', '免除確認フォームを、入学時期選択、選択内容に応じた単位フォーム、取得資格入力の3段階に変更し、高専単位免除要件にも対応。', '免除申請チェックリスト'],
-  ['2026-05-13', '全体', 'トップページに直置きしていた4ツールを、出願Todo・ルート比較・免除確認・公式PDF傾向分析の専用ディレクトリへ分離。トップページは説明つきの入口に変更。', 'トップページ・各ツールページ'],
+  ['2026-05-13', '全体', 'トップページに直置きしていた4ツールを、出願Todo・ルート比較・免除確認・公式過去問PDF傾向分析の専用ディレクトリへ分離。トップページは説明つきの入口に変更。', 'トップページ・各ツールページ'],
   ['2026-05-13', '免除確認', '文部科学省の高校単位免除要件PDFに合わせ、入学時期A〜E、必要単位数、備考欄の確認、単位修得証明書で確認できない場合の注意を追加。', '免除申請チェックリスト・出願Todo'],
   ['2026-05-12', '物理基礎', '物理基礎PDFの端末内分析を追加。大問見出し「問1〜問Nに答えよ。」で分割し、頻出分野、年度別推移、大問構成、出題形式を表示。', '物理基礎分析ページ'],
   ['2026-05-12', '英語', 'CEFRの説明を頻出語彙セクションに追加し、文法×語彙レベルのヒートマップを行内比率つきで読みやすく改善。', '英語分析ページ'],
@@ -17,7 +18,7 @@ const updates = [
   ['2026-05-02', 'タグ定義', '英語以外の全11科目（国語・数学・歴史・地理・公共・科学と人間生活・物理基礎・化学基礎・生物基礎・地学基礎・情報）の単元タグ・形式タグ定義を追加。', 'タグ定義ページ'],
   ['2026-05-02', 'タグ定義', '科目タブ切り替えで各科目の固有タグ定義を表示可能に。全科目共通タグ（形式・制度区分）セクションを分離。', 'タグ定義ページ'],
   ['2026-05-01', '全体', '高認パスのトップページ、科目別カード、出願Todoリスト、タグ定義、更新履歴を追加。', 'Phase 1 UI構成'],
-  ['2026-05-01', '英語', '英語頻出分析を科目詳細ページの一部として統合。公式PDF選択、ランキング、形式分布、年度推移、フィルタを配置。', '英語詳細ページ'],
+  ['2026-05-01', '英語', '英語頻出分析を科目詳細ページの一部として統合。公式過去問PDF選択、ランキング、形式分布、年度推移、フィルタを配置。', '英語詳細ページ'],
   ['2026-05-01', '英語', 'rule_set型変換を修正し、Next.js production buildを通過。', 'ビルド安定性'],
   ['2026-05-01', '情報', '準備中表示を追加。令和8年度第1回より追加予定、過去問未公開のため分析機能は非表示。', '科目カード・詳細ページ']
 ]
@@ -26,18 +27,13 @@ export default function UpdatesPage() {
   return (
     <>
       <a className="skip-link" href="#main-content">本文へ移動</a>
-      <Header navItems={[
-        { label: 'ツール一覧', href: '/#tools' },
-        { label: '英語分析', href: '/subjects/english/' },
-        { label: 'タグ定義', href: '/tags/' },
-        { label: '更新履歴', href: '/updates/' },
-      ]} />
+      <Header showSubjectDropdown={true} />
 
-      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
+      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 lg:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a><span aria-hidden="true">/</span><span>更新履歴</span>
       </nav>
 
-      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
+      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 lg:px-10" tabIndex={-1}>
         <section className="py-12 md:py-20" aria-labelledby="updates-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">CHANGE LOG</p>
           <h1 id="updates-title" className="mt-4 max-w-6xl font-mincho text-4xl font-bold leading-none tracking-[-.04em] sm:text-5xl md:text-7xl lg:text-9xl">更新履歴</h1>
@@ -56,6 +52,7 @@ export default function UpdatesPage() {
           </div>
         </section>
       </main>
+      <SiteFooter />
     </>
   )
 }

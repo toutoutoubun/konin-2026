@@ -33,7 +33,7 @@ export default function GeographyPDFUploader({ onComplete, onError }: Props) {
     } catch (error) {
       const message =
         error instanceof Error && error.message === 'NO_TEXT'
-          ? '該当データはない：PDFからテキストを抽出できませんでした。別の公式PDFで試してください。'
+          ? '該当データはない：PDFからテキストを抽出できませんでした。別の公式過去問PDFで試してください。'
           : '解析できませんでした。PDFを選び直すか、文科省公式ページから取得したPDFか確認してください。'
       onError(message)
     } finally {
@@ -47,7 +47,7 @@ export default function GeographyPDFUploader({ onComplete, onError }: Props) {
       <div className="mb-6">
         <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">LOCAL PDF</p>
         <h2 id="geo-upload-title" className="mt-2 font-mincho text-4xl font-bold md:text-6xl">
-          公式PDFを選択
+          公式過去問PDFを選択
         </h2>
         <p id="geo-upload-help" className="mt-3 max-w-3xl">
           ユーザーが文科省公式ページから取得した地理・地理A・地理BのPDFを選択すると、端末内で傾向データを集計します。複数ファイルを同時に追加できます。PDFはサーバーへ送信せず、問題文や設問文は再掲載しません。
@@ -58,7 +58,7 @@ export default function GeographyPDFUploader({ onComplete, onError }: Props) {
         role="button"
         tabIndex={0}
         aria-describedby="geo-upload-help geo-upload-status"
-        aria-label="地理の公式PDFを端末内解析用に選択"
+        aria-label="地理の公式過去問PDFを端末内解析用に選択"
         className={`grid min-h-[230px] place-items-center border-[3px] border-dashed border-ink bg-cream p-8 text-center ${dragging ? 'bg-yellow' : ''}`}
         onClick={() => inputRef.current?.click()}
         onKeyDown={(event) => {

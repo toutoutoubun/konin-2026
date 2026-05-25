@@ -1,16 +1,10 @@
 import Header from '@/components/Header'
+import SiteFooter from '@/components/SiteFooter'
 import { officialPastExamUrl, subjects } from '@/data/subjects'
 import { getToolPage, toolPages } from '@/data/toolPages'
 import { subjectHref } from '@/lib/subjectHref'
 
 const tool = getToolPage('analysis')!
-
-const navItems = [
-  { label: 'トップ', href: '/' },
-  { label: '出願Todo', href: '/application-todo/' },
-  { label: '免除確認', href: '/exemption-check/' },
-  { label: 'タグ定義', href: '/tags/' },
-]
 
 const statusLabel: Record<string, { text: string; style: string }> = {
   active: { text: '実装済み', style: 'border-blue bg-blue/10' },
@@ -22,13 +16,13 @@ export default function AnalysisPage() {
   return (
     <>
       <a className="skip-link" href="#main-content">本文へ移動</a>
-      <Header navItems={navItems} showSubjectDropdown={true} />
+      <Header showSubjectDropdown={true} />
 
-      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
+      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 lg:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a><span aria-hidden="true">/</span><span>{tool.title}</span>
       </nav>
 
-      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
+      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 lg:px-10" tabIndex={-1}>
         <section className="py-10 md:py-16" aria-labelledby="analysis-page-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">{tool.label}</p>
           <h1 id="analysis-page-title" className="mt-4 max-w-5xl font-mincho text-4xl font-bold leading-none tracking-[-.04em] sm:text-5xl md:text-7xl">
@@ -36,8 +30,9 @@ export default function AnalysisPage() {
           </h1>
           <p className="mt-5 max-w-3xl text-base leading-relaxed sm:text-xl">{tool.description}</p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            {/* Review A-2: blue = in-site action, orange = external source. */}
             <a className="hard-button button-like bg-blue px-5 py-3 text-center text-white no-underline" href="#subjects">科目を選ぶ</a>
-            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式PDFページ</a>
+            <a className="hard-button button-like bg-orange px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式過去問PDFページ</a>
           </div>
         </section>
 
@@ -45,7 +40,7 @@ export default function AnalysisPage() {
           <div className="grid gap-6 lg:grid-cols-[.9fr_1.1fr]">
             <div>
               <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">LOCAL ANALYSIS</p>
-              <h2 id="analysis-guide-title" className="mt-2 font-mincho text-3xl font-bold leading-tight sm:text-4xl">公式PDFをどう扱うか</h2>
+              <h2 id="analysis-guide-title" className="mt-2 font-mincho text-3xl font-bold leading-tight sm:text-4xl">公式過去問PDFをどう扱うか</h2>
             </div>
             <div className="space-y-4 text-base leading-relaxed">
               <p>
@@ -108,6 +103,8 @@ export default function AnalysisPage() {
           </div>
         </section>
       </main>
+
+      <SiteFooter />
     </>
   )
 }

@@ -1,5 +1,6 @@
 import ExemptionCheck from '@/components/ExemptionCheck/ExemptionCheck'
 import Header from '@/components/Header'
+import SiteFooter from '@/components/SiteFooter'
 import {
   officialApplicationFlowUrl,
   officialCreditCertificateUrl,
@@ -12,24 +13,17 @@ import { getToolPage, toolPages } from '@/data/toolPages'
 
 const tool = getToolPage('exemption-check')!
 
-const navItems = [
-  { label: 'トップ', href: '/' },
-  { label: '出願Todo', href: '/application-todo/' },
-  { label: 'ルート比較', href: '/route-compare/' },
-  { label: '分析科目', href: '/analysis/' },
-]
-
 export default function ExemptionCheckPage() {
   return (
     <>
       <a className="skip-link" href="#main-content">本文へ移動</a>
-      <Header navItems={navItems} showSubjectDropdown={true} />
+      <Header showSubjectDropdown={true} />
 
-      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
+      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 lg:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a><span aria-hidden="true">/</span><span>{tool.title}</span>
       </nav>
 
-      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
+      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 lg:px-10" tabIndex={-1}>
         <section className="py-10 md:py-16" aria-labelledby="exemption-check-page-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">{tool.label}</p>
           <h1 id="exemption-check-page-title" className="mt-4 max-w-5xl font-mincho text-4xl font-bold leading-none tracking-[-.04em] sm:text-5xl md:text-7xl">
@@ -46,7 +40,7 @@ export default function ExemptionCheckPage() {
             </div>
             <div className="space-y-4 text-base leading-relaxed">
               <p>
-                免除は「単位を修得したから自動で反映される」ものではなく、出願時に申請し、証明書類を提出して確認されます。入学時期、修得した高校科目、必要単位数、技能審査の対象級がずれると判定が変わるため、公式PDFと証明書類を並べて確認します。
+                免除は「単位を修得したから自動で反映される」ものではなく、出願時に申請し、証明書類を提出して確認されます。入学時期、修得した高校科目、必要単位数、技能審査の対象級がずれると判定が変わるため、公式過去問PDFと証明書類を並べて確認します。
               </p>
               <ul className="list-inside list-disc space-y-1 text-sm">
                 <li>高校単位で申請する場合は、入学時期A〜Eごとの表を確認します。</li>
@@ -55,12 +49,13 @@ export default function ExemptionCheckPage() {
                 <li>技能審査は、英検、全商英検、国連英検、数検、歴検、ITパスポートなど、公式一覧にあるものだけを確認します。</li>
               </ul>
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialExemptionRequirementsUrl} target="_blank" rel="noopener">免除要件</a>
-                <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialHighSchoolCreditExemptionUrl} target="_blank" rel="noopener">高校単位免除要件</a>
-                <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialKosenCreditExemptionUrl} target="_blank" rel="noopener">高専単位免除要件</a>
-                <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialSkillExemptionUrl} target="_blank" rel="noopener">技能審査一覧</a>
-                <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialCreditCertificateUrl} target="_blank" rel="noopener">証明書様式</a>
-                <a className="hard-button button-like bg-paper px-4 py-2 no-underline" href={officialApplicationFlowUrl} target="_blank" rel="noopener">出願書類</a>
+                {/* Review A-2: orange = external official source. */}
+                <a className="hard-button button-like bg-orange px-4 py-2 no-underline" href={officialExemptionRequirementsUrl} target="_blank" rel="noopener">免除要件</a>
+                <a className="hard-button button-like bg-orange px-4 py-2 no-underline" href={officialHighSchoolCreditExemptionUrl} target="_blank" rel="noopener">高校単位免除要件</a>
+                <a className="hard-button button-like bg-orange px-4 py-2 no-underline" href={officialKosenCreditExemptionUrl} target="_blank" rel="noopener">高専単位免除要件</a>
+                <a className="hard-button button-like bg-orange px-4 py-2 no-underline" href={officialSkillExemptionUrl} target="_blank" rel="noopener">技能審査一覧</a>
+                <a className="hard-button button-like bg-orange px-4 py-2 no-underline" href={officialCreditCertificateUrl} target="_blank" rel="noopener">証明書様式</a>
+                <a className="hard-button button-like bg-orange px-4 py-2 no-underline" href={officialApplicationFlowUrl} target="_blank" rel="noopener">出願書類</a>
               </div>
             </div>
           </div>
@@ -94,6 +89,8 @@ export default function ExemptionCheckPage() {
           </div>
         </section>
       </main>
+
+      <SiteFooter />
     </>
   )
 }

@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import CEFRDistributionChart from '@/components/CEFRDistributionChart'
 import Header from '@/components/Header'
+import SiteFooter from '@/components/SiteFooter'
 import FilterPanel, { initialFilters, type EnglishFilters } from '@/components/FilterPanel'
 import FrequencyChart from '@/components/FrequencyChart'
 import GrammarVocabCrossTable from '@/components/GrammarVocabCrossTable'
@@ -12,6 +13,28 @@ import VocabRankingTable from '@/components/VocabRankingTable'
 import { aggregateResults } from '@/lib/scoreCalculator'
 import type { AnalysisResult } from '@/lib/tagMapper'
 import type { CefrLevel } from '@/lib/vocabAnalyzer'
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from 'recharts'
+
+// 単元ごとに固定色（生物ページと同じ系統）。Top8 までを線として表示。
+const UNIT_LINE_COLORS = [
+  '#1A5CFF', // blue
+  '#FF6B35', // orange
+  '#2E8B57', // green
+  '#E11D48', // red
+  '#9370DB', // purple
+  '#FFD166', // yellow
+  '#0EA5E9', // sky
+  '#1A1A1A'  // ink
+]
 
 const officialPastExamUrl = 'https://www.mext.go.jp/a_menu/koutou/shiken/1421021.htm'
 
@@ -63,7 +86,33 @@ export default function EnglishAnalysisPage() {
 
   const unitChartData = summary.unitRanking.slice(0, 8).map((row) => ({ name: row.unit, count: row.count }))
   const formatChartData = summary.formatRows.map((row) => ({ name: row.format, count: row.count }))
-  const trendChartData = summary.trendRows.slice(0, 24).map((row) => ({ session: `${row.session}\n${row.unit}`, count: row.count }))
+
+  // 単元（文法項目）ごとに1本の折れ線を描くため、試験回 × 単元 を wide-format に集約する。
+  // 同じ session で複数の trendRow があると以前は session が同じ複数点として描かれ
+  // ジグザグになっていたため、ここで session 単位にまとめ直す。
+  const topTrendUnits = useMemo(
+    () => summary.unitRanking.slice(0, 8).map((row) => row.unit),
+    [summary.unitRanking]
+  )
+
+  const trendChartData = useMemo(() => {
+    if (summary.trendRows.length === 0) return [] as Record<string, string | number>[]
+    const topSet = new Set(topTrendUnits)
+    const sessions = Array.from(new Set(summary.trendRows.map((row) => row.session))).sort()
+    return sessions.map((session) => {
+      const row: Record<string, string | number> = { session }
+      for (const trend of summary.trendRows) {
+        if (trend.session !== session) continue
+        if (!topSet.has(trend.unit)) continue
+        row[trend.unit] = ((row[trend.unit] as number) ?? 0) + trend.count
+      }
+      // 該当しなかった単元は 0 で埋める（折れ線が途切れないようにするため）
+      for (const unit of topTrendUnits) {
+        if (row[unit] === undefined) row[unit] = 0
+      }
+      return row
+    })
+  }, [summary.trendRows, topTrendUnits])
 
   // Derive CEFR / POS / category filter values for vocab section
   const cefrFilter = (filters.cefrLevel ?? 'all') as CefrLevel | 'all'
@@ -73,21 +122,13 @@ export default function EnglishAnalysisPage() {
   return (
     <>
       <a className="skip-link" href="#main-content">本文へ移動</a>
-      <Header navItems={[
-        { label: '分析一覧', href: '/analysis/' },
-        { label: 'PDF選択', href: '#upload-title' },
-        { label: '集計', href: '#ranking-title' },
-        { label: '語彙分析', href: '#vocab-title' },
-        { label: 'フィルタ', href: '#filter-title' },
-        { label: 'タグ定義', href: '/tags/' },
-        { label: '更新履歴', href: '/updates/' },
-      ]} />
+      <Header showSubjectDropdown={true} />
 
-      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
-        <a href="/">トップ</a><span aria-hidden="true">/</span><a href="/analysis/">分析一覧</a><span aria-hidden="true">/</span><span>英語頻出分析</span>
+      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 lg:px-10" aria-label="パンくずリスト">
+        <a href="/">トップ</a><span aria-hidden="true">/</span><a href="/analysis/">公式過去問PDF傾向分析</a><span aria-hidden="true">/</span><span>英語頻出分析</span>
       </nav>
 
-      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
+      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 lg:px-10" tabIndex={-1}>
         <section className="py-12 md:py-20" aria-labelledby="hero-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">ENGLISH PAST EXAM ANALYZER</p>
           <h1 id="hero-title" className="mt-4 max-w-5xl font-mincho text-4xl font-bold leading-none tracking-[-.04em] sm:text-5xl md:text-7xl lg:text-9xl">
@@ -98,14 +139,13 @@ export default function EnglishAnalysisPage() {
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4" aria-label="主要操作">
             <a className="hard-button button-like bg-blue px-5 py-3 text-center text-white no-underline" href="#upload-title">PDFを分析する</a>
-            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式PDFページへ</a>
+            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式過去問PDFページへ</a>
           </div>
         </section>
 
         <PDFUploader
           onComplete={(nextResults) => {
             setResults(nextResults)
-            setFilters(initialFilters)
             setError('')
           }}
           onError={setError}
@@ -138,6 +178,20 @@ export default function EnglishAnalysisPage() {
             <p className="mt-5 border-2 border-ink bg-cream p-4">該当データはない：PDF解析後に、解析したファイル名・試験回・制度区分を表示します。</p>
           )}
         </section>
+
+        {/* --- FILTER (結果の上に配置：操作の影響をすぐ確認できるようにする) --- */}
+        {results.length > 0 && (
+          <div className="mt-8">
+            <FilterPanel
+              value={filters}
+              onChange={setFilters}
+              availableFormats={availableFormats}
+              availableGrammar={availableGrammar}
+              resultCount={filteredResults.length}
+              mixedRuleSets={mixedRuleSets}
+            />
+          </div>
+        )}
 
         {/* --- SECTION B: よく出る単元ランキング --- */}
         <section className="mt-8 panel p-5 sm:p-6 md:p-8" aria-labelledby="ranking-title">
@@ -187,12 +241,42 @@ export default function EnglishAnalysisPage() {
           </div>
         </section>
 
-        {/* --- SECTION E: 年度推移 --- */}
+        {/* --- SECTION E: 分野別年度推移 --- */}
         <section className="mt-8 panel p-5 sm:p-6 md:p-8" aria-labelledby="trend-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION E</p>
-          <h2 id="trend-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">年度推移</h2>
+          <h2 id="trend-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">分野別年度推移</h2>
+          <p className="mt-3 max-w-3xl">
+            横軸を試験回、縦軸を出現回数として、よく出る単元（上位8項目）ごとの推移を1本ずつの折れ線で表示します。
+          </p>
           <div className="mt-5 grid gap-6 lg:grid-cols-[1fr_.9fr]">
-            <FrequencyChart data={trendChartData} type="line" xKey="session" yKey="count" label="試験回ごとの出現回数の推移グラフ" color="#1A5CFF" />
+            {trendChartData.length > 0 ? (
+              <div className="border-2 border-ink bg-paper p-4" style={{ height: 400 }} role="img" aria-label="単元別の年度推移折れ線グラフ">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={trendChartData} margin={{ top: 16, right: 20, bottom: 24, left: 0 }}>
+                    <CartesianGrid stroke="#1A1A1A" strokeDasharray="4 4" opacity={0.22} />
+                    <XAxis dataKey="session" interval={0} angle={-18} textAnchor="end" height={70} tick={{ fontSize: 11 }} />
+                    <YAxis allowDecimals={false} />
+                    <Tooltip />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    {topTrendUnits.map((unit, idx) => (
+                      <Line
+                        key={unit}
+                        type="monotone"
+                        dataKey={unit}
+                        stroke={UNIT_LINE_COLORS[idx % UNIT_LINE_COLORS.length]}
+                        strokeWidth={2}
+                        dot={{ r: 3, fill: UNIT_LINE_COLORS[idx % UNIT_LINE_COLORS.length] }}
+                        activeDot={{ r: 5 }}
+                      />
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className="border-2 border-ink bg-cream p-6" role="img" aria-label="分野別年度推移グラフ。該当データはない">
+                該当データはない：PDF解析後にグラフを表示します。
+              </div>
+            )}
             <div className="overflow-x-auto" role="region" aria-label="年度推移表">
               <table className="w-full min-w-[520px] border-collapse bg-paper" role="table">
                 <caption className="py-3 text-left font-bold">年度推移グラフと同一データの表。</caption>
@@ -287,18 +371,6 @@ export default function EnglishAnalysisPage() {
           />
         </section>
 
-        {/* --- FILTER --- */}
-        <div className="mt-8">
-          <FilterPanel
-            value={filters}
-            onChange={setFilters}
-            availableFormats={availableFormats}
-            availableGrammar={availableGrammar}
-            resultCount={filteredResults.length}
-            mixedRuleSets={mixedRuleSets}
-          />
-        </div>
-
         {/* --- META: 注記とタグ定義 --- */}
         <section className="mt-8 panel p-5 sm:p-6 md:p-8" aria-labelledby="meta-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">NOTES</p>
@@ -324,14 +396,7 @@ export default function EnglishAnalysisPage() {
         </section>
       </main>
 
-      <footer className="border-t-2 border-ink bg-ink px-4 py-6 text-cream sm:py-8 md:px-10">
-        <div className="mx-auto max-w-7xl space-y-2">
-          <p><strong>更新日</strong> 2026-05-12</p>
-          <p><strong>データ範囲</strong> ユーザーが正当に取得し、端末内で選択した文部科学省公式PDF。問題文・設問文の配布や再掲載は行いません。</p>
-          <p><strong>注意書き</strong> 高認パスは文部科学省の公式サービスではありません。</p>
-          <p><a className="text-yellow" href={officialPastExamUrl} target="_blank" rel="noopener">文部科学省 過去問題ページ</a></p>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   )
 }

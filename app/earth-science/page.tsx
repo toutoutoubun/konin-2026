@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import Header from '@/components/Header'
+import SiteFooter from '@/components/SiteFooter'
 import FrequencyChart from '@/components/FrequencyChart'
 import EarthSciencePDFUploader from '@/components/EarthSciencePDFUploader'
 import EarthScienceFilterPanel from '@/components/EarthScienceFilterPanel'
@@ -73,24 +74,17 @@ export default function EarthSciencePage() {
     <>
       <a className="skip-link" href="#main-content">本文へ移動</a>
 
-      <Header navItems={[
-        { label: '分析一覧', href: '/analysis/' },
-        { label: 'PDF選択', href: '#earth-science-upload-title' },
-        { label: '集計', href: '#earth-science-ranking-title' },
-        { label: 'フィルタ', href: '#earth-science-filter-title' },
-        { label: 'タグ定義', href: '/tags/' },
-        { label: '更新履歴', href: '/updates/' },
-      ]} />
+      <Header showSubjectDropdown={true} />
 
-      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 md:px-10" aria-label="パンくずリスト">
+      <nav className="mx-auto mt-4 flex max-w-7xl gap-2 px-4 text-sm text-ink/70 lg:px-10" aria-label="パンくずリスト">
         <a href="/">トップ</a>
         <span aria-hidden="true">/</span>
-        <a href="/analysis/">分析一覧</a>
+        <a href="/analysis/">公式過去問PDF傾向分析</a>
         <span aria-hidden="true">/</span>
         <span aria-current="page">地学基礎頻出分析</span>
       </nav>
 
-      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 md:px-10" tabIndex={-1}>
+      <main id="main-content" className="mx-auto max-w-7xl px-4 pb-20 lg:px-10" tabIndex={-1}>
         <section className="py-12 md:py-20" aria-labelledby="earth-science-hero-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.22em]">EARTH SCIENCE PAST EXAM ANALYZER</p>
           <h1 id="earth-science-hero-title" className="mt-4 max-w-5xl font-mincho text-[48px] font-bold leading-none tracking-normal">
@@ -104,7 +98,7 @@ export default function EarthSciencePage() {
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:gap-4" aria-label="主要操作">
             <a className="hard-button button-like bg-blue px-5 py-3 text-center text-white no-underline" href="#earth-science-upload-title">PDFを分析する</a>
-            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式PDFページへ</a>
+            <a className="hard-button button-like bg-paper px-5 py-3 text-center no-underline" href={officialPastExamUrl} target="_blank" rel="noopener">文科省公式過去問PDFページへ</a>
           </div>
         </section>
 
@@ -115,7 +109,6 @@ export default function EarthSciencePage() {
               const kept = prev.filter((result) => !existingNames.has(result.fileName))
               return [...kept, ...nextResults]
             })
-            setFilters(initialEarthScienceFilters)
             setError('')
           }}
           onError={setError}
@@ -172,6 +165,18 @@ export default function EarthSciencePage() {
             </p>
           )}
         </section>
+
+        {hasResults && (
+        <div className="mt-8">
+          <EarthScienceFilterPanel
+            value={filters}
+            onChange={setFilters}
+            availableTopics={allSummary.availableTopics}
+            availableFormats={allSummary.availableFormats}
+            resultCount={filteredResults.length}
+          />
+        </div>
+        )}
 
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="earth-science-ranking-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">SECTION A</p>
@@ -315,16 +320,6 @@ export default function EarthSciencePage() {
           </div>
         </section>
 
-        <div className="mt-8">
-          <EarthScienceFilterPanel
-            value={filters}
-            onChange={setFilters}
-            availableTopics={allSummary.availableTopics}
-            availableFormats={allSummary.availableFormats}
-            resultCount={filteredResults.length}
-          />
-        </div>
-
         <section className="panel mt-8 p-6 md:p-8" aria-labelledby="earth-science-meta-title">
           <p className="font-serifDisplay text-sm uppercase tracking-[.18em]">NOTES</p>
           <h2 id="earth-science-meta-title" className="mt-2 font-mincho text-2xl font-bold sm:text-4xl md:text-6xl">
@@ -344,7 +339,7 @@ export default function EarthSciencePage() {
             <div className="border-2 border-ink bg-cream p-4">
               <h3 className="text-xl font-bold">地学基礎の解析方法</h3>
               <p className="mt-3">
-                公式PDFの見出しで大問を分割し、各大問の解答番号範囲と小問数を推定します。
+                公式過去問PDFの見出しで大問を分割し、各大問の解答番号範囲と小問数を推定します。
               </p>
               <p className="mt-2 text-sm">
                 分野は、地球の概観、固体地球、大気と海洋、宇宙、地層・岩石・地史、自然災害と防災、地球環境のキーワードスコアで分類します。
@@ -357,14 +352,7 @@ export default function EarthSciencePage() {
         </section>
       </main>
 
-      <footer className="border-t-2 border-ink bg-ink px-4 py-6 text-cream sm:py-8 md:px-10">
-        <div className="mx-auto max-w-7xl space-y-2">
-          <p><strong>更新日</strong> 2026-05-13</p>
-          <p><strong>データ範囲</strong> ユーザーが正当に取得し、端末内で選択した文部科学省公式PDF。問題文・設問文の配布や再掲載は行いません。</p>
-          <p><strong>注意書き</strong> 高認パスは文部科学省の公式サービスではありません。</p>
-          <p><a className="text-yellow" href={officialPastExamUrl} target="_blank" rel="noopener">文部科学省 過去問題ページ</a></p>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   )
 }
